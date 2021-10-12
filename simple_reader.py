@@ -38,7 +38,6 @@ class DataLoader:
         Parameters:
         dataset (Dataset): dataset to be loaded
         """
-        self.dataset = dataset
         self.iter = iter(dataset)
 
     def __iter__(self):
