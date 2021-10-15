@@ -1,2 +1,11 @@
+# data
 /data
 /data/*
+*.csv
+
+# pycache
+__pycache__/
+*/__pycache__/*
+
+# jupyter checkpoints
+*/.ipynb_checkpoints
