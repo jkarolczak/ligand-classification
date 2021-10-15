@@ -122,11 +122,9 @@ class BlobDetails:
             isomin=float(self.blob[self.blob > 0].min()),
             isomax=float(self.blob[self.blob > 0].max()),
             opacity=0.1,
-            surface_count=20,
-            colorscale='brbg',
-            ),
-            width=800, 
-            height=600
+            surface_count=15,
+            colorscale='brbg'
+            )
         )
         fig.show()
 
@@ -137,6 +135,6 @@ if __name__ == '__main__':
     blob_file_name = sys.argv[2] if len(sys.argv) >= 3 else '1a0h_0G6_1_B_2.npz'
 
     test_blob = BlobDetails(blob_dir_path, blob_file_name)
-    #test_blob.display_volume_3d()
+    test_blob.display_volume_3d()
     print(test_blob.get_stats())
     
