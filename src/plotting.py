@@ -26,3 +26,25 @@ def svg_to_html(svg_url, width="300px"):
     text = _html_template.format(width, svg_url)
     return HTML(text)
 
+
+def plot_interactive_trisurf(blob, title, cutoff_val=0.0, grid_unit=0.2, color='#009988', opacity=0.5):
+    """
+    Creates an interactive #d visualization of a given volume.
+    :param blob: 3D numpy array
+    :param title: title of plot
+    :param cutoff_val: value considered as void
+    :param grid_unit: unit of each voxel; by default 0.2 Angstrom
+    :param color: mesh color
+    :param opacity: mesh opacity
+    :return: plotly figure
+    """
+    from skimage.measure import marching_cubes_lewiner
+    import plotly.figure_factory as ff
+
+    verts, faces, _, _ = marching_cubes_lewiner(blob, cutoff_val, spacing=(grid_unit, grid_unit, grid_unit))
+    fig = ff.create_trisurf(x=verts[:, 0], y=verts[:, 1], z=verts[:, 2], title=title,
+                            simplices=faces, colormap=[color, color], show_colorbar=False)
+    if opacity < 1:
+        fig['data'][0].update(opacity=opacity)
+
+    fig.show()
