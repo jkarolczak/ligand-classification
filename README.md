@@ -11,7 +11,7 @@ Build docker image
 git clone https://github.com/NVIDIA/MinkowskiEngine
 mv MinkowskiEngine/ minkowskiengine/
 cd minkowskiengine
-docker build -t MinkowskiEngine docker
+docker build -t minkowskiengine docker
 ```
 
 Run docker container
