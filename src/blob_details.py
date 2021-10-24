@@ -34,7 +34,7 @@ class BlobDetails:
     def get_stats(self):
         stats = []
         labels = [
-            'blol_name',
+            'blob_name',
             'label',
             'blob_shape',
             'blob_n',
@@ -98,7 +98,7 @@ class BlobDetails:
 
         return dict(zip(labels, stats))
 
-    def display_volume_3d(self):
+    def plot_volume_3d(self, title, opacity = 0.1, surface_count = 15, colorscale = 'brbg'):
         x, y, z = self.blob.shape
         max_dim = max(x, y, z)
         x_pad = (max_dim - x) / 2
@@ -121,12 +121,22 @@ class BlobDetails:
             value=data.flatten(),
             isomin=float(self.blob[self.blob > 0].min()),
             isomax=float(self.blob[self.blob > 0].max()),
-            opacity=0.1,
-            surface_count=15,
-            colorscale='brbg'
+            opacity=opacity,
+            surface_count=surface_count,
+            colorscale=colorscale
             )
         )
-        fig.show()
+
+        fig.update_layout(
+            title={
+                'text': title,
+                'y':0.9,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'})
+
+
+        return fig
 
 
 
@@ -135,6 +145,6 @@ if __name__ == '__main__':
     blob_file_name = sys.argv[2] if len(sys.argv) >= 3 else '1a0h_0G6_1_B_2.npz'
 
     test_blob = BlobDetails(blob_dir_path, blob_file_name)
-    test_blob.display_volume_3d()
+    test_blob.plot_volume_3d().show()
     print(test_blob.get_stats())
     
