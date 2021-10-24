@@ -10,5 +10,10 @@ __pycache__/
 # jupyter checkpoints
 */.ipynb_checkpoints
 
+<<<<<<< HEAD
 # venv
 /venv
+=======
+# notebook output files
+blob_details/output/volume_graph.html
+>>>>>>> 6f5bcb5251957efb3011073f0bb72dc1602f14a9

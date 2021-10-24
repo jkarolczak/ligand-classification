@@ -9,8 +9,8 @@
 Build docker image
 ```
 git clone https://github.com/NVIDIA/MinkowskiEngine
+cd MinkowskiEngine
 mv MinkowskiEngine/ minkowskiengine/
-cd minkowskiengine
 docker build -t minkowskiengine docker
 ```
 
