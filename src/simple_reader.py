@@ -7,14 +7,25 @@ from torch import tensor
 from torch.utils.data import Dataset
 
 class LigandDataset(Dataset):
-    def __init__(self, annotations_file_path: str):
+    """A class to represent a ligands dataset."""
+    def __init__(
+        self, 
+        annotations_file_path: str,
+        labels_file_path: str = None
+        ):
         """
-        Parameters:
-        annotations_file_path (str): path to the directory containing directory 'blobs_full' (which contains .npz files) and 'cmb_blob_labels.csv' (which contains columns 'ligands' and 'blob_map_file')
+        :param annotations_file_path: path to the directory containing directory
+        'blobs_full' (which contains .npz files)
+        :param labels_file_path: string with path to the file containing csv definition 
+        of the dataset, default '{annotations_file_path}/cmb_blob_labels.csv', this 
+        file has to contain columns 'ligands' and 'blob_map_file'
         """
         self.annotations_file_path = annotations_file_path
+        if labels_file_path is None: 
+            labels_file_path = os.path.join(self.annotations_file_path, 'cmb_blob_labels.csv')
+        
         file_ligand_map = pd.read_csv(
-            os.path.join(self.annotations_file_path, 'cmb_blob_labels.csv'),
+            labels_file_path,
             usecols=['ligand', 'blob_map_filename']
         )
         self.file_ligand_map = file_ligand_map.set_index('blob_map_filename').to_dict()['ligand']
@@ -33,10 +44,10 @@ class LigandDataset(Dataset):
         return (blob, label)
 
 class DataLoader:
+    """A class to represent simple dataloader which doesn't perform batching."""
     def __init__(self, dataset: Dataset):
         """
-        Parameters:
-        dataset (Dataset): dataset to be loaded
+        :param dataset: dataset to be loaded
         """
         self.iter = iter(dataset)
 
