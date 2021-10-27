@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
+import torch
 from torch import tensor
 from torch.utils.data import Dataset
 
@@ -39,7 +40,7 @@ class LigandDataset(Dataset):
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, 'blobs_full', idx)
         blob = np.load(blob_path)['blob']
-        blob = tensor(blob)
+        blob = tensor(blob, dtype=torch.float32)
         label = self.file_ligand_map[idx]
         return (blob, label)
 

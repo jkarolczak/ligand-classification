@@ -21,7 +21,7 @@ def to_me_tensor(
     for idx in coordinates:
         features.append(batch[tuple(idx)])
     features = torch.tensor(features).unsqueeze(-1)
-    return ME.SparseTensor(features=features, coordinates=coordinates)
+    return ME.SparseTensor(features=features, coordinates=coordinates, requires_grad=True)
 
 def dataset_split(
     dataset: LigandDataset,
