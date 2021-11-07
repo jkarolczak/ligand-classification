@@ -21,7 +21,8 @@ def to_minkowski_tensor(
     for idx in coordinates:
         features.append(batch[tuple(idx)])
     features = torch.tensor(features).unsqueeze(-1)
-    return ME.SparseTensor(features=features, coordinates=coordinates, requires_grad=True)
+    coordinates, features = ME.utils.sparse_collate([coordinates], [features])
+    return ME.SparseTensor(features=features, coordinates=coordinates)
 
 def dataset_split(
     dataset: LigandDataset,

@@ -32,12 +32,12 @@ optimizer = torch.optim.Adam(
     lr=1e-3
 )
 
-for idx, (blob, label) in enumerate(dataloader):
+for idx, (blob, y) in enumerate(dataloader):
     if idx >= 10000:
         break
-
-    y = blob.sum()    
+        
     optimizer.zero_grad()
+    y = blob.sum()
     blob = to_minkowski_tensor(blob)
     y_hat = model(blob)
     loss = criterion(y, y_hat)
