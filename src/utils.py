@@ -8,7 +8,7 @@ from copy import deepcopy
 
 from sklearn.model_selection import train_test_split
 
-def to_me_tensor(
+def to_minkowski_tensor(
     batch: torch.tensor
 ) -> ME.SparseTensor: 
     """
