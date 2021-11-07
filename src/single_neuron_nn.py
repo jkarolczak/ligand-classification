@@ -1,19 +1,19 @@
 import torch
 import MinkowskiEngine as ME
 
-from utils import to_me_tensor
+from utils import to_minkowski_tensor
 from simple_reader import LigandDataset, DataLoader
 
-class MinkowskiCNN(ME.MinkowskiNetwork):
+class MinkowskiNN(ME.MinkowskiNetwork):
     def __init__(
         self
     ):
         ME.MinkowskiNetwork.__init__(self, 3)
 
         self.conv = ME.MinkowskiConvolution(
-            in_channels=1, 
+            in_channels=1,
             out_channels=1,
-            kernel_size=3,
+            kernel_size=1,
             dimension=self.D
         )
         self.pool = ME.MinkowskiGlobalSumPooling()
@@ -21,9 +21,9 @@ class MinkowskiCNN(ME.MinkowskiNetwork):
     def forward(self, x: ME.SparseTensor):
         x = self.conv(x)
         x = self.pool(x)
-        return x
+        return x.F.squeeze(0).squeeze(0)
 
-model = MinkowskiCNN()
+model = MinkowskiNN()
 dataset = LigandDataset('data')
 dataloader = DataLoader(dataset)
 criterion = torch.nn.L1Loss()
@@ -36,17 +36,18 @@ for idx, (blob, label) in enumerate(dataloader):
     if idx >= 10000:
         break
 
+    y = blob.sum()    
     optimizer.zero_grad()
-
-    y = blob.sum() # neural networks objective is to compute sum of all densities stored in the blob
-    x = to_me_tensor(blob.unsqueeze(0)) # (for now) dataloader yield torch tensor, here we convert single blob to minibatch containing single Minkowski sparse tensor
-    y_hat = model(x).F # forward pass
-
+    blob = to_minkowski_tensor(blob)
+    y_hat = model(blob)
     loss = criterion(y, y_hat)
     loss.backward()
     optimizer.step()
 
     if not idx % 100:
-        #print(loss.grad)
-        #print([param.grad for param in model.parameters()]) 
         print(f'iteration:{idx:>8}', f'loss: {loss.item():.4f}', f'groundtruth: {y.item():6.4f}', f'prediction: {y_hat.item():.4f}')
+    
+    if not idx % 500:
+        print([param for param in model.parameters()]) 
+
+print([param for param in model.parameters()])
