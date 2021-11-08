@@ -7,6 +7,10 @@ import torch
 from torch import tensor
 from torch.utils.data import Dataset
 
+import MinkowskiEngine as ME
+
+from sklearn.preprocessing import LabelBinarizer
+
 class LigandDataset(Dataset):
     """A class to represent a ligands dataset."""
     def __init__(
@@ -32,17 +36,31 @@ class LigandDataset(Dataset):
         self.file_ligand_map = file_ligand_map.set_index('blob_map_filename').to_dict()['ligand']
         self.files = list(self.file_ligand_map.keys())
         self.labels = list(self.file_ligand_map.values())
+        self.encoder = LabelBinarizer()
+        self.labels = self.encoder.fit_transform(self.labels)
+
+    def __get_coords_feats(
+        self, 
+        batch: torch.Tensor
+    ) -> ME.SparseTensor: 
+        coordinates = torch.nonzero(batch).int()
+        features = []
+        for idx in coordinates:
+            features.append(batch[tuple(idx)])
+        features = torch.tensor(features).unsqueeze(-1)
+        return coordinates, features
 
     def __len__(self):
         return len(self.files)
 
     def __getitem__(self, idx):
+        label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, 'blobs_full', idx)
         blob = np.load(blob_path)['blob']
         blob = tensor(blob, dtype=torch.float32)
-        label = self.file_ligand_map[idx]
-        return (blob, label)
+        coordinates, features = self.__get_coords_feats(blob)
+        return (coordinates, features, label)
 
 class DataLoader:
     """A class to represent simple dataloader which doesn't perform batching."""
@@ -59,7 +77,7 @@ if __name__ == '__main__':
     dataset = LigandDataset('data')
     dataloader = DataLoader(dataset)
 
-    for idx, (blob, label) in enumerate(dataloader):
+    for idx, (coords, feats, label) in enumerate(dataloader):
         if idx >= 100:
             break
-        print(blob.shape, label)
+        print(coords.shape, feats.shape, label.shape)
