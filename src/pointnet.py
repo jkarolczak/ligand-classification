@@ -1,3 +1,6 @@
+from math import exp
+import os
+
 from typing import List
 
 import torch
@@ -5,7 +8,7 @@ from torch.utils.data import DataLoader
 
 import MinkowskiEngine as ME
 
-from utils import collation_fn
+from utils import *
 from simple_reader import LigandDataset
 
 class SparseConvBlock(ME.MinkowskiNetwork):
@@ -82,7 +85,7 @@ class PointNet(ME.MinkowskiNetwork):
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=3 * conv_kernels[-1], 
+            in_features=3 * conv_kernels[-1],
             out_features=conv_kernels[-1]
         )
         self.sigmoid = torch.nn.Sigmoid()
@@ -128,29 +131,49 @@ class PointNet(ME.MinkowskiNetwork):
         return x
 
 if __name__ == '__main__':
+
+    experiment_dir = 'experiment'
+    os.makedirs(experiment_dir, exist_ok=True)
+    write_log_header(experiment_dir)
+    
     # TODO: choose proper architecture of the NN
+
     model = PointNet(
         conv_kernels = [8, 32, 128, 512],
         in_channels = 1,
         out_channels = 44
     )
     dataset = LigandDataset('data', 'data/labels_ten_percent.csv')
-    dataloader = DataLoader(
-        dataset=dataset, 
-        batch_size=4, 
+
+    train, test = dataset_split(dataset=dataset)
+
+    train_dataloader = DataLoader(
+        dataset=train, 
+        batch_size=16, 
         collate_fn=collation_fn,
+        num_workers=4,
         shuffle=True
     )
+    test_dataloader = DataLoader(
+        dataset=test, 
+        batch_size=16, 
+        collate_fn=collation_fn,
+        num_workers=4,
+        shuffle=True
+    )
+
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(
+    optimizer = torch.optim.AdamW(
         model.parameters(),
-        lr=1e-3
+        lr=1e-3,
+        weight_decay=1e-2
     )
     epochs = 10
 
     for e in range(epochs):
-        for idx, (coords, feats, labels) in enumerate(dataloader):
-            # if idx >= 1000: break
+        model.train()
+        for idx, (coords, feats, labels) in enumerate(train_dataloader):
+            if idx >= 3: break
                 
             batch = ME.SparseTensor(feats, coords)
             optimizer.zero_grad()
@@ -159,10 +182,31 @@ if __name__ == '__main__':
             loss.backward()
             optimizer.step()
 
-            if not idx % 10:
-                print(f'iteration:{idx:>8}', f'loss: {loss.item():.4f}')
+        model.eval()
+        groundtruth, predictions = None, None
+        for idx, (coords, feats, labels) in enumerate(test_dataloader):
+            if idx >= 3: break
 
-    # TODO: early stopping
-    # TODO: model serialization or saving weights
-    # TODO: logging loss, time and metrics from https://github.com/jkarolczak/ligands-classification/issues/9 
+            batch = ME.SparseTensor(feats, coords)
+            preds = model(batch)
+            if groundtruth is None:
+                groundtruth = labels
+                predictions = preds
+            else:
+                groundtruth = torch.cat([groundtruth, labels], -1)
+                predictions = torch.cat([predictions, preds], -1)
+        
+        save_state_dict(
+            model=model,
+            directory=experiment_dir,
+            epoch=e
+        )
+        log_epoch(
+            preds=predictions, 
+            target=groundtruth, 
+            directory=experiment_dir, 
+            epoch=e
+        )
+
+        # TODO: early stopping
 
