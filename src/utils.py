@@ -1,3 +1,5 @@
+import numpy as np
+
 import torch
 import MinkowskiEngine as ME
 
@@ -8,20 +10,25 @@ from copy import deepcopy
 
 from sklearn.model_selection import train_test_split
 
-def to_me_tensor(
-    batch: torch.tensor
-) -> ME.SparseTensor: 
+def collation_fn(blobel):
     """
-    Converts torch tensor containing blob or batch of blobs into MinkowskiEngine sparse tensor.
-    :param batch: torch tensor
-    :return: MinkowskiEngine sparse tensor
+    Implements collation function for batching the LigandsDataset using 
+    `torch.utils.data.DataLoader`
+
+    :param blobel: tuple (coordinates, features, labels); blob+label => blobel; all credit to Witek T.
     """
-    coordinates = torch.nonzero(batch).int()
-    features = []
-    for idx in coordinates:
-        features.append(batch[tuple(idx)])
-    features = torch.tensor(features).unsqueeze(-1)
-    return ME.SparseTensor(features=features, coordinates=coordinates, requires_grad=True)
+    coords_batch, feats_batch, labels_batch = [], [], []
+
+    for (coords, feats, label) in blobel:
+        coords_batch.append(coords) 
+        feats_batch.append(feats) 
+        labels_batch.append(label) 
+
+    coords_batch = ME.utils.batched_coordinates(coords_batch)
+    feats_batch = torch.tensor(np.concatenate(feats_batch, 0), dtype=torch.float32)
+    labels_batch = torch.tensor(np.vstack(labels_batch), dtype=torch.float32)
+
+    return coords_batch, feats_batch, labels_batch
 
 def dataset_split(
     dataset: LigandDataset,
@@ -30,6 +37,7 @@ def dataset_split(
 ) -> Tuple[LigandDataset, LigandDataset]:
     """
     Splits dataset into train and test sets.
+
     :param dataset: dataset of type LigandDataset 
     :param train_size: the proportion of the dataset to include in the test split, must be float in [0.0, 1.0]
     :param stratify: boolean, if train and test sets should have the same proportions between classes like dataset
@@ -53,5 +61,3 @@ def dataset_split(
     test.files, test.labels = files_test, labels_test
 
     return (train, test)
-
-    
