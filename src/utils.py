@@ -154,7 +154,7 @@ def compute_metrics(
     micro_precision = torchmetrics.functional.precision(preds, target, average = 'micro')
     micro_f1 = torchmetrics.functional.f1(preds, target, average = 'micro')
 
-    cohen_kappa = torchmetrics.functional.cohen_kappa(torch.argmax(preds, axis = 1), target, num_classes = num_classes)
+    cohen_kappa = torchmetrics.functional.cohen_kappa(preds, target, num_classes = num_classes)
 
     cross_entropy = torch.nn.functional.cross_entropy(preds, target)
 
