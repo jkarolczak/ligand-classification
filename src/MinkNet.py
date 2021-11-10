@@ -18,7 +18,7 @@ class SparseConvBlock(ME.MinkowskiNetwork):
         in_channels: int,
         out_channels: int,
         dimensions: int = 3,
-        conv_kernel: int = 3,
+        conv_channel: int = 3,
         pooling_kernel: int = 2,
         activation = ME.MinkowskiSigmoid,
         pooling = ME.MinkowskiMaxPooling,
@@ -26,7 +26,7 @@ class SparseConvBlock(ME.MinkowskiNetwork):
         """
         :param in_channels: number of channels in input 
         :param out_channels: number of channels in output, equal to number of classes
-        :param conv_kernel: integer describing convolution kernel size - it is 
+        :param conv_channel: integer describing convolution kernel size - it is 
         assumed that convolution kernel is a cube, all kernel dimensions are equal
         :param dimensions: number of dimensions of input
         :param pooling_kernel: integer describing pooling kernel size, similarly
@@ -38,7 +38,7 @@ class SparseConvBlock(ME.MinkowskiNetwork):
         self.conv = ME.MinkowskiConvolution(
             in_channels=in_channels,
             out_channels=out_channels,
-            kernel_size=conv_kernel,
+            kernel_size=conv_channel,
             dimension=self.D
         )
         self.activation = activation()
@@ -60,13 +60,13 @@ class MinkNet(ME.MinkowskiNetwork):
     """A class to represent MinkNet neural network."""
     def __init__(
         self,
-        conv_kernels: List[int],
+        conv_channels: List[int],
         in_channels: int,
         out_channels: int,
         dimensions: int = 3
     ):
         """
-        :param conv_kernels: list of integers describing consecutive convolution
+        :param conv_channels: list of integers describing consecutive convolution
         kernels sizes - it is assumed that convolution kernel is a cube, all 
         kernel dimensions are equal
         :param in_channels: number of channels in input 
@@ -77,7 +77,7 @@ class MinkNet(ME.MinkowskiNetwork):
         self.sparse_conv_blocks = torch.nn.Sequential(
             *self.__get_sparse_conv_blocks(
                 in_channels=in_channels,
-                conv_kernels=conv_kernels
+                conv_channels=conv_channels
             )
         )
 
@@ -85,12 +85,12 @@ class MinkNet(ME.MinkowskiNetwork):
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=3 * conv_kernels[-1],
-            out_features=conv_kernels[-1]
+            in_features=3 * conv_channels[-1],
+            out_features=conv_channels[-1]
         )
         self.sigmoid = torch.nn.Sigmoid()
         self.linear2 = torch.nn.Linear(
-            in_features=conv_kernels[-1], 
+            in_features=conv_channels[-1], 
             out_features=out_channels
         )
         self.softmax = torch.nn.Softmax(-1)
@@ -98,11 +98,11 @@ class MinkNet(ME.MinkowskiNetwork):
     def __get_sparse_conv_blocks(
         self, 
         in_channels: int,
-        conv_kernels: List[int]
+        conv_channels: List[int]
     ):
-        channels = [in_channels] + conv_kernels
+        channels = [in_channels] + conv_channels
         sparse_conv_blocks = []
-        for i in range(len(conv_kernels)):
+        for i in range(len(conv_channels)):
             sparse_conv_blocks.append(
                 SparseConvBlock(
                     in_channels = channels[i],
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
     train_dataloader = DataLoader(
         dataset=train, 
-        batch_size=, 
+        batch_size=16, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     )
 
     model = MinkNet(
-        conv_kernels = [64, 64, 64, 64, 128, 128, 128, 128, 256, 256, 256, 256, 512, 512, 512, 512],
+        conv_channels = [64, 64, 64, 64, 128, 128, 128, 128, 256, 256, 256, 256, 512, 512, 512, 512],
         in_channels = 1,
         out_channels = dataset.labels[0].shape[0]
     )
@@ -173,8 +173,6 @@ if __name__ == '__main__':
     for e in range(epochs):
         model.train()
         for idx, (coords, feats, labels) in enumerate(train_dataloader):
-            if idx >= 3: break
-                
             batch = ME.SparseTensor(feats, coords)
             optimizer.zero_grad()
             labels_hat = model(batch)
@@ -191,8 +189,6 @@ if __name__ == '__main__':
         model.eval()
         groundtruth, predictions = None, None
         for idx, (coords, feats, labels) in enumerate(test_dataloader):
-            if idx >= 3: break
-
             batch = ME.SparseTensor(feats, coords)
             preds = model(batch)
             if groundtruth is None:
