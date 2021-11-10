@@ -56,8 +56,8 @@ class SparseConvBlock(ME.MinkowskiNetwork):
         x = self.pooling(x)
         return x
 
-class PointNet(ME.MinkowskiNetwork):
-    """A class to represent PointNet neural network."""
+class MinkNet(ME.MinkowskiNetwork):
+    """A class to represent MinkNet neural network."""
     def __init__(
         self,
         conv_kernels: List[int],
@@ -136,20 +136,13 @@ if __name__ == '__main__':
     os.makedirs(experiment_dir, exist_ok=True)
     write_log_header(experiment_dir)
     
-    # TODO: choose proper architecture of the NN
-
-    model = PointNet(
-        conv_kernels = [8, 32, 128, 512],
-        in_channels = 1,
-        out_channels = 44
-    )
     dataset = LigandDataset('data', 'data/labels_ten_percent.csv')
 
     train, test = dataset_split(dataset=dataset)
 
     train_dataloader = DataLoader(
         dataset=train, 
-        batch_size=16, 
+        batch_size=, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
@@ -162,13 +155,20 @@ if __name__ == '__main__':
         shuffle=True
     )
 
+    model = MinkNet(
+        conv_kernels = [64, 64, 64, 64, 128, 128, 128, 128, 256, 256, 256, 256, 512, 512, 512, 512],
+        in_channels = 1,
+        out_channels = dataset.labels[0].shape[0]
+    )
+    
+    write_structure(model, experiment_dir)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=1e-3,
         weight_decay=1e-2
     )
-    epochs = 10
+    epochs = 100
 
     for e in range(epochs):
         model.train()
@@ -181,6 +181,12 @@ if __name__ == '__main__':
             loss = criterion(labels_hat, labels)
             loss.backward()
             optimizer.step()
+
+            save_state_dict(
+                model=model,
+                directory=experiment_dir,
+                epoch=e
+            )
 
         model.eval()
         groundtruth, predictions = None, None
@@ -195,7 +201,7 @@ if __name__ == '__main__':
             else:
                 groundtruth = torch.cat([groundtruth, labels], -1)
                 predictions = torch.cat([predictions, preds], -1)
-        
+
         save_state_dict(
             model=model,
             directory=experiment_dir,
@@ -207,6 +213,3 @@ if __name__ == '__main__':
             directory=experiment_dir, 
             epoch=e
         )
-
-        # TODO: early stopping
-

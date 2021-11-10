@@ -103,6 +103,23 @@ def write_log_header(
             'micro_f1', 'cohen_kappa', 'cross_entropy']) + '\n'
         )
 
+def write_structure(
+    model: torch.nn.Module,
+    directory: str    
+) -> None:
+    """
+    :param model: torch.nn.Module to save its structure
+    :param directory: path to the directory to log experiment results
+    """
+    struct = str(model)
+    file_name = 'model-' + str(datetime.now()).replace(' ', '-') + '.txt'
+    structures_path = os.path.join(directory, 'structures')
+    os.makedirs(structures_path, exist_ok=True)
+    file_path = os.path.join(structures_path, file_name)
+    with open(file_path, 'w') as fp:
+        fp.write(struct)
+
+
 def log_epoch(
     preds: torch.Tensor, 
     target: torch.Tensor,
