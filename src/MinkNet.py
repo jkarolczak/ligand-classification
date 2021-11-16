@@ -1,4 +1,3 @@
-from math import exp
 import os
 
 from typing import List
@@ -10,6 +9,8 @@ import MinkowskiEngine as ME
 
 from utils import *
 from simple_reader import LigandDataset
+
+import gc
 
 class SparseConvBlock(ME.MinkowskiNetwork):
     """A class to represent a single sparse convolution block."""
@@ -132,6 +133,7 @@ class MinkNet(ME.MinkowskiNetwork):
 
 if __name__ == '__main__':
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     experiment_dir = 'experiment'
     os.makedirs(experiment_dir, exist_ok=True)
     write_log_header(experiment_dir)
@@ -142,14 +144,14 @@ if __name__ == '__main__':
 
     train_dataloader = DataLoader(
         dataset=train, 
-        batch_size=16, 
+        batch_size=4, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
     )
     test_dataloader = DataLoader(
         dataset=test, 
-        batch_size=16, 
+        batch_size=4, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
@@ -157,10 +159,11 @@ if __name__ == '__main__':
 
     model = MinkNet(
         conv_channels = [64, 64, 64, 64, 128, 128, 128, 128, 256, 256, 256, 256, 512, 512, 512, 512],
+        #conv_channels = [64, 64, 128, 128, 256, 256, 512, 512],
         in_channels = 1,
         out_channels = dataset.labels[0].shape[0]
     )
-    
+    model.to(device)
     write_structure(model, experiment_dir)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(
@@ -173,23 +176,28 @@ if __name__ == '__main__':
     for e in range(epochs):
         model.train()
         for idx, (coords, feats, labels) in enumerate(train_dataloader):
-            batch = ME.SparseTensor(feats, coords)
+            
+            labels = labels.to(device=device)
+            batch = ME.SparseTensor(feats, coords, device=device)
+
+            print(torch.cuda.memory_allocated())
             optimizer.zero_grad()
             labels_hat = model(batch)
             loss = criterion(labels_hat, labels)
             loss.backward()
             optimizer.step()
-
-            save_state_dict(
-                model=model,
-                directory=experiment_dir,
-                epoch=e
-            )
-
+            torch.cuda.synchronize()
+            model.zero_grad()
+            del batch, labels, labels_hat
+            gc.collect()
+            torch.cuda.empty_cache()
+            print(torch.cuda.memory_allocated())
+            
         model.eval()
         groundtruth, predictions = None, None
         for idx, (coords, feats, labels) in enumerate(test_dataloader):
-            batch = ME.SparseTensor(feats, coords)
+            torch.cuda.empty_cache()
+            batch = ME.SparseTensor(feats, coords, device=device)
             preds = model(batch)
             if groundtruth is None:
                 groundtruth = labels
