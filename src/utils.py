@@ -157,13 +157,15 @@ def compute_metrics(
     :returns: tuple of metrics
     """
     num_classes = target.shape[1]
+    
+    cross_entropy = torch.nn.functional.binary_cross_entropy(preds, target)
 
     target = torch.argmax(target, axis = 1)
 
     accuracy = torchmetrics.functional.accuracy(preds, target)
-    top5_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 5)
-    top10_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 10)
-    top20_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 20)
+    top5_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 5) if num_classes > 5 else 1
+    top10_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 10) if num_classes > 10 else 1
+    top20_accuracy = torchmetrics.functional.accuracy(preds, target, top_k = 20) if num_classes > 20 else 1
 
     macro_recall = torchmetrics.functional.recall(preds, target, average = 'macro', num_classes=num_classes)
 
@@ -173,7 +175,7 @@ def compute_metrics(
 
     cohen_kappa = torchmetrics.functional.cohen_kappa(preds, target, num_classes = num_classes)
 
-    cross_entropy = torch.nn.functional.cross_entropy(preds, target)
+    
 
     return (
         accuracy,
