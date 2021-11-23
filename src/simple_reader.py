@@ -61,23 +61,3 @@ class LigandDataset(Dataset):
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self.__get_coords_feats(blob)
         return (coordinates, features, label)
-
-class DataLoader:
-    """A class to represent simple dataloader which doesn't perform batching."""
-    def __init__(self, dataset: Dataset):
-        """
-        :param dataset: dataset to be loaded
-        """
-        self.iter = iter(dataset)
-
-    def __iter__(self):
-        return self.iter
-    
-if __name__ == '__main__':
-    dataset = LigandDataset('data')
-    dataloader = DataLoader(dataset)
-
-    for idx, (coords, feats, label) in enumerate(dataloader):
-        if idx >= 100:
-            break
-        print(coords.shape, feats.shape, label.shape)
