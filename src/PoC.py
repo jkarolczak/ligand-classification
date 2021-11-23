@@ -134,6 +134,7 @@ class MinkNet(ME.MinkowskiNetwork):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = 'cpu'
     experiment_dir = 'experiment'
     os.makedirs(experiment_dir, exist_ok=True)
     write_log_header(experiment_dir)
@@ -165,13 +166,13 @@ if __name__ == '__main__':
 
     model.to(device)
     write_structure(model, experiment_dir)
-    criterion = torch.nn.BCELoss()
-    optimizer = torch.optim.AdamW(
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=1e-3,
+        lr=1e-1,
         weight_decay=1e-2
     )
-    epochs = 10
+    epochs = 3
 
     for e in range(epochs):
         model.train()
@@ -246,4 +247,4 @@ predictions = predictions.transpose(-1, 0)
 
 for g, p in zip(groundtruth[0], predictions[0]):
     print(g.item(), p.item())  
-print(torch.nn.functional.binary_cross_entropy(predictions, groundtruth))
+print(torch.nn.functional.cross_entropy(predictions, groundtruth))

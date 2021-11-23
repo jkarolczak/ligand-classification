@@ -158,7 +158,7 @@ def compute_metrics(
     """
     num_classes = target.shape[1]
     
-    cross_entropy = torch.nn.functional.binary_cross_entropy(preds, target)
+    cross_entropy = torch.nn.functional.cross_entropy(preds, target)
 
     target = torch.argmax(target, axis = 1)
 
