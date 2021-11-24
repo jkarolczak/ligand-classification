@@ -12,56 +12,10 @@ from simple_reader import LigandDataset
 
 import gc
 
-class SparseConvBlock(ME.MinkowskiNetwork):
-    """A class to represent a single sparse convolution block."""
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        dimensions: int = 3,
-        conv_channel: int = 3,
-        pooling_kernel: int = 2,
-        activation = ME.MinkowskiSigmoid,
-        pooling = ME.MinkowskiMaxPooling,
-    ):
-        """
-        :param in_channels: number of channels in input 
-        :param out_channels: number of channels in output, equal to number of classes
-        :param conv_channel: integer describing convolution kernel size - it is 
-        assumed that convolution kernel is a cube, all kernel dimensions are equal
-        :param dimensions: number of dimensions of input
-        :param pooling_kernel: integer describing pooling kernel size, similarly
-        to cov_kernel
-        :param activation: activation function
-        :param pooling: pooling function
-        """
-        ME.MinkowskiNetwork.__init__(self, dimensions)
-        self.conv = ME.MinkowskiConvolution(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            kernel_size=conv_channel,
-            dimension=self.D
-        )
-        self.activation = activation()
-        self.pooling = pooling(
-            kernel_size=pooling_kernel, 
-            dimension=self.D
-        )
-    
-    def forward(
-        self,
-        x: torch.Tensor
-    ) -> torch.Tensor:
-        x = self.conv(x)
-        x = self.activation(x)
-        x = self.pooling(x)
-        return x
-
 class MinkNet(ME.MinkowskiNetwork):
     """A class to represent MinkNet neural network."""
     def __init__(
         self,
-        conv_channels: List[int],
         in_channels: int,
         out_channels: int,
         dimensions: int = 3
@@ -76,9 +30,39 @@ class MinkNet(ME.MinkowskiNetwork):
         """
         ME.MinkowskiNetwork.__init__(self, dimensions)
         self.sparse_conv_blocks = torch.nn.Sequential(
-            *self.__get_sparse_conv_blocks(
-                in_channels=in_channels,
-                conv_channels=conv_channels
+            ME.MinkowskiConvolution(
+                in_channels=1,
+                out_channels=4,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiConvolution(
+                in_channels=4,
+                out_channels=4,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiSigmoid(),
+            ME.MinkowskiMaxPooling(
+                kernel_size=2,
+                dimension=self.D
+            ),
+            ME.MinkowskiConvolution(
+                in_channels=4,
+                out_channels=8,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiConvolution(
+                in_channels=8,
+                out_channels=8,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiSigmoid(),
+            ME.MinkowskiMaxPooling(
+                kernel_size=2,
+                dimension=self.D
             )
         )
 
@@ -86,31 +70,16 @@ class MinkNet(ME.MinkowskiNetwork):
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=3 * conv_channels[-1],
-            out_features=conv_channels[-1]
+            in_features=3 * 8,
+            out_features=8
         )
         self.sigmoid = torch.nn.Sigmoid()
         self.linear2 = torch.nn.Linear(
-            in_features=conv_channels[-1], 
+            in_features=8, 
             out_features=out_channels
         )
         self.softmax = torch.nn.Softmax(-1)
-
-    def __get_sparse_conv_blocks(
-        self, 
-        in_channels: int,
-        conv_channels: List[int]
-    ):
-        channels = [in_channels] + conv_channels
-        sparse_conv_blocks = []
-        for i in range(len(conv_channels)):
-            sparse_conv_blocks.append(
-                SparseConvBlock(
-                    in_channels = channels[i],
-                    out_channels = channels[i + 1]
-                )
-            )
-        return sparse_conv_blocks
+        
 
     def forward(
         self, 
@@ -130,6 +99,7 @@ class MinkNet(ME.MinkowskiNetwork):
         x = self.linear2(x)
         x = self.softmax(x)
         return x
+    
 
 if __name__ == '__main__':
 
@@ -159,7 +129,6 @@ if __name__ == '__main__':
     )
 
     model = MinkNet(
-        conv_channels = [8, 8, 16, 16],
         in_channels = 1,
         out_channels = dataset.labels[0].shape[0]
     )
@@ -169,10 +138,10 @@ if __name__ == '__main__':
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=1e-1,
+        lr=1e-3,
         weight_decay=1e-2
     )
-    epochs = 3
+    epochs = 10
 
     for e in range(epochs):
         model.train()
@@ -191,7 +160,6 @@ if __name__ == '__main__':
                 torch.cuda.empty_cache()
             del batch, labels, labels_hat
             gc.collect()
-            
             
         model.eval()
         with torch.no_grad():
