@@ -12,9 +12,11 @@ import MinkowskiEngine as ME
 
 from simple_reader import LigandDataset
 
-
+import neptune.new as neptune
+from neptune.new.types import File
 
 from sklearn.model_selection import train_test_split
+
 
 def collation_fn(blobel):
     """
@@ -35,6 +37,7 @@ def collation_fn(blobel):
     labels_batch = torch.tensor(np.vstack(labels_batch), dtype=torch.float32)
 
     return coords_batch, feats_batch, labels_batch
+
 
 def dataset_split(
     dataset: LigandDataset,
@@ -68,90 +71,59 @@ def dataset_split(
 
     return (train, test)
 
-def save_state_dict(
+
+def log_state_dict(
+    run: neptune.Run,
     model: torch.nn.Module,
-    directory: str,
-    epoch: int
 ) -> None:
     """
     Serialize model weigts.
+    :param run: neptune.Run
     :param model: torch.nn.Module to save its weights
-    :param directory: path to the directory to log experiment results
-    :param epoch: int describing epoch
     """
-    models_path = os.path.join(directory, 'models')
-    os.makedirs(models_path, exist_ok=True)
-    time = str(datetime.now()).replace(' ', '-')
-    file_name = f'{time}-epoch-{epoch}.pt'
-    file_path = os.path.join(models_path, file_name)
+    file_path = f'.model.pt'
     torch.save(model.state_dict(), file_path)
+    #run['model/checkpoints'].log(File(file_path)) # not working yet! dummy workaround below
+    with open(file_path, 'rb') as fp:
+        state_dict = fp.read()
+        
+    run['model/checkpoints'].log(state_dict)
 
-def write_log_header(
-    directory: str,
-    file_name: str = 'file.log'
-) -> None:
-    """
-    :param directory: path to the directory to log experiment results
-    :param file_name: name of the file to log metrics in it
-    """
-    file_path = os.path.join(directory, file_name)
 
-    with open(file_path, 'a') as fp:
-        fp.write(
-            ','.join(['epoch', 'time', 'accuracy', 'top5_accuracy', 'top10_accuracy', 
-            'top20_accuracy', 'macro_recall', 'micro_recall', 'micro_precision', 
-            'micro_f1', 'cohen_kappa', 'cross_entropy']) + '\n'
-        )
-
-def write_structure(
+def log_config(
+    run: neptune.Run,
     model: torch.nn.Module,
-    directory: str    
+    criterion: torch.nn.Module,
+    optimizer: torch.nn.Module,
+    dataset: LigandDataset
 ) -> None:
     """
-    :param model: torch.nn.Module to save its structure
-    :param directory: path to the directory to log experiment results
+    :param run: neptune.Run
+    :param model: torch.nn.Module 
+    :param criterion: torch.nn.Module 
+    :param optimizer: torch.nn.Module 
+    :param datset: 
     """
-    struct = str(model)
-    file_name = 'model-' + str(datetime.now()).replace(' ', '-') + '.txt'
-    structures_path = os.path.join(directory, 'structures')
-    os.makedirs(structures_path, exist_ok=True)
-    file_path = os.path.join(structures_path, file_name)
-    with open(file_path, 'w') as fp:
-        fp.write(struct)
+    
+    run['config/model/class'] = type(model).__name__
+    run['config/model/structure'] = str(model)
+    
+    run['config/dataset/instances'] = dataset.labels.shape[0]
+    run['config/dataset/labels'] = dataset.labels.shape[1]
+    
+    run['config/criterion/class'] = type(criterion).__name__
+    run['config/optimizer/class'] = type(optimizer).__name__
+    run['config/optimizer/learning_rate'] = optimizer.__dict__['defaults']['lr']
+    run['config/optimizer/weight_decay'] = optimizer.__dict__['defaults']['weight_decay']
 
 
 def log_epoch(
-    preds: torch.Tensor, 
-    target: torch.Tensor,
-    directory: str,
-    epoch: int,
-    file_name: str = 'file.log'
-) -> None:
-    """
-    :param preds: torch.tensor, labels predictions (sotfmax output)
-    :param target: torch.tensor, target one-hot encoded labels
-    :param directory: path to the directory to log experiment results
-    :param epoch: int describing epoch
-    :param file_name: name of the file to log metrics in it
-    """
-    file_path = os.path.join(directory, file_name)
-
-    with open(file_path, 'a') as fp:
-        fp.write(
-            ','.join(
-                [
-                    str(epoch), 
-                    str(datetime.now()).replace(' ', '-'), 
-                    *[str(float(m)) for m in  compute_metrics(preds, target)]
-                ]
-            ) + '\n'
-        )
-
-def compute_metrics(
+    run: neptune.Run,
     preds: torch.Tensor, 
     target: torch.Tensor
-) -> Tuple[torch.Tensor]:
+) -> None:
     """
+    :param run: neptune.Run, object to log
     :param preds: torch.tensor, labels predictions (sotfmax output)
     :param target: torch.tensor, target one-hot encoded labels
     :returns: tuple of metrics
@@ -175,17 +147,13 @@ def compute_metrics(
 
     cohen_kappa = torchmetrics.functional.cohen_kappa(preds, target, num_classes = num_classes)
 
-    
-
-    return (
-        accuracy,
-        top5_accuracy,
-        top10_accuracy,
-        top20_accuracy,
-        macro_recall,
-        micro_recall,
-        micro_precision,
-        micro_f1,
-        cohen_kappa,
-        cross_entropy
-    )
+    run['eval/accuracy'].log(accuracy)
+    run['eval/top5_accuracy'].log(top5_accuracy)
+    run['eval/top10_accuracy'].log(top10_accuracy)
+    run['eval/top20_accuracy'].log(top20_accuracy)
+    run['eval/macro_recall'].log(macro_recall)
+    run['eval/micro_recall'].log(micro_recall)
+    run['eval/micro_precision'].log(micro_precision)
+    run['eval/micro_f1'].log(micro_f1)
+    run['eval/cohen_kappa'].log(cohen_kappa)
+    run['eval/cross_entropy'].log(cross_entropy)

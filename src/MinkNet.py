@@ -134,11 +134,14 @@ class MinkNet(ME.MinkowskiNetwork):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    experiment_dir = 'experiment'
-    os.makedirs(experiment_dir, exist_ok=True)
-    write_log_header(experiment_dir)
+ 
+    run = neptune.init(
+        project="LIGANDS/LIGANDS",
+        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
+    ) 
     
-    dataset = LigandDataset('data', 'data/labels_ten_percent.csv')
+    dataset_path = 'data/labels_ten_percent.csv'
+    dataset = LigandDataset('data', dataset_path)
 
     train, test = dataset_split(dataset=dataset)
 
@@ -158,13 +161,12 @@ if __name__ == '__main__':
     )
 
     model = MinkNet(
-        conv_channels = [64, 64, 64, 64, 128, 128, 128, 128, 256, 256, 256, 256, 512, 512, 512, 512],
-        #conv_channels = [64, 64, 128, 128, 256, 256, 512, 512],
+        conv_channels = [64, 64, 128, 128, 256, 256, 512, 512],
         in_channels = 1,
         out_channels = dataset.labels[0].shape[0]
     )
     model.to(device)
-    write_structure(model, experiment_dir)
+    
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -173,6 +175,14 @@ if __name__ == '__main__':
     )
     epochs = 100
 
+    log_config(
+        run=run,
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        dataset=dataset
+    )
+
     for e in range(epochs):
         model.train()
         for idx, (coords, feats, labels) in enumerate(train_dataloader):
@@ -180,40 +190,42 @@ if __name__ == '__main__':
             labels = labels.to(device=device)
             batch = ME.SparseTensor(feats, coords, device=device)
 
-            print(torch.cuda.memory_allocated())
             optimizer.zero_grad()
             labels_hat = model(batch)
             loss = criterion(labels_hat, labels)
             loss.backward()
             optimizer.step()
-            torch.cuda.synchronize()
-            model.zero_grad()
+            if device == 'cuda':
+                torch.cuda.synchronize()
+                torch.cuda.empty_cache()
             del batch, labels, labels_hat
             gc.collect()
-            torch.cuda.empty_cache()
-            print(torch.cuda.memory_allocated())
             
         model.eval()
-        groundtruth, predictions = None, None
-        for idx, (coords, feats, labels) in enumerate(test_dataloader):
-            torch.cuda.empty_cache()
-            batch = ME.SparseTensor(feats, coords, device=device)
-            preds = model(batch)
-            if groundtruth is None:
-                groundtruth = labels
-                predictions = preds
-            else:
-                groundtruth = torch.cat([groundtruth, labels], -1)
-                predictions = torch.cat([predictions, preds], -1)
+        with torch.no_grad():
+            groundtruth, predictions = None, None
+            for idx, (coords, feats, labels) in enumerate(test_dataloader):
+                torch.cuda.empty_cache()
+                batch = ME.SparseTensor(feats, coords, device=device)
+                preds = model(batch)
+                if groundtruth is None:
+                    groundtruth = labels
+                    predictions = preds
+                else:
+                    try:
+                        groundtruth = torch.cat([groundtruth, labels], 0)
+                        predictions = torch.cat([predictions, preds], 0)
+                    except:
+                        pass 
 
-        save_state_dict(
-            model=model,
-            directory=experiment_dir,
-            epoch=e
+        log_state_dict(
+            run=run,
+            model=model
         )
         log_epoch(
+            run=run,
             preds=predictions, 
-            target=groundtruth, 
-            directory=experiment_dir, 
-            epoch=e
+            target=groundtruth
         )
+        
+    run.stop()
