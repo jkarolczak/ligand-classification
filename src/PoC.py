@@ -1,7 +1,3 @@
-import os
-
-from typing import List
-
 import torch
 from torch.utils.data import DataLoader
 
@@ -12,7 +8,9 @@ from simple_reader import LigandDataset
 
 import gc
 
-class MinkNet(ME.MinkowskiNetwork):
+import neptune.new as neptune
+
+class PoCMinkNet(ME.MinkowskiNetwork):
     """A class to represent MinkNet neural network."""
     def __init__(
         self,
@@ -31,7 +29,7 @@ class MinkNet(ME.MinkowskiNetwork):
         ME.MinkowskiNetwork.__init__(self, dimensions)
         self.sparse_conv_blocks = torch.nn.Sequential(
             ME.MinkowskiConvolution(
-                in_channels=1,
+                in_channels=in_channels,
                 out_channels=4,
                 kernel_size=3,
                 dimension=self.D
@@ -98,6 +96,8 @@ class MinkNet(ME.MinkowskiNetwork):
         x = self.sigmoid(x)
         x = self.linear2(x)
         x = self.softmax(x)
+        if len(x.shape) == 1:
+            x = x.unsqueeze(0)
         return x
     
 
@@ -105,11 +105,14 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     device = 'cpu'
-    experiment_dir = 'experiment'
-    os.makedirs(experiment_dir, exist_ok=True)
-    write_log_header(experiment_dir)
     
-    dataset = LigandDataset('data', 'data/labels_two.csv')
+    run = neptune.init(
+        project="LIGANDS/LIGANDS",
+        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
+    ) 
+    
+    dataset_path = 'data/labels_three.csv'
+    dataset = LigandDataset('data', dataset_path)
 
     train, test = dataset_split(dataset=dataset)
 
@@ -128,20 +131,27 @@ if __name__ == '__main__':
         shuffle=True
     )
 
-    model = MinkNet(
+    model = PoCMinkNet(
         in_channels = 1,
         out_channels = dataset.labels[0].shape[0]
     )
-
     model.to(device)
-    write_structure(model, experiment_dir)
+    
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=1e-3,
-        weight_decay=1e-2
+        lr=1e-2,
+        weight_decay=1e-3
     )
-    epochs = 10
+    epochs = 250
+
+    log_config(
+        run=run,
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        dataset=dataset
+    )
 
     for e in range(epochs):
         model.train()
@@ -176,43 +186,16 @@ if __name__ == '__main__':
                         groundtruth = torch.cat([groundtruth, labels], 0)
                         predictions = torch.cat([predictions, preds], 0)
                     except:
-                        pass
-                    
-        groundtruth = groundtruth.transpose(-1, 0)
-        predictions = predictions.transpose(-1, 0)    
+                        pass 
 
-        save_state_dict(
-            model=model,
-            directory=experiment_dir,
-            epoch=e
+        log_state_dict(
+            run=run,
+            model=model
         )
         log_epoch(
+            run=run,
             preds=predictions, 
-            target=groundtruth, 
-            directory=experiment_dir, 
-            epoch=e
+            target=groundtruth
         )
-
-model.eval()
-with torch.no_grad():
-    groundtruth, predictions = None, None
-    for idx, (coords, feats, labels) in enumerate(test_dataloader):
-        torch.cuda.empty_cache()
-        batch = ME.SparseTensor(feats, coords, device=device)
-        preds = model(batch)
-        if groundtruth is None:
-            groundtruth = labels
-            predictions = preds
-        else:
-            try:
-                groundtruth = torch.cat([groundtruth, labels], 0)
-                predictions = torch.cat([predictions, preds], 0)
-            except:
-                pass
-groundtruth = groundtruth.transpose(-1, 0)
-predictions = predictions.transpose(-1, 0)     
-
-
-for g, p in zip(groundtruth[0], predictions[0]):
-    print(g.item(), p.item())  
-print(torch.nn.functional.cross_entropy(predictions, groundtruth))
+        
+    run.stop()
