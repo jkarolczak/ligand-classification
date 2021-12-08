@@ -40,40 +40,16 @@ class PoCMinkNet(ME.MinkowskiNetwork):
                 kernel_size=3,
                 dimension=self.D
             ),
-            ME.MinkowskiSigmoid(),
-            ME.MinkowskiMaxPooling(
-                kernel_size=2,
-                dimension=self.D
-            ),
-            ME.MinkowskiConvolution(
-                in_channels=4,
-                out_channels=8,
-                kernel_size=3,
-                dimension=self.D
-            ),
-            ME.MinkowskiConvolution(
-                in_channels=8,
-                out_channels=8,
-                kernel_size=3,
-                dimension=self.D
-            ),
-            ME.MinkowskiSigmoid(),
             ME.MinkowskiMaxPooling(
                 kernel_size=2,
                 dimension=self.D
             )
         )
 
-        self.global_sum_pool = ME.MinkowskiGlobalSumPooling()
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=3 * 8,
-            out_features=8
-        )
-        self.sigmoid = torch.nn.Sigmoid()
-        self.linear2 = torch.nn.Linear(
-            in_features=8, 
+            in_features=2 * 4,
             out_features=out_channels
         )
         self.softmax = torch.nn.Softmax(-1)
@@ -85,16 +61,13 @@ class PoCMinkNet(ME.MinkowskiNetwork):
     ) -> torch.Tensor:
         
         x = self.sparse_conv_blocks(x)
-
-        x_sum = self.global_sum_pool(x)
+    
         x_avg = self.global_avg_pool(x)
         x_max = self.global_max_pool(x)
 
-        x = torch.cat([x_sum.F, x_avg.F, x_max.F], -1).squeeze(0)
+        x = torch.cat([x_avg.F, x_max.F], -1).squeeze(0)
         
         x = self.linear1(x)
-        x = self.sigmoid(x)
-        x = self.linear2(x)
         x = self.softmax(x)
         if len(x.shape) == 1:
             x = x.unsqueeze(0)
@@ -118,14 +91,14 @@ if __name__ == '__main__':
 
     train_dataloader = DataLoader(
         dataset=train, 
-        batch_size=4, 
+        batch_size=1, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
     )
     test_dataloader = DataLoader(
         dataset=test, 
-        batch_size=4, 
+        batch_size=1, 
         collate_fn=collation_fn,
         num_workers=4,
         shuffle=True
@@ -140,10 +113,10 @@ if __name__ == '__main__':
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
         model.parameters(),
-        lr=1e-2,
+        lr=1e-3,
         weight_decay=1e-3
     )
-    epochs = 250
+    epochs = 10
 
     log_config(
         run=run,
@@ -163,7 +136,9 @@ if __name__ == '__main__':
             optimizer.zero_grad()
             labels_hat = model(batch)
             loss = criterion(labels_hat, labels)
+            
             loss.backward()
+
             optimizer.step()
             if device == 'cuda':
                 torch.cuda.synchronize()
@@ -199,3 +174,20 @@ if __name__ == '__main__':
         )
         
     run.stop()
+    model.eval()
+    with torch.no_grad():
+        groundtruth, predictions = None, None
+        for idx, (coords, feats, labels) in enumerate(test_dataloader):
+            torch.cuda.empty_cache()
+            batch = ME.SparseTensor(feats, coords, device=device)
+            preds = model(batch)
+            if groundtruth is None:
+                groundtruth = labels
+                predictions = preds
+            else:
+                try:
+                    groundtruth = torch.cat([groundtruth, labels], 0)
+                    predictions = torch.cat([predictions, preds], 0)
+                except:
+                    pass 
+    
