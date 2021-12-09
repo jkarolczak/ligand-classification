@@ -40,6 +40,24 @@ class PoCMinkNet(ME.MinkowskiNetwork):
                 kernel_size=3,
                 dimension=self.D
             ),
+            ME.MinkowskiTanh(),
+            ME.MinkowskiMaxPooling(
+                kernel_size=2,
+                dimension=self.D
+            ),
+            ME.MinkowskiConvolution(
+                in_channels=4,
+                out_channels=8,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiConvolution(
+                in_channels=8,
+                out_channels=8,
+                kernel_size=3,
+                dimension=self.D
+            ),
+            ME.MinkowskiTanh(),
             ME.MinkowskiMaxPooling(
                 kernel_size=2,
                 dimension=self.D
@@ -49,7 +67,12 @@ class PoCMinkNet(ME.MinkowskiNetwork):
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=2 * 4,
+            in_features=2 * 8,
+            out_features=8
+        )
+        self.tanh = torch.nn.Tanh()
+        self.linear2 = torch.nn.Linear(
+            in_features=8, 
             out_features=out_channels
         )
         self.softmax = torch.nn.Softmax(-1)
@@ -68,6 +91,8 @@ class PoCMinkNet(ME.MinkowskiNetwork):
         x = torch.cat([x_avg.F, x_max.F], -1).squeeze(0)
         
         x = self.linear1(x)
+        x = self.tanh(x)
+        x = self.linear2(x)
         x = self.softmax(x)
         if len(x.shape) == 1:
             x = x.unsqueeze(0)

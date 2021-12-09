@@ -21,7 +21,7 @@ class SparseConvBlock(ME.MinkowskiNetwork):
         dimensions: int = 3,
         conv_channel: int = 3,
         pooling_kernel: int = 2,
-        activation = ME.MinkowskiSigmoid,
+        activation = ME.MinkowskiTanh,
         pooling = ME.MinkowskiMaxPooling,
     ):
         """
@@ -82,14 +82,13 @@ class MinkNet(ME.MinkowskiNetwork):
             )
         )
 
-        self.global_sum_pool = ME.MinkowskiGlobalSumPooling()
         self.global_max_pool = ME.MinkowskiGlobalMaxPooling()
         self.global_avg_pool = ME.MinkowskiGlobalAvgPooling()
         self.linear1 = torch.nn.Linear(
-            in_features=3 * conv_channels[-1],
+            in_features=2 * conv_channels[-1],
             out_features=conv_channels[-1]
         )
-        self.sigmoid = torch.nn.Sigmoid()
+        self.tanh = torch.nn.Tanh()
         self.linear2 = torch.nn.Linear(
             in_features=conv_channels[-1], 
             out_features=out_channels
@@ -119,14 +118,13 @@ class MinkNet(ME.MinkowskiNetwork):
         
         x = self.sparse_conv_blocks(x)
 
-        x_sum = self.global_sum_pool(x)
         x_avg = self.global_avg_pool(x)
         x_max = self.global_max_pool(x)
 
-        x = torch.cat([x_sum.F, x_avg.F, x_max.F], -1).squeeze(0)
+        x = torch.cat([x_avg.F, x_max.F], -1).squeeze(0)
         
         x = self.linear1(x)
-        x = self.sigmoid(x)
+        x = self.tanh(x)
         x = self.linear2(x)
         x = self.softmax(x)
         return x
