@@ -18,3 +18,9 @@ __pycache__/
 blob_details/output/volume_graph.html
 
 src/not_working_yet.py
+
+.neptune
+.model.pt
+
+# local backup
+backup
