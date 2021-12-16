@@ -1,4 +1,3 @@
-
 def get_ligand_diagram_url(ligand_id: str):
     """
     Gets RCSB's ligand diagram in SVG format. The function can be used to display the diagram in a jupyter notebook or
@@ -21,13 +20,16 @@ def svg_to_html(svg_url, width="300px"):
     """
     from IPython.display import SVG, display, HTML
     import base64
-    _html_template='<img width="{}" src="{}" >'
+
+    _html_template = '<img width="{}" src="{}" >'
 
     text = _html_template.format(width, svg_url)
     return HTML(text)
 
 
-def plot_interactive_trisurf(blob, title, cutoff_val=0.0, grid_unit=0.2, color='#009988', opacity=0.5):
+def plot_interactive_trisurf(
+    blob, title, cutoff_val=0.0, grid_unit=0.2, color="#009988", opacity=0.5
+):
     """
     Creates an interactive #d visualization of a given volume.
     :param blob: 3D numpy array
@@ -41,10 +43,19 @@ def plot_interactive_trisurf(blob, title, cutoff_val=0.0, grid_unit=0.2, color='
     from skimage.measure import marching_cubes_lewiner
     import plotly.figure_factory as ff
 
-    verts, faces, _, _ = marching_cubes_lewiner(blob, cutoff_val, spacing=(grid_unit, grid_unit, grid_unit))
-    fig = ff.create_trisurf(x=verts[:, 0], y=verts[:, 1], z=verts[:, 2], title=title,
-                            simplices=faces, colormap=[color, color], show_colorbar=False)
+    verts, faces, _, _ = marching_cubes_lewiner(
+        blob, cutoff_val, spacing=(grid_unit, grid_unit, grid_unit)
+    )
+    fig = ff.create_trisurf(
+        x=verts[:, 0],
+        y=verts[:, 1],
+        z=verts[:, 2],
+        title=title,
+        simplices=faces,
+        colormap=[color, color],
+        show_colorbar=False,
+    )
     if opacity < 1:
-        fig['data'][0].update(opacity=opacity)
+        fig["data"][0].update(opacity=opacity)
 
     fig.show()

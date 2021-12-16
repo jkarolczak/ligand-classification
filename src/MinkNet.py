@@ -1,16 +1,10 @@
-import os
-
 from typing import List
 
 import torch
-from torch.utils.data import DataLoader
 
 import MinkowskiEngine as ME
 
 from utils import *
-from simple_reader import LigandDataset
-
-import gc
 
 
 class SparseConvBlock(ME.MinkowskiNetwork):

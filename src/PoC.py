@@ -1,14 +1,8 @@
 import torch
-from torch.utils.data import DataLoader
 
 import MinkowskiEngine as ME
 
 from utils import *
-from simple_reader import LigandDataset
-
-import gc
-
-import neptune.new as neptune
 
 
 class PoCMinkNet(ME.MinkowskiNetwork):

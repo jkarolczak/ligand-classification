@@ -11,38 +11,36 @@ import MinkowskiEngine as ME
 
 from sklearn.preprocessing import LabelBinarizer
 
+
 class LigandDataset(Dataset):
     """A class to represent a ligands dataset."""
-    def __init__(
-        self, 
-        annotations_file_path: str,
-        labels_file_path: str = None
-        ):
+
+    def __init__(self, annotations_file_path: str, labels_file_path: str = None):
         """
         :param annotations_file_path: path to the directory containing directory
         'blobs_full' (which contains .npz files)
-        :param labels_file_path: string with path to the file containing csv definition 
-        of the dataset, default '{annotations_file_path}/cmb_blob_labels.csv', this 
+        :param labels_file_path: string with path to the file containing csv definition
+        of the dataset, default '{annotations_file_path}/cmb_blob_labels.csv', this
         file has to contain columns 'ligands' and 'blob_map_file'
         """
         self.annotations_file_path = annotations_file_path
-        if labels_file_path is None: 
-            labels_file_path = os.path.join(self.annotations_file_path, 'cmb_blob_labels.csv')
-        
+        if labels_file_path is None:
+            labels_file_path = os.path.join(
+                self.annotations_file_path, "cmb_blob_labels.csv"
+            )
+
         file_ligand_map = pd.read_csv(
-            labels_file_path,
-            usecols=['ligand', 'blob_map_filename']
+            labels_file_path, usecols=["ligand", "blob_map_filename"]
         )
-        self.file_ligand_map = file_ligand_map.set_index('blob_map_filename').to_dict()['ligand']
+        self.file_ligand_map = file_ligand_map.set_index("blob_map_filename").to_dict()[
+            "ligand"
+        ]
         self.files = list(self.file_ligand_map.keys())
         self.labels = list(self.file_ligand_map.values())
         self.encoder = LabelBinarizer()
         self.labels = self.encoder.fit_transform(self.labels)
 
-    def __get_coords_feats(
-        self, 
-        batch: torch.Tensor
-    ) -> ME.SparseTensor: 
+    def __get_coords_feats(self, batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
         features = []
         for idx in coordinates:
@@ -56,9 +54,9 @@ class LigandDataset(Dataset):
     def __getitem__(self, idx):
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
-        blob_path = os.path.join(self.annotations_file_path, 'blobs_full', idx)
-        blob = np.load(blob_path)['blob']
+        blob_path = os.path.join(self.annotations_file_path, "blobs_full", idx)
+        blob = np.load(blob_path)["blob"]
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self.__get_coords_feats(blob)
-        features = (features - features.mean())/features.std()
+        features = (features - features.mean()) / features.std()
         return (coordinates, features, label)
