@@ -8,6 +8,11 @@ from simple_reader import LigandDataset
 
 from MinkNet import MinkNet
 from PoC import PoCMinkNet
+from MinkowskiPointNet import MinkowskiPointNet
+from chinese_model.transloc3d_cfg import model_cfg, model_type
+from chinese_model import create_model
+
+from chinese_model.utils_config import Config
 
 
 import gc
@@ -15,15 +20,18 @@ import gc
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/labels_three.csv"
-    batch_size = 16
-    no_workers = 4
+    dataset_path = "data/labels_three_v2.csv"
+    batch_size = 8
+    no_workers = 8
     epochs = 100
+    weight_decay = 1e-4
+    lr = 1e-2
     # MODEL CONFIG LATER IN CODE
     # ======================================================================
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
+    device = cpu
 
     run = neptune.init(
         project="LIGANDS/LIGANDS",
@@ -31,6 +39,7 @@ if __name__ == "__main__":
     )
 
     dataset = LigandDataset("data", dataset_path)
+
     train, test = dataset_split(dataset=dataset)
     train_dataloader = DataLoader(
         dataset=train,
@@ -56,11 +65,18 @@ if __name__ == "__main__":
         out_channels=dataset.labels[0].shape[0],
     )
     modelPoC = PoCMinkNet(in_channels=1, out_channels=dataset.labels[0].shape[0])
+    modelMinkowskiPointNet = MinkowskiPointNet(
+        in_channels=1, out_channels=dataset.labels[0].shape[0]
+    )
+    # print("ADAM GRZENDA", type(model_cfg["backbone_cfg"]))
+    cfg = Config(model_cfg)
+    modelTransKloc = create_model(model_type, cfg)
+
     # SET MODEL
-    model = modelMinkNet
+    model = modelTransKloc
     model.to(device)
     # SET OPTIMIZER
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-2)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     # ======================================================================
 
     criterion = torch.nn.CrossEntropyLoss()
@@ -81,19 +97,21 @@ if __name__ == "__main__":
             # print(f"Batch shape: {batch.F.shape}")
 
             optimizer.zero_grad()
-            labels_hat = model(batch)
 
             try:
+                labels_hat = model(batch)
                 loss = criterion(labels_hat, labels)
                 loss.backward()
                 optimizer.step()
+                del labels_hat
+
             except:
                 pass
 
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()
                 torch.cuda.empty_cache()
-            del batch, labels, labels_hat
+            del (batch, labels)
             gc.collect()
 
         print("You've reached eval")
