@@ -4,7 +4,7 @@ import torch
 
 import MinkowskiEngine as ME
 
-from utils import *
+from utils.utils import *
 
 
 class SparseConvBlock(ME.MinkowskiNetwork):

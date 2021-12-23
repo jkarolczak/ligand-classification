@@ -2,7 +2,7 @@ import torch
 
 import MinkowskiEngine as ME
 
-from utils import *
+from utils.utils import *
 
 
 class PoCMinkNet(ME.MinkowskiNetwork):

@@ -7,7 +7,7 @@ import torch
 import torchmetrics
 import MinkowskiEngine as ME
 
-from simple_reader import LigandDataset
+from utils.simple_reader import LigandDataset
 
 import neptune.new as neptune
 from neptune.new.types import File

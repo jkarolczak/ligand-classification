@@ -3,16 +3,16 @@ from torch.utils.data import DataLoader
 
 import MinkowskiEngine as ME
 
-from utils import *
-from simple_reader import LigandDataset
+from utils.utils import *
+from utils.simple_reader import LigandDataset
 
-from MinkNet import MinkNet
-from PoC import PoCMinkNet
-from MinkowskiPointNet import MinkowskiPointNet
-from chinese_model.transloc3d_cfg import model_cfg, model_type
-from chinese_model import create_model
+from CustomMink.MinkNet import MinkNet
+from CustomMink.PoC import PoCMinkNet
+from CustomMink.MinkowskiPointNet import MinkowskiPointNet
+from TransLoc3D.transloc3d_cfg import model_cfg, model_type
+from TransLoc3D import create_model
 
-from chinese_model.utils_config import Config
+from TransLoc3D.utils_config import Config
 
 
 import gc
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
     dataset_path = "data/labels_three_v2.csv"
-    batch_size = 8
+    batch_size = 16
     no_workers = 8
     epochs = 100
     weight_decay = 1e-4
@@ -31,7 +31,6 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
-    device = cpu
 
     run = neptune.init(
         project="LIGANDS/LIGANDS",
