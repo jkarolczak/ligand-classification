@@ -269,7 +269,6 @@ class TransLoc3DFPN(nn.Module):
 
     def forward(self, data):
         # x, xyz = data
-        # print(data)
         x = self.up_conv0(data)
 
         for idx, (conv, block) in enumerate(zip(self.up_convs, self.up_blocks)):

@@ -20,8 +20,8 @@ import gc
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/labels_three_v2.csv"
-    batch_size = 16
+    dataset_path = "data/labels_ten_percent.csv"
+    batch_size = 8
     no_workers = 8
     epochs = 100
     weight_decay = 1e-4
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     dataset = LigandDataset("data", dataset_path)
 
     train, test = dataset_split(dataset=dataset)
+
     train_dataloader = DataLoader(
         dataset=train,
         batch_size=batch_size,
@@ -67,8 +68,9 @@ if __name__ == "__main__":
     modelMinkowskiPointNet = MinkowskiPointNet(
         in_channels=1, out_channels=dataset.labels[0].shape[0]
     )
-    # print("ADAM GRZENDA", type(model_cfg["backbone_cfg"]))
+    # TRANSLOC3D CONFIGURATION (see transloc3d_cfg.py for information about options)
     cfg = Config(model_cfg)
+    cfg.pool_cfg.out_channels = dataset.labels[0].shape[0]
     modelTransKloc = create_model(model_type, cfg)
 
     # SET MODEL
