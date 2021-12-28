@@ -20,12 +20,12 @@ import gc
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/labels_ten_percent.csv"
+    dataset_path = "data/labels_three.csv"
     batch_size = 8
-    no_workers = 8
+    no_workers = 4
     epochs = 100
     weight_decay = 1e-4
-    lr = 1e-2
+    lr = 1e-3
     # MODEL CONFIG LATER IN CODE
     # ======================================================================
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     modelTransKloc = create_model(model_type, cfg)
 
     # SET MODEL
-    model = modelTransKloc
+    model = modelPoC
     model.to(device)
     # SET OPTIMIZER
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                     except:
                         pass
 
-        log_state_dict(run=run, model=model)
+        log_state_dict(model=model, epoch=e)
         log_epoch(run=run, preds=predictions, target=groundtruth)
 
     run.stop()

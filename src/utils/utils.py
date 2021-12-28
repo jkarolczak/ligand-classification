@@ -1,19 +1,16 @@
+import os
+from datetime import datetime
 from typing import Tuple
 from copy import deepcopy
-
-import numpy as np
 
 import torch
 import torchmetrics
 import MinkowskiEngine as ME
-
-from utils.simple_reader import LigandDataset
-
+import numpy as np
 import neptune.new as neptune
-from neptune.new.types import File
-
 from sklearn.model_selection import train_test_split
 
+from utils.simple_reader import LigandDataset
 
 def collation_fn(blobel):
     """
@@ -65,21 +62,21 @@ def dataset_split(
 
 
 def log_state_dict(
-    run: neptune.Run,
     model: torch.nn.Module,
+    epoch: int
 ) -> None:
     """
     Serialize model weigts.
-    :param run: neptune.Run
     :param model: torch.nn.Module to save its weights
+    :param directory: path to the directory to log experiment results
+    :param epoch: int describing epoch
     """
-    file_path = f".model.pt"
+    models_path = os.path.join('logs', 'models')
+    os.makedirs(models_path, exist_ok=True)
+    time = str(datetime.now()).replace(' ', '-')
+    file_name = f'{time}-epoch-{epoch}.pt'
+    file_path = os.path.join(models_path, file_name)
     torch.save(model.state_dict(), file_path)
-    # run['model/checkpoints'].log(File(file_path)) # not working yet! dummy workaround below
-    with open(file_path, "rb") as fp:
-        state_dict = fp.read()
-
-    run["model/checkpoints"].log(state_dict)
 
 
 def log_config(
