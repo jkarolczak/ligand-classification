@@ -20,9 +20,9 @@ import gc
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/labels_three.csv"
-    batch_size = 8
-    no_workers = 4
+    dataset_path = "data/cmb_blob_labels.csv.csv"
+    batch_size = 32
+    no_workers = 8
     epochs = 100
     weight_decay = 1e-4
     lr = 1e-3
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
     )
 
-    dataset = LigandDataset("data", dataset_path)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=10000)
 
     train, test = dataset_split(dataset=dataset)
 
@@ -71,10 +71,10 @@ if __name__ == "__main__":
     # TRANSLOC3D CONFIGURATION (see transloc3d_cfg.py for information about options)
     cfg = Config(model_cfg)
     cfg.pool_cfg.out_channels = dataset.labels[0].shape[0]
-    modelTransKloc = create_model(model_type, cfg)
+    modelTransLoc = create_model(model_type, cfg)
 
     # SET MODEL
-    model = modelPoC
+    model = modelTransLoc
     model.to(device)
     # SET OPTIMIZER
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
