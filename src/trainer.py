@@ -20,12 +20,12 @@ import gc
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/cmb_blob_labels.csv.csv"
+    dataset_path = "data/cmb_blob_labels.csv"
     batch_size = 32
     no_workers = 8
     epochs = 100
-    weight_decay = 1e-4
-    lr = 1e-3
+    weight_decay = 0
+    lr = 2e-4
     # MODEL CONFIG LATER IN CODE
     # ======================================================================
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=10000)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=6000)
 
     train, test = dataset_split(dataset=dataset)
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     model = modelTransLoc
     model.to(device)
     # SET OPTIMIZER
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     # ======================================================================
 
     criterion = torch.nn.CrossEntropyLoss()
