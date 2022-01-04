@@ -16,7 +16,7 @@ from utils.simple_reader import LigandDataset
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/labels_three.csv"
+    dataset_path = "data/cmb_blob_labels.csv"
     batch_size = 32
     no_workers = 8
     epochs = 100
@@ -92,22 +92,18 @@ if __name__ == "__main__":
             labels = labels.to(device=device)
             batch = ME.SparseTensor(feats, coords, device=device)
 
-            # High fluctuations in batch size (up to 15x difference)
-            # print(f"Batch shape: {batch.F.shape}")
-
             try:
                 labels_hat = model(batch)
                 loss = criterion(labels_hat, labels) / accum_iter
                 loss.backward()
-                
                 del labels_hat
+                
+                if not idx % accum_iter:
+                    optimizer.step()
+                    optimizer.zero_grad()
             
             except:
                 pass
-
-            if not idx % accum_iter:
-                optimizer.step()
-                optimizer.zero_grad()
 
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()

@@ -12,12 +12,14 @@ from sklearn.model_selection import train_test_split
 
 from utils.simple_reader import LigandDataset
 
+np.random.seed(23)
+
 def collation_fn(blobel):
     """
     Implements collation function for batching the LigandsDataset using
     `torch.utils.data.DataLoader`
 
-    :param blobel: tuple (coordinates, features, labels); blob+label => blobel; all credit to Witek T.
+    :param blobel: tuple (coordinates, features, labels); blo(b)+(la)bel => blobel; all credit to Witek T.
     """
     coords_batch, feats_batch, labels_batch = [], [], []
 
@@ -50,7 +52,7 @@ def dataset_split(
     stratify = labels if stratify else None
 
     files_train, files_test, labels_train, labels_test = train_test_split(
-        files, labels, train_size=train_size, stratify=stratify
+        files, labels, train_size=train_size, stratify=stratify, random_state=23
     )
 
     train = deepcopy(dataset)
