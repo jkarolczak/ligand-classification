@@ -1,31 +1,28 @@
+import gc
+
 import torch
+import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
-import MinkowskiEngine as ME
-
+from CustomMink.MinkNet import MinkNet
+from CustomMink.MinkowskiPointNet import MinkowskiPointNet
+from CustomMink.PoC import PoCMinkNet
+from TransLoc3D import create_model
+from TransLoc3D.transloc3d_cfg import model_cfg, model_type
+from TransLoc3D.utils_config import Config
 from utils.utils import *
 from utils.simple_reader import LigandDataset
-
-from CustomMink.MinkNet import MinkNet
-from CustomMink.PoC import PoCMinkNet
-from CustomMink.MinkowskiPointNet import MinkowskiPointNet
-from TransLoc3D.transloc3d_cfg import model_cfg, model_type
-from TransLoc3D import create_model
-
-from TransLoc3D.utils_config import Config
-
-
-import gc
 
 if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
-    dataset_path = "data/cmb_blob_labels.csv.csv"
+    dataset_path = "data/labels_three.csv"
     batch_size = 32
     no_workers = 8
     epochs = 100
     weight_decay = 1e-4
     lr = 1e-3
+    accum_iter = 4
     # MODEL CONFIG LATER IN CODE
     # ======================================================================
 
@@ -78,6 +75,7 @@ if __name__ == "__main__":
     model.to(device)
     # SET OPTIMIZER
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
     # ======================================================================
 
     criterion = torch.nn.CrossEntropyLoss()
@@ -97,17 +95,19 @@ if __name__ == "__main__":
             # High fluctuations in batch size (up to 15x difference)
             # print(f"Batch shape: {batch.F.shape}")
 
-            optimizer.zero_grad()
-
             try:
                 labels_hat = model(batch)
-                loss = criterion(labels_hat, labels)
+                loss = criterion(labels_hat, labels) / accum_iter
                 loss.backward()
-                optimizer.step()
+                
                 del labels_hat
-
+            
             except:
                 pass
+
+            if not idx % accum_iter:
+                optimizer.step()
+                optimizer.zero_grad()
 
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()
@@ -137,7 +137,8 @@ if __name__ == "__main__":
                         predictions = torch.cat([predictions, preds], 0)
                     except:
                         pass
-
+                    
+        scheduler.step()
         log_state_dict(model=model, epoch=e)
         log_epoch(run=run, preds=predictions, target=groundtruth)
 
