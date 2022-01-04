@@ -34,7 +34,7 @@ if __name__ == "__main__":
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=10000)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=6000)
 
     train, test = dataset_split(dataset=dataset)
 
