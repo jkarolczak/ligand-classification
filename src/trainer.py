@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # ======================================================================
     # INITIAL CONFIG
     dataset_path = "data/cmb_blob_labels.csv"
-    batch_size = 32
+    batch_size = 64
     no_workers = 8
     epochs = 100
     weight_decay = 1e-4
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMGQ1ZDQwZS05YjhlLTRmMGUtYjZjZC0yYzk0OWE4OWJmYzkifQ==",
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=6000)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=2000)
 
     train, test = dataset_split(dataset=dataset)
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     model.to(device)
     # SET OPTIMIZER
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
     # ======================================================================
 
     criterion = torch.nn.CrossEntropyLoss()
@@ -134,7 +134,7 @@ if __name__ == "__main__":
                     except:
                         pass
                     
-        scheduler.step()
+        #scheduler.step()
         log_state_dict(model=model, epoch=e)
         log_epoch(run=run, preds=predictions, target=groundtruth)
 
