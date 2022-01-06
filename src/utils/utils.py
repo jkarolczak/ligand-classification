@@ -110,7 +110,8 @@ def log_config(
     ]
 
 
-def log_epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor) -> None:
+def log_epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor, 
+              epoch: int) -> None:
     """
     :param run: neptune.Run, object to log
     :param preds: torch.tensor, labels predictions (sotfmax output)
@@ -162,3 +163,20 @@ def log_epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor) -> No
     run["eval/micro_f1"].log(micro_f1)
     run["eval/cohen_kappa"].log(cohen_kappa)
     run["eval/cross_entropy"].log(cross_entropy)
+
+    time = str(datetime.now()).replace(' ', '-')
+    line = f"{time},{epoch}"
+    for metric in [accuracy, top5_accuracy, top10_accuracy, top20_accuracy, 
+                   macro_recall, micro_recall, micro_precision, micro_f1, 
+                   cohen_kappa, cross_entropy]:
+        line += f"{metric},"  
+
+    os.makedirs('logs', exist_ok=True)
+    path = os.path.join('logs', 'log.txt')
+    
+    if not os.path.isfile(path):
+        with open(path, 'a') as fp:
+            fp.write("time,epoch,accuracy,top5_accuracy,top10_accuracy,top20_accuracy,macro_recall,micro_recall,micro_precision,micro_f1,cohen_kappa,cross_entropy\n")
+        
+    with open(path, 'a') as fp:
+        fp.write(line + '\n')
