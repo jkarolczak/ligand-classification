@@ -136,6 +136,6 @@ if __name__ == "__main__":
                     
         #scheduler.step()
         log_state_dict(model=model, epoch=e)
-        log_epoch(run=run, preds=predictions, target=groundtruth)
+        log_epoch(run=run, preds=predictions, target=groundtruth, epoch=e)
 
     run.stop()
