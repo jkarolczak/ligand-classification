@@ -75,7 +75,7 @@ if __name__ == "__main__":
     model.to(device)
     # SET OPTIMIZER
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
     # ======================================================================
 
     criterion = torch.nn.CrossEntropyLoss()
@@ -134,7 +134,7 @@ if __name__ == "__main__":
                     except:
                         pass
                     
-        #scheduler.step()
+        scheduler.step()
         log_state_dict(model=model, epoch=e)
         log_epoch(run=run, preds=predictions, target=groundtruth, epoch=e)
 
