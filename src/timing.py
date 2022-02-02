@@ -38,9 +38,8 @@ if __name__ == "__main__":
     result = []
     model.eval()
     with torch.no_grad():
-        groundtruth, predictions = None, None
-        for idx, ((coords, feats, _), df_row) in enumerate(zip(dataloader, df.iterrows())):
-            for r in range(10):
+        for r in range(10):
+            for idx, ((coords, feats, _), df_row) in enumerate(zip(dataloader, df.iterrows())):
                 start_time = datetime.now()
                 batch = ME.SparseTensor(feats, coords, device=device)
                 preds = model(batch)
