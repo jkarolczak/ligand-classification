@@ -62,11 +62,9 @@ if __name__ == "__main__":
                 groundtruth = labels
                 predictions = preds
             else:
-                try:
-                    groundtruth = torch.cat([groundtruth, labels], 0)
-                    predictions = torch.cat([predictions, preds], 0)
-                except:
-                    pass
+                groundtruth = torch.cat([groundtruth, labels], 0)
+                predictions = torch.cat([predictions, preds], 0)
+               
             preds_encoded = torch.zeros_like(preds)
             preds_encoded[list(range(preds.shape[0])), preds.max(axis=1).indices] = 1
             result_labels.extend(dataset.encoder.inverse_transform(labels))
