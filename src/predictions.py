@@ -17,6 +17,7 @@ if __name__ == "__main__":
     model_path = "logs/models/2022-01-10-11:12:01.845989-epoch-13.pt"
     batch_size = 32
     no_workers = 8
+    rng_seed = 213
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
@@ -27,7 +28,7 @@ if __name__ == "__main__":
         tags=['holdout']
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=5000, rng_seed=23)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=5000, rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,
