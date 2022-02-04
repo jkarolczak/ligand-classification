@@ -1,5 +1,5 @@
 import os
-from random import choices
+from random import choices, seed
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,8 @@ class LigandDataset(Dataset):
         self, 
         annotations_file_path: str, 
         labels_file_path: str = None,
-        max_blob_size: int = None
+        max_blob_size: int = None,
+        rng_seed: int = 23
     ):
         """
         :param annotations_file_path: path to the directory containing directory
@@ -29,12 +30,12 @@ class LigandDataset(Dataset):
         of the dataset, default '{annotations_file_path}/cmb_blob_labels.csv', this
         file has to contain columns 'ligands' and 'blob_map_file'
         """
+        seed(rng_seed)
         self.annotations_file_path = annotations_file_path
         if labels_file_path is None:
             labels_file_path = os.path.join(
                 self.annotations_file_path, "cmb_blob_labels.csv"
             )
-
         file_ligand_map = pd.read_csv(
             labels_file_path, usecols=["ligand", "blob_map_filename"]
         )

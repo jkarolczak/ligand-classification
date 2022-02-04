@@ -27,7 +27,7 @@ if __name__ == "__main__":
         tags=['holdout']
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=5000)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=5000, rng_seed=23)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,
