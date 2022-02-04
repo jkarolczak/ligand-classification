@@ -15,7 +15,7 @@ from utils.simple_reader import LigandDataset
 if __name__ == "__main__":
     dataset_path = "data/holdout.csv"
     model_path = "logs/models/2022-01-10-11:12:01.845989-epoch-13.pt"
-    batch_size = 64
+    batch_size = 32
     no_workers = 8
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         batch_size=batch_size,
         collate_fn=collation_fn,
         num_workers=no_workers,
-        shuffle=True,
+        shuffle=False,
     )
 
     with open("encoder.pkl", "wb") as fp:
