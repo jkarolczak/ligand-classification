@@ -20,7 +20,6 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
-    device = cpu
 
     run = neptune.init(
         project="LIGANDS/LIGANDS",
@@ -28,7 +27,7 @@ if __name__ == "__main__":
         tags=['holdout']
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=2000)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=5000)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,
