@@ -15,7 +15,7 @@ from utils.simple_reader import LigandDataset
 if __name__ == "__main__":
     dataset_path = "data/holdout.csv"
     model_path = "logs/models/2022-01-10-11:12:01.845989-epoch-13.pt"
-    batch_size = 32
+    batch_size = 64
     no_workers = 8
     rng_seed = 213
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         tags=['holdout']
     )
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=5000, rng_seed=rng_seed)
+    dataset = LigandDataset("data", dataset_path, max_blob_size=2000, rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,
