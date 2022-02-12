@@ -1,5 +1,6 @@
 import gc
 import pickle
+from random import random
 
 import pandas as pd
 import torch
@@ -13,11 +14,11 @@ from utils.utils import *
 from utils.simple_reader import LigandDataset
 
 if __name__ == "__main__":
-    dataset_path = "data/holdout.csv"
+    dataset_path = "holdout.csv"
     model_path = "logs/models/2022-01-10-11:12:01.845989-epoch-13.pt"
     batch_size = 64
     no_workers = 8
-    rng_seed = 213
+    rng_seed = random.randrange(1000)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
@@ -71,6 +72,7 @@ if __name__ == "__main__":
             result_predicitons.extend(dataset.encoder.inverse_transform(preds_encoded))
 
         log_epoch(run=run, preds=predictions, target=groundtruth, epoch=0)
+        run['seed'].log(rng_seed)
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predicitons})
     df.to_csv("predicitons.csv")
