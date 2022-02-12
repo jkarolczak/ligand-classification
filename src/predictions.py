@@ -1,6 +1,6 @@
 import gc
 import pickle
-from random import random
+from random import randrange
 
 import pandas as pd
 import torch
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     model_path = "logs/models/2022-01-10-11:12:01.845989-epoch-13.pt"
     batch_size = 64
     no_workers = 8
-    rng_seed = random.randrange(1000)
+    rng_seed = randrange(1000)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cpu = torch.device("cpu")
