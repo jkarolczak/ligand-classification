@@ -1,7 +1,11 @@
-# data
+# data, logs and files
 /data
-/data/*
+/logs
+*/output
 *.csv
+*.npz
+*.pt
+*.pkl
 
 # pycache
 __pycache__/
@@ -15,10 +19,14 @@ __pycache__/
 /MEtestvenv
 
 # notebook output files
+*/.ipynb_checkpoints
 blob_details/output/volume_graph.html
 
-src/not_working_yet.py
-
+# neptune
 .neptune
-.model.pt
 
+# pycharm
+.idea
+
+# secret configs
+cfg/neptune.yaml
