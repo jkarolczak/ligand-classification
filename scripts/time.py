@@ -18,7 +18,7 @@ if __name__ == "__main__":
     dataset_path = "data/eff_test.csv"
     dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000)
 
-    model = models.create("TransLoc3d")
+    model = models.create(cfg["model"])
     model.load_state_dict(torch.load("best.pt"))
     model.to(device)
 

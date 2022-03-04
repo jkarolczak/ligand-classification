@@ -36,7 +36,7 @@ if __name__ == "__main__":
     with open("../encoder.pkl", "wb") as fp:
         pickle.dump(dataset.encoder, fp)
 
-    model = models.create("TransLoc3d")
+    model = models.create(cfg["model"])
     model.load_state_dict(torch.load(cfg["statedict_path"]))
     model.to(device)
 

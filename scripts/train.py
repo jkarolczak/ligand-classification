@@ -28,7 +28,7 @@ if __name__ == "__main__":
     test_dataloader = DataLoader(dataset=test, batch_size=cfg["batch_size"], collate_fn=collation_fn,
                                  num_workers=cfg["no_workers"], shuffle=True)
 
-    model = models.create("TransLoc3d")
+    model = models.create(cfg["model"])
     model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
