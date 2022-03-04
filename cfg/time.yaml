@@ -1,0 +1,7 @@
+model: TransLoc3D
+statedict_path: best.pt
+device: cpu
+dataset_path: data/eff_test.csv
+batch_size: 1
+no_workers: 1
+iterations: 10

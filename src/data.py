@@ -62,7 +62,7 @@ class LigandDataset(Dataset):
     def __getitem__(self, idx):
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
-        blob_path = os.path.join("..", self.annotations_file_path, "blobs_full", idx)
+        blob_path = os.path.join(self.annotations_file_path, "blobs_full", idx)
         blob = np.load(blob_path)["blob"]
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)

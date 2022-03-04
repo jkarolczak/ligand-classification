@@ -7,10 +7,10 @@ import torch
 import torchmetrics
 import yaml
 
-from src.data import LigandDataset
+from data import LigandDataset
 
 
-def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
+def get_run(file: str = "cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
     print(os.getcwd())
     with open(file) as fp:
         config = yaml.safe_load(fp)
@@ -20,6 +20,7 @@ def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = No
         mode="async" if config["debug"] is False else "debug",
         tags=tags if tags is not None else []
     )
+    return run
 
 
 def state_dict(model: torch.nn.Module, epoch: int) -> None:

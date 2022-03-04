@@ -1,0 +1,9 @@
+model: TransLoc3D
+device: cuda
+dataset_path: data/train.csv
+batch_size: 64
+no_workers: 8
+epochs: 100
+weight_decay: 1e-4
+lr: 1e-3
+accum_iter: 4

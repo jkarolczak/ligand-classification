@@ -7,40 +7,37 @@ import torch
 import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
-from src.models.TransLoc3D import create_model, model_cfg, model_type, Config
-from src.data import LigandDataset, collation_fn
-from src.log import get_run
+sys.path.append("src")
+import models
+from cfg import read_config
+from data import LigandDataset, collation_fn
+from log import get_run
 
 if __name__ == "__main__":
-    dataset_path = "../data/holdout.csv"
-    model_path = "../best.pt"
-    batch_size = 64
-    no_workers = 8
+    cfg = read_config("cfg/eval.yaml")
+
     rng_seed = randrange(1000)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and cfg["device"] != "cpu" else "cpu")
     cpu = torch.device("cpu")
-    device = cpu
 
     run = get_run(tags=["holdout"])
     run["seed"] = rng_seed
 
-    dataset = LigandDataset("data", dataset_path, max_blob_size=2000, rng_seed=rng_seed)
+    dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000, rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=batch_size,
+        batch_size=cfg["batch_size"],
         collate_fn=collation_fn,
-        num_workers=no_workers,
+        num_workers=cfg["no_workers"],
         shuffle=False,
     )
 
     with open("../encoder.pkl", "wb") as fp:
         pickle.dump(dataset.encoder, fp)
 
-    cfg = Config(model_cfg)
-    cfg.pool_cfg.out_channels = dataset.labels[0].shape[0]
-    model = create_model(model_type, cfg)
-    model.load_state_dict(torch.load(model_path))
+    model = models.create("TransLoc3d")
+    model.load_state_dict(torch.load(cfg["statedict_path"]))
     model.to(device)
 
     result_labels = []

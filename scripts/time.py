@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 
 import MinkowskiEngine as ME
@@ -5,24 +6,27 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-from src.data import LigandDataset, collation_fn
-from src.models.TransLoc3D import create_model, model_cfg, model_type, Config
+sys.path.append("src")
+import models
+from cfg import read_config
+from data import LigandDataset, collation_fn
 
 if __name__ == "__main__":
-    device = torch.device("cpu")
-    dataset_path = "../data/eff_test.csv"
-    dataset = LigandDataset("data", dataset_path, max_blob_size=2000)
+    cfg = read_config("cfg/time.yaml")
 
-    cfg = Config(model_cfg)
-    cfg.pool_cfg.out_channels = 219
-    model = create_model(model_type, cfg)
-    model.load_state_dict(torch.load("../best.pt"))
+    device = torch.device("cpu")
+    dataset_path = "data/eff_test.csv"
+    dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000)
+
+    model = models.create("TransLoc3d")
+    model.load_state_dict(torch.load("best.pt"))
+    model.to(device)
 
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=1,
+        batch_size=cfg["batch_size"],
         collate_fn=collation_fn,
-        num_workers=1,
+        num_workers=cfg["no_workers"],
         shuffle=False
     )
 
@@ -31,7 +35,7 @@ if __name__ == "__main__":
     result = []
     model.eval()
     with torch.no_grad():
-        for r in range(10):
+        for r in range(cfg["iterations"]):
             for idx, ((coords, feats, _), df_row) in enumerate(zip(dataloader, df.iterrows())):
                 start_time = datetime.now()
                 batch = ME.SparseTensor(feats, coords, device=device)
