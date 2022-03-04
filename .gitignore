@@ -19,7 +19,7 @@ __pycache__/
 /MEtestvenv
 
 # notebook output files
-*/.ipynb_checkpoints
+*/.ipynb_checkpoints/*
 blob_details/output/volume_graph.html
 
 # neptune
