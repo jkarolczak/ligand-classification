@@ -1,0 +1,3 @@
+project: project_name
+api_token: api_token_value
+debug: false
