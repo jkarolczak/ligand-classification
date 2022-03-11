@@ -10,7 +10,7 @@ import yaml
 from data import LigandDataset
 
 
-def get_run(file: str = "cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
+def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
     print(os.getcwd())
     with open(file) as fp:
         config = yaml.safe_load(fp)
@@ -97,7 +97,8 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
     if not os.path.isfile(path):
         with open(path, 'a') as fp:
             fp.write(
-                "time,epoch,accuracy,top5_accuracy,top10_accuracy,top20_accuracy,macro_recall,micro_recall,micro_precision,micro_f1,cohen_kappa,cross_entropy\n")
+                "time,epoch,accuracy,top5_accuracy,top10_accuracy,top20_accuracy,macro_recall,micro_recall,"
+                "micro_precision,micro_f1,cohen_kappa,cross_entropy\n")
 
     with open(path, 'a') as fp:
         fp.write(line + '\n')

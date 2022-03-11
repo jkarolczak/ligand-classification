@@ -7,14 +7,13 @@ import torch
 import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
-sys.path.append("src")
 import models
 from cfg import read_config
 from data import LigandDataset, collation_fn
 from log import get_run
 
 if __name__ == "__main__":
-    cfg = read_config("cfg/eval.yaml")
+    cfg = read_config("../cfg/eval.yaml")
 
     rng_seed = randrange(1000)
 
@@ -24,7 +23,7 @@ if __name__ == "__main__":
     run = get_run(tags=["holdout"])
     run["seed"] = rng_seed
 
-    dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000, rng_seed=rng_seed)
+    dataset = LigandDataset("../data", cfg["dataset_path"], max_blob_size=2000, rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=cfg["batch_size"],
@@ -68,6 +67,6 @@ if __name__ == "__main__":
         run['seed'].log(rng_seed)
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
-    df.to_csv("predicitons.csv")
+    df.to_csv("predictions.csv")
 
     run.stop()
