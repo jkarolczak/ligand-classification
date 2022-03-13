@@ -1,18 +1,16 @@
 import gc
-import sys
 
 import torch
 import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
-sys.path.append("src")
 import models
 import log
 from cfg import read_config
 from data import LigandDataset, dataset_split, collation_fn
 
 if __name__ == "__main__":
-    cfg = read_config("cfg/train.yaml")
+    cfg = read_config("../cfg/train.yaml")
 
     device = torch.device("cuda" if torch.cuda.is_available() and cfg["device"] != "cpu" else "cpu")
     cpu = torch.device("cpu")

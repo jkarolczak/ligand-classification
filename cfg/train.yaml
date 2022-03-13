@@ -1,6 +1,6 @@
 model: TransLoc3D
 device: cuda
-dataset_path: data/train.csv
+dataset_path: ../data/train.csv
 batch_size: 64
 no_workers: 8
 epochs: 100

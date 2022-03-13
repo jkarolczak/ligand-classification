@@ -6,20 +6,19 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-sys.path.append("src")
 import models
 from cfg import read_config
 from data import LigandDataset, collation_fn
 
 if __name__ == "__main__":
-    cfg = read_config("cfg/time.yaml")
+    cfg = read_config("../cfg/time.yaml")
 
     device = torch.device("cpu")
-    dataset_path = "data/eff_test.csv"
-    dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000)
+    dataset_path = "../data/eff_test.csv"
+    dataset = LigandDataset("../data", cfg["dataset_path"], max_blob_size=2000)
 
     model = models.create(cfg["model"])
-    model.load_state_dict(torch.load("best.pt"))
+    model.load_state_dict(torch.load("../best.pt"))
     model.to(device)
 
     dataloader = DataLoader(
