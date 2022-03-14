@@ -9,21 +9,22 @@ class Pipeline:
 
     def __init__(self,
                  transforms: List[Transform] = None,
-                 col_name: str = None) -> None:
+                 blob: np.ndarray = None) -> None:
         self._transforms = transforms
-        self.col_name = col_name
+        self.blob = blob
 
-    @staticmethod
-    def elementwise_len(series: pd.Series) -> pd.Series:
-        return series.map(lambda lst: len(lst))
-
-    @property
-    def transforms(self):
+    @transforms.getter
+    def transforms(self) -> List[Transform]:
+        """
+        getter for Pipeline
+        :return: List of Transformations applied to a blob
+        """
         return self._transforms
 
     @transforms.setter
     def transforms(self, value: List[Transform]):
         self._transforms = value
+
 
 # perhaps some other functionality
 
