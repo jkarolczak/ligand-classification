@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+
 import numpy as np
-import pandas as pd
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -21,7 +21,7 @@ _EXAMPLE_CLASS = "Example class"
 
 class Transform(ABC):
     """
-    abstract class for preprocessing transformations
+    Abstract class for preprocessing transformations
     """
 
     def __init__(self, blob: np.ndarray = None, **kwargs) -> None:
@@ -56,3 +56,28 @@ class ExampleClass(Transform):
         pass
 
     # define utility functions necessary
+
+
+class BlobSurfaceTransform(Transform):
+    """
+    A class that limit voxels in the blob by removing all voxels that don't create surface of the blob. It removes
+    voxels that don't have any 0 in their neighbourhood. This class extends `Transformer` class.
+    """
+
+    @staticmethod
+    def _get_mask(blob: np.ndarray) -> np.ndarray:
+        mask = np.ones_like(blob)
+        blob = np.pad(blob, (1, 1), mode="constant", constant_values=0)
+        for x in range(1, blob.shape[0] - 1):
+            for y in range(1, blob.shape[1] - 1):
+                for z in range(1, blob.shape[2] - 1):
+                    neighbours = [blob[x - 1, y, z], blob[x + 1, y, z], blob[x, y - 1, z], blob[x, y + 1, z],
+                                  blob[x, y, z - 1], blob[x, y, z + 1]]
+                    neighbours = list(map(lambda _x: _x != 0, neighbours))
+                    if all(neighbours):
+                        mask[x - 1, y - 1, z - 1] = 0
+        return mask
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        mask = self._get_mask(blob)
+        return mask * blob
