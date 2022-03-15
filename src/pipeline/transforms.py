@@ -121,7 +121,7 @@ class InterpolationTransform(Transform):
         if nonzero <= self.max_voxel:
             return blob
         scale = self.max_voxel / nonzero
-        processed_blob = zoom(blob, (scale, scale, scale), mode='nearest', grid_mode=True)
+        processed_blob = zoom(blob, scale, order=1, mode='nearest', grid_mode=True)
         return processed_blob
 
 
