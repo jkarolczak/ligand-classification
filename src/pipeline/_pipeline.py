@@ -1,4 +1,7 @@
-from typing import List
+from typing import List, Dict
+
+import numpy as np
+
 from pipeline.transforms import *
 
 
@@ -7,13 +10,10 @@ class Pipeline:
     Class that allows chaining of Transforms
     """
 
-    def __init__(self,
-                 transforms: List[Transform] = None,
-                 blob: np.ndarray = None) -> None:
-        self._transforms = transforms
-        self.blob = blob
+    def __init__(self, steps: List[Dict]) -> None:
+        self._transforms = [TRANSFORMS[s["name"]](s["config"]) for s in steps]
 
-    @transforms.getter
+    @property
     def transforms(self) -> List[Transform]:
         """
         getter for Pipeline
@@ -25,8 +25,10 @@ class Pipeline:
     def transforms(self, value: List[Transform]):
         self._transforms = value
 
-
-# perhaps some other functionality
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        for _t in self._transforms:
+            blob = _t.preprocess(blob)
+        return blob
 
 
 if __name__ == "__main__":

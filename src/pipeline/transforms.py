@@ -1,6 +1,11 @@
+import os
 from abc import ABC, abstractmethod
+from typing import Dict, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
+from skimage.measure import marching_cubes
+from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -16,16 +21,14 @@ we can be more specific, e.g.
 Union[str, List[str]] -> either string or a list of strings
 """
 
-_EXAMPLE_CLASS = "Example class"
-
 
 class Transform(ABC):
     """
     Abstract class for preprocessing transformations
     """
 
-    def __init__(self, blob: np.ndarray = None, **kwargs) -> None:
-        self.blob = blob
+    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
+        self.__dict__.update(config)
 
     @abstractmethod
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
@@ -36,48 +39,30 @@ class Transform(ABC):
         pass
 
 
-class ExampleClass(Transform):
-    """
-    Example class showing all the best practices to follow during methods' implementation
-    """
-
-    def __init__(self, blob: np.ndarray = None, **kwargs) -> None:
-        super().__init__(blob, **kwargs)
-        self.blob = blob,
-        self.name = _EXAMPLE_CLASS
-        # other required attributes
-
-    def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        """
-
-        :param blob:
-        """
-        # should there be some method, that this transform uses, but could static, you can add @staticmethod annotation
-        pass
-
-    # define utility functions necessary
-
-
 class BlobSurfaceTransform(Transform):
     """
     A class that limit voxels in the blob by removing all voxels that don't create surface of the blob. It removes
     voxels that don't have any 0 in their neighbourhood. This class extends `Transformer` class.
     """
 
-    @staticmethod
-    def _get_mask(blob: np.ndarray) -> np.ndarray:
-        mask = np.ones_like(blob)
-        blob = np.pad(blob, (1, 1), mode="constant", constant_values=0)
-        for x in range(1, blob.shape[0] - 1):
-            for y in range(1, blob.shape[1] - 1):
-                for z in range(1, blob.shape[2] - 1):
-                    neighbours = [blob[x - 1, y, z], blob[x + 1, y, z], blob[x, y - 1, z], blob[x, y + 1, z],
-                                  blob[x, y, z - 1], blob[x, y, z + 1]]
-                    neighbours = list(map(lambda _x: _x != 0, neighbours))
-                    if all(neighbours):
-                        mask[x - 1, y - 1, z - 1] = 0
-        return mask
-
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        mask = self._get_mask(blob)
-        return mask * blob
+        blob = marching_cubes(blob, spacing=self.spacing, method=self.method)
+        coords = blob[0].astype(int)
+        shape = coords.max(-2)
+        values = blob[3]
+        blob = np.zeros(shape)
+        np.put(blob, coords, values)
+        return blob
+
+
+TRANSFORMS = {
+    "BlobSurfaceTransform": BlobSurfaceTransform
+}
+
+# the function is left only for the sake of development.
+# TODO: Remove before merging to the `main`
+if __name__ == "__main__":
+    files = os.listdir("../../data/blobs_full")[0]
+    blob = np.load(f"../../data/blobs_full/{files}")["blob"]
+    transform = ...
+    transformed = transform.preprocess(blob)
