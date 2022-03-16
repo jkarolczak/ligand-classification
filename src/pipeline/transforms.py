@@ -2,10 +2,8 @@ import os
 from abc import ABC, abstractmethod
 from typing import Dict, Union
 
-import matplotlib.pyplot as plt
 import numpy as np
 from skimage.measure import marching_cubes
-from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -46,7 +44,7 @@ class BlobSurfaceTransform(Transform):
     """
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        blob = marching_cubes(blob, spacing=self.spacing, method=self.method)
+        blob = marching_cubes(blob, 0)  # spacing=self.spacing, method=self.method)
         coords = blob[0].astype(int)
         shape = coords.max(-2)
         values = blob[3]
