@@ -1,3 +1,6 @@
+[![uses-badges](https://img.shields.io/badge/uses-badges-blue.svg)](https://knowyourmeme.com/photos/325428-imagination-spongebob) 
+[![dabrze-badge](https://img.shields.io/badge/makes-dabrze_smile-red.svg)](https://www.istockphoto.com/pl/wektor/du%C5%BCy-emotikon-u%C5%9Bmiechu-z-kciukiem-w-g%C3%B3r%C4%99-gm1124532572-295250550)
+
 # Ligand classification using deep neural networks
 
 ## Environment
