@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import itertools
 from scipy.ndimage import zoom
+import math
 from skimage.measure import marching_cubes
 from plotting import plot_interactive_trisurf
 
@@ -59,21 +60,22 @@ class BlobSurfaceTransform(Transform):
 
 class UniformSelectionTransform(Transform):
     """
-    A class that limits the number of voxels in the blob by averaging densities within 2x2x2 segments if the number
-    of voxels within the original blob exceeds the max_voxel. This class extends 'Transformer' class.
+    A class that limits the number of voxels in the blob by either selecting  This class extends 'Transformer' class.
 
-    Requires 'max_voxel' parameter to be defined within the provided config dictionary.
+    :param config: configuration dictionary with integer 'max_voxel' and boolean 'mean_selection' entries
     """
 
     def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
         super().__init__(config, **kwargs)
-        if not self.__dict__.get('max_voxel'):
+        if self.__dict__.get('max_voxel') is None:
             raise ValueError("{} requires 'max_voxel' key in config dictionary".format(type(self).__name__))
+        if self.__dict__.get('mean_selection') is None:
+            raise ValueError("{} requires 'mean_selection' key in config dictionary".format(type(self).__name__))
 
     @staticmethod
-    def _pad_blob(blob: np.ndarray) -> np.ndarray:
+    def _pad_blob(blob: np.ndarray, scale: int) -> np.ndarray:
         x, y, z = blob.shape
-        new_shape = (x + x % 2, y + y % 2, z + z % 2)
+        new_shape = [val + (scale - val % scale) % scale for val in (x, y, z)]
         padded_blob = np.zeros(new_shape, dtype=np.float32)
         padded_blob[:x, :y, :z] += blob
         return padded_blob
@@ -84,44 +86,29 @@ class UniformSelectionTransform(Transform):
         return nonzero.shape[-1]
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        if self._nonzero(blob) <= self.max_voxel:
-            return blob
-        padded_blob = self._pad_blob(blob)
-        sub_arrays = []
-        for (x, y, z) in itertools.product((0, 1), repeat=3):
-            sub_array = padded_blob[x::2, y::2, z::2]
-            sub_arrays.append(sub_array)
-        sub_arrays = np.stack(sub_arrays)
-        processed_blob = np.average(sub_arrays, axis=0)
-        return processed_blob
-
-
-class InterpolationTransform(Transform):
-    """
-    A class that limits the number of voxels to the desired number of nonzero voxels by using spline interpolation,
-    This class extends 'Transformer' class.
-
-    Requires 'max_voxel' parameter to be defined within the provided config dictionary.
-
-    TODO: Verify correctness?
-    """
-
-    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
-        super().__init__(config, **kwargs)
-        if not self.__dict__.get('max_voxel'):
-            raise ValueError("{} requires 'max_voxel' key in config dictionary".format(type(self).__name__))
-
-    @staticmethod
-    def _nonzero(blob: np.ndarray) -> int:
-        nonzero = np.array(np.nonzero(blob))
-        return nonzero.shape[-1]
-
-    def preprocess(self, blob: np.ndarray) -> np.ndarray:
         nonzero = self._nonzero(blob)
         if nonzero <= self.max_voxel:
             return blob
-        scale = self.max_voxel / nonzero
-        processed_blob = zoom(blob, scale, order=1, mode='nearest', grid_mode=True)
+        scale = (nonzero / self.max_voxel)**(1/3)
+        scale = math.ceil(scale)
+        processed_blob = blob
+        while self._nonzero(processed_blob) > self.max_voxel:
+            if self.mean_selection:
+                padded_blob = self._pad_blob(blob, scale)
+                sub_arrays = []
+                for (x, y, z) in itertools.product(list(range(scale)), repeat=3):
+                    sub_array = padded_blob[x::scale, y::scale, z::scale]
+                    sub_arrays.append(sub_array)
+                sub_arrays = np.stack(sub_arrays)
+                voxel_samples = np.average(sub_arrays, axis=0)
+                processed_blob = np.zeros(padded_blob.shape)
+                processed_blob[scale // 2::scale, scale // 2::scale, scale // 2::scale] = voxel_samples
+                processed_blob = processed_blob[:blob.shape[0], :blob.shape[1], :blob.shape[2]]
+            else:
+                voxel_samples = blob[scale // 2::scale, scale // 2::scale, scale // 2::scale]
+                processed_blob = np.zeros(blob.shape)
+                processed_blob[scale // 2::scale, scale // 2::scale, scale // 2::scale] = voxel_samples
+            scale += 1
         return processed_blob
 
 
@@ -132,7 +119,9 @@ TRANSFORMS = {
 # the function is left only for the sake of development.
 # TODO: Remove before merging to the `main`
 if __name__ == "__main__":
-    files = os.listdir("../../data/blobs_full")[0]
+    files = os.listdir("../../data/blobs_full")[12]
     blob = np.load(f"../../data/blobs_full/{files}")["blob"]
-    transform = ...
+    print("Pre-size: {}".format(UniformSelectionTransform._nonzero(blob)))
+    transform = UniformSelectionTransform({'max_voxel': 2000, 'mean_selection': False})
     transformed = transform.preprocess(blob)
+    print("Post-size: {}".format(UniformSelectionTransform._nonzero(transformed)))
