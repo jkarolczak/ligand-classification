@@ -16,7 +16,7 @@ def blobs():
     return _blobs
 
 
-@pytest.mark.parametrize("config", [{"spacing": [0.0, 0.0, 0.0], "method": "lorensen"}])
+@pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 22}])
 def test_blob_surface_transform(config):
     transforms = BlobSurfaceTransform(config)
     for blob in blobs():
