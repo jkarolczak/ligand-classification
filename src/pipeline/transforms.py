@@ -1,6 +1,11 @@
+import os
 from abc import ABC, abstractmethod
+from typing import Dict, Union
+
 import numpy as np
-import pandas as pd
+from scipy.ndimage import generic_filter
+
+from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -16,59 +21,70 @@ we can be more specific, e.g.
 Union[str, List[str]] -> either string or a list of strings
 """
 
-# TODO: we can use or reject using such definition of names,
-# this way we may quite easy generate text of preprocessing steps -> Transform.name
-# this can also be hardcoded in class or removed
-_EXAMPLE_CLASS = "Example class"
-
 
 class Transform(ABC):
     """
-    abstract class for preprocessing transformations
+    Abstract class for preprocessing transformations
+
+    :param config: dictionary containing transformation configuration. It's keys will be transformed to object fields.
+    Example: config['foo'] = 'bar' -> transformation.foo = 'bar'
     """
 
-    # TODO: here we should probably debate, what to pass as the argument, so that it makes the most sense:
-    #   - single blob ?
-    #   - pd.DataFrame with blobs to be processed ?
-    #       - this is my initial idea, we could apply transforms to entire pd.Series
-    #   - something else?
-    def __init__(self, col_name: str = None, **kwargs) -> None:
-        self.col_name = col_name
+    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
+        if config:
+            self.__dict__.update(config)
 
-    # TODO: discuss what to preprocess
     @abstractmethod
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        """
+        Abstract method for applying preprocessing methods to a blob
+        :param blob: blob to be processed
+        """
         pass
 
-    # following my initial idea, I propose a method applying some preprocess to pd.Series
-    def calculate(self, series: pd.Series) -> pd.Series:
-        """
-        Abstract method for applying preprocessing methods to Series
-        Args:
-            series (pd.Series): Series containing data (keywords, descriptions, etc.) to process
-        Returns:
-            pd.Series: Series containing processed data
-        """
-        if self.col_name is None:
-            self.col_name = series.name
-        series_tmp = series.map(self.preprocess)
-        return series_tmp
 
-
-class ExampleClass(Transform):
+class BlobSurfaceTransform(Transform):
     """
-    Example class showing all the best practices to follow during methods' implementation
+    A class that limit voxels in the blob by removing all voxels that don't create surface of the blob. It removes
+    voxels that don't have any 0 in their neighbourhood. This class extends `Transformer` class.
+
+    :param config: has to contain key describing the neighbourhood, one of 6, 22 or 26
     """
 
-    def __init__(self, col_name: str = None, **kwargs) -> None:
-        super().__init__(col_name, **kwargs)
-        self.col_name = col_name,
-        self.name = _EXAMPLE_CLASS
-        # other required attributes
+    def _footprint(self):
+        assert int(self.neighbourhood) in [6, 22, 26]
+        _masks = {
+            6: np.array([
+                [[0, 0, 0], [0, 1, 0], [0, 0, 0]],
+                [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+                [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
+            ]),
+            22: np.array([
+                [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+                [[1, 1, 1], [1, 1, 1], [1, 1, 1]],
+                [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+            ]),
+            26: np.ones((3, 3, 3))
+        }
+        return _masks[int(self.neighbourhood)]
+
+    @staticmethod
+    def _filter(neighbourhood: np.ndarray) -> None:
+        if np.any(neighbourhood == 0):
+            return neighbourhood[int(neighbourhood.shape[0] / 2)]
+        return 0.0
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        # implementation goes here or some utility methods
-        # should there be some method, that this transform uses, but could static, you can add @staticmethod annotation
-        pass
+        blob = generic_filter(
+            input=blob,
+            function=BlobSurfaceTransform._filter,
+            footprint=self._footprint(),
+            mode="constant",
+            cval=0.0
+        )
+        return blob
 
-    # define utility functions necessary
+
+TRANSFORMS = {
+    "BlobSurfaceTransform": BlobSurfaceTransform
+}

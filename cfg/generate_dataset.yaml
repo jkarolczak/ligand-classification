@@ -1,0 +1,8 @@
+input_dir: ../data/blobs_full
+output_dir: ../data/blobs_transformed
+steps:
+  - name: BlobSurfaceTransform
+    config:
+      spacing: [ 1.0, 1.0, 1.0 ]
+      method: lewiner
+
