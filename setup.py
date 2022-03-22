@@ -27,9 +27,9 @@ requirements = [
 
 
 setup(
-    name="blob test",
-    version=21.37,
-    description="I love blobs",
+    name="Ligand classification",
+    version=0.1,
+    description="Ligand classification using sparse convolutional neural network",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=requirements,
