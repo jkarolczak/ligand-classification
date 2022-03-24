@@ -19,6 +19,7 @@ jobs:
       with:
         python-version: "3.8.10"
     - name: Change source root path
+      run: |
         echo "src" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
