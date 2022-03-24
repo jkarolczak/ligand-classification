@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 
-from pipeline.transforms import BlobSurfaceTransform
+from pipeline.transforms import BlobSurfaceTransform, RandomSelectionTransform
 
 
 def blobs():
@@ -19,6 +19,15 @@ def blobs():
 @pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 22}, {"neighbourhood": 26}])
 def test_blob_surface_transform(config):
     transforms = BlobSurfaceTransform(config)
+    for blob in blobs():
+        transformed = transforms.preprocess(blob)
+        assert transformed.shape == blob.shape
+        assert np.sum(transformed > 0) <= np.sum(transformed > 0)
+
+
+@pytest.mark.parametrize("config", [{"max_blob_size": 200}, {"max_blob_size": 2000}, {"max_blob_size": 10000}])
+def test_random_selection(config):
+    transforms = RandomSelectionTransform(config)
     for blob in blobs():
         transformed = transforms.preprocess(blob)
         assert transformed.shape == blob.shape
