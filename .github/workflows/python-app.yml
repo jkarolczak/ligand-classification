@@ -2,7 +2,6 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: tests
-
 on:
   push:
   pull_request:
@@ -19,6 +18,8 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: "3.8.10"
+    - name: Change source root path
+        echo "src" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
         echo "src/" >> $GITHUB_PATH
