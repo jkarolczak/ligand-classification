@@ -1,14 +1,8 @@
-    addict==2.4.0,
-#     ipython==8.1.1,
-#     MinkowskiEngine==0.5.4
-#     neptune_client==0.15.1
-    numpy==1.22.3,
-    pandas==1.4.1,
-#     plotly==5.6.0,
-    PyYAML==6.0,
-    scikit_image==0.19.2,
-    scikit_learn==1.0.2,
-    skimage==0.0,
-#     torch==1.10.2+cpu
-#     torchmetrics==0.7.2
+    addict==2.4.0
+    numpy==1.22.3
+    pandas==1.4.1
+    PyYAML==6.0
+    scikit_image==0.19.2
+    scikit_learn==1.0.2
+    skimage==0.0
     yapf==0.32.0
