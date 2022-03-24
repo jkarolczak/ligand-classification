@@ -7,10 +7,10 @@ from pipeline.transforms import BlobSurfaceTransform
 
 
 def blobs():
-    files = os.listdir("static/tests-data")
+    files = os.listdir("../static/tests-data")
     _blobs = []
     for idx, f_name in enumerate(files):
-        input_path = os.path.join("static/tests-data", f_name)
+        input_path = os.path.join("../static/tests-data", f_name)
         _blob = np.load(input_path)
         _blobs.append(_blob["blob"])
     return _blobs
