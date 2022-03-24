@@ -18,12 +18,8 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: "3.8.10"
-    - name: Change source root path
-      run: |
-        echo "src" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        echo "src/" >> $GITHUB_PATH
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -35,4 +31,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        echo "src" >> $GITHUB_PATH
         pytest
