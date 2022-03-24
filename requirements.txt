@@ -2,7 +2,7 @@
     numpy==1.22.3
     pandas==1.4.1
     PyYAML==6.0
-    scikit_image==0.19.2
-    scikit_learn==1.0.2
+    scikit-image==0.19.2
+    scikit-learn==1.0.2
     skimage==0.0
     yapf==0.32.0
