@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = LigandDataset("data", cfg["dataset_path"], max_blob_size=2000)
+    dataset = LigandDataset("data", cfg["dataset_path"])
 
     train, test = dataset_split(dataset=dataset)
 
