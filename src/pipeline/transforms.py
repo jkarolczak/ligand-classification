@@ -2,13 +2,10 @@ import os
 from abc import ABC, abstractmethod
 from typing import Dict, Union, Callable
 
-import matplotlib.pyplot as plt
 import numpy as np
 import itertools
-from scipy.ndimage import zoom
 import math
 from skimage.measure import marching_cubes
-from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -144,15 +141,8 @@ class UniformSelectionTransform(Transform):
 
 
 TRANSFORMS = {
-    "BlobSurfaceTransform": BlobSurfaceTransform
+    "BlobSurfaceTransform": BlobSurfaceTransform,
+    "UniformSelectionTransform": UniformSelectionTransform
 }
 
-# the function is left only for the sake of development.
-# TODO: Remove before merging to the `main`
-if __name__ == "__main__":
-    files = os.listdir("../../data/blobs_full")[12]
-    blob = np.load(f"../../data/blobs_full/{files}")["blob"]
-    print("Pre-size: {}".format(UniformSelectionTransform._nonzero(blob)))
-    transform = UniformSelectionTransform({'max_voxel': 2000, 'method': 'max'})
-    transformed = transform.preprocess(blob)
-    print("Post-size: {}".format(UniformSelectionTransform._nonzero(transformed)))
+
