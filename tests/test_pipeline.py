@@ -17,18 +17,18 @@ def blobs():
 
 
 @pytest.mark.parametrize("config", [
-    {'max_voxel': 2000, 'method': 'basic'},
-    {'max_voxel': 2000, 'method': 'average'},
-    {'max_voxel': 2000, 'method': 'max'},
-    {'max_voxel': 500, 'method': 'basic'},
-    {'max_voxel': 500, 'method': 'average'},
-    {'max_voxel': 500, 'method': 'max'}])
+    {'max_blob_size': 2000, 'method': 'basic'},
+    {'max_blob_size': 2000, 'method': 'average'},
+    {'max_blob_size': 2000, 'method': 'max'},
+    {'max_blob_size': 500, 'method': 'basic'},
+    {'max_blob_size': 500, 'method': 'average'},
+    {'max_blob_size': 500, 'method': 'max'}])
 def test_uniform_selection_transform(config):
     transforms = UniformSelectionTransform(config)
     for blob in blobs():
         transformed = transforms.preprocess(blob)
         assert transformed.shape == blob.shape
-        assert np.sum(transformed > 0) <= config['max_voxel']
+        assert np.sum(transformed > 0) <= config['max_blob_size']
 
         
 @pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 22}, {"neighbourhood": 26}])

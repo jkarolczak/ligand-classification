@@ -128,15 +128,18 @@ class RandomSelectionTransform(Transform):
     
 class UniformSelectionTransform(Transform):
     """
-    A class that limits the number of voxels in the blob by either selecting  This class extends 'Transformer' class.
+    A class that limits the number of voxels in the blob sampling only the middle voxels within n x n x n blocks.
+    The value assigned to selected voxels depends on the value of 'method' in config dictionary.
+    This class extends 'Transformer' class.
 
-    :param config: configuration dictionary with integer 'max_voxel' and str 'method' entries
-
+    :param config: configuration dictionary with integer 'max_blob_size' (maximal number of remaining voxels)
+     and string 'method' (dictating the method of assigning values to sampled voxels - options: 'basic'/'average'/'max')
+    """
 
     def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
         super().__init__(config, **kwargs)
-        if self.__dict__.get('max_voxel') is None:
-            raise ValueError("{} requires 'max_voxel' key in config dictionary".format(type(self).__name__))
+        if self.__dict__.get('max_blob_size') is None:
+            raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
         if self.__dict__.get('method') is None:
             raise ValueError("{} requires 'method' key in config dictionary".format(type(self).__name__))
         self._selection = self._selection_method(self.method)
@@ -200,12 +203,12 @@ class UniformSelectionTransform(Transform):
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
         nonzero = self._nonzero(blob)
-        if nonzero <= self.max_voxel:
+        if nonzero <= self.max_blob_size:
             return blob
-        scale = (nonzero / self.max_voxel)**(1/3)
+        scale = (nonzero / self.max_blob_size)**(1/3)
         scale = math.ceil(scale)
         processed_blob = blob
-        while self._nonzero(processed_blob) > self.max_voxel:
+        while self._nonzero(processed_blob) > self.max_blob_size:
             processed_blob = self._selection(blob, scale)
             scale += 1
         return processed_blob
