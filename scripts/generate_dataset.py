@@ -16,15 +16,12 @@ def main(cfg: Dict) -> None:
 
     transformation_pipeline = Pipeline(cfg["steps"])
 
-
     for idx, f_name in enumerate(files):
         input_path = os.path.join(input_dir, f_name)
         blob = np.load(input_path)["blob"]
         blob = transformation_pipeline.preprocess(blob)
         output_path = os.path.join(output_dir, f_name)
         np.savez(output_path, blob=blob)
-        if idx == 4:
-            break
 
 
 if __name__ == "__main__":
