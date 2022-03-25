@@ -1,3 +1,8 @@
+![example workflow](https://github.com/jkarolczak/ligands-classification/actions/workflows/python-app.yml/badge.svg)
+
+[![uses-badges](https://img.shields.io/badge/uses-badges-blue.svg)](https://knowyourmeme.com/photos/325428-imagination-spongebob)
+[![dabrze-badge](https://img.shields.io/badge/makes-dabrze_smile-green.svg)](https://www.istockphoto.com/pl/wektor/du%C5%BCy-emotikon-u%C5%9Bmiechu-z-kciukiem-w-g%C3%B3r%C4%99-gm1124532572-295250550)
+
 # Ligand classification using deep neural networks
 
 ## Environment
@@ -35,7 +40,7 @@ with <path-to-folder> pointing to the folder containing data folder and cloned l
     - switch between the branches using PyCharm GUI, not with terminal tools
     - in the bottom-right corner, there is a special menu:
 
-![branch management](./readme-images/branch-management-pycharm.jpg "branch management")
+![branch management](static/readme-images/branch-management-pycharm.jpg "branch management")
 
 - select the desired branch and choose `Checkout` in order to switch branches,
 - if you can't see a branch, make sure to run `git fetch` from the Git toolbar menu.
@@ -49,4 +54,4 @@ with <path-to-folder> pointing to the folder containing data folder and cloned l
     - open branch menu -> choose main branch -> Merge 'main' into task branch
     - thanks to the above, all commits merged into the `main` branch will be applied to the specific branch
 
-![update branch](./readme-images/update-branch.jpg "update branch")
+![update branch](static/readme-images/update-branch.jpg "update branch")

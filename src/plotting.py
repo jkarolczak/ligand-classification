@@ -28,7 +28,7 @@ def svg_to_html(svg_url, width="300px"):
 
 
 def plot_interactive_trisurf(
-        blob, title, cutoff_val=0.0, grid_unit=0.2, color="#009988", opacity=0.5
+        blob, title, cutoff_val=0.0, grid_unit=0.2, color="#009988", opacity=0.5, save=False
 ):
     """
     Creates an interactive #d visualization of a given volume.
@@ -38,6 +38,7 @@ def plot_interactive_trisurf(
     :param grid_unit: unit of each voxel; by default 0.2 Angstrom
     :param color: mesh color
     :param opacity: mesh opacity
+    :param save: if True than image is saved to a file
     :return: plotly figure
     """
     from skimage.measure import marching_cubes_lewiner
@@ -62,4 +63,7 @@ def plot_interactive_trisurf(
     if opacity < 1:
         fig["data"][0].update(opacity=opacity)
 
-    fig.show()
+    if save:
+        fig.write_image(f"{title}.png")
+    else:
+        fig.show()
