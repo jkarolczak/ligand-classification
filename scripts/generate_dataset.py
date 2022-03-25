@@ -16,6 +16,7 @@ def main(cfg: Dict) -> None:
 
     transformation_pipeline = Pipeline(cfg["steps"])
 
+
     for idx, f_name in enumerate(files):
         input_path = os.path.join(input_dir, f_name)
         blob = np.load(input_path)["blob"]
