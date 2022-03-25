@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 
-from pipeline.transforms import BlobSurfaceTransform, RandomSelectionTransform, UniformSelectionTransform
+from pipeline.transforms import *
 
 
 def blobs():
