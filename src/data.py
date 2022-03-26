@@ -20,7 +20,6 @@ class LigandDataset(Dataset):
             self,
             annotations_file_path: str,
             labels_file_path: str = None,
-            max_blob_size: int = None,
             rng_seed: int = 23
     ):
         """
@@ -46,7 +45,6 @@ class LigandDataset(Dataset):
         self.labels = list(self.file_ligand_map.values())
         self.encoder = LabelBinarizer()
         self.labels = self.encoder.fit_transform(self.labels)
-        self.max_blob_size = max_blob_size
 
     def _get_coords_feats(self, batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
@@ -66,11 +64,6 @@ class LigandDataset(Dataset):
         blob = np.load(blob_path)["blob"]
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)
-        blob_size = coordinates.shape[0]
-        if self.max_blob_size and blob_size > self.max_blob_size:
-            indices = choices(range(blob_size), k=self.max_blob_size)
-            coordinates = coordinates[indices, :]
-            features = features[indices, :]
         features = (features - features.mean()) / features.std()
         return (coordinates, features, label)
 
