@@ -1,11 +1,8 @@
 input_dir: ../data/blobs_full
-output_dir: ../data/blobs_transformed/shell_uniform
+output_dir: ../data/blobs_transformed/max_uniform
 steps:
-  - name: BlobSurfaceTransform
-    config:
-      neighbourhood: 22
   - name: UniformSelectionTransform
     config:
       max_blob_size: 2000
-      method: basic
+      method: max
 
