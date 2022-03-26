@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import models
 from cfg import read_config
 from data import LigandDataset, collation_fn
-from log import get_run
+from log import get_run, epoch
 
 if __name__ == "__main__":
     cfg = read_config("../cfg/eval.yaml")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
             result_labels.extend(dataset.encoder.inverse_transform(labels))
             result_predictions.extend(dataset.encoder.inverse_transform(preds_encoded))
 
-        log_epoch(run=run, preds=predictions, target=groundtruth, epoch=0)
+        epoch(run=run, preds=predictions, target=groundtruth, epoch=0)
         run['seed'].log(rng_seed)
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
