@@ -1,4 +1,3 @@
-import os
 from abc import ABC, abstractmethod
 
 from typing import Dict, Union, Callable
@@ -11,12 +10,9 @@ import math
 from skimage.measure import marching_cubes
 
 from scipy.ndimage import generic_filter
-
-from plotting import plot_interactive_trisurf
-
 from sklearn.cluster import KMeans
 
-from read_blob import BlobDetailsA
+from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -99,6 +95,43 @@ class BlobSurfaceTransform(Transform):
             cval=0.0
         )
         return blob
+
+
+class ClusteringTransform(Transform):
+    """
+    A class that limits the number of voxels in the blob using k-means clustering.
+
+    :param config: has to contain "max_blob_size" (maximal number of nonzero voxels in the blob)
+    """
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        """
+        performs kmeans clustering on given blob
+        :param blob: blob to be processed
+        :type blob: np.ndarray
+        :returns: processed blob with number of voxels limited to max_blob_size. If the value of "max_blob_size" is
+        greater than the number of nonzero voxels in blob, new blob with nonzero voxels being clusters' centers is
+        returned. Otherwise, when the value of "max_blob_size" is less or equal to the number of nonzero voxels in the
+        blob, there are no modifications made and the whole blob is returned.
+        :return type: np.ndarray
+        """
+        coordinates = np.transpose(np.nonzero(blob))
+        features = blob[np.nonzero(blob)]
+        if coordinates.shape[0] <= self.max_blob_size:
+            return blob
+        else:
+            kmeans = KMeans(n_clusters=self.max_blob_size, random_state=23).fit(coordinates)
+            features_clusters = np.array([features[kmeans.labels_ == i].mean() for i in np.unique(kmeans.labels_)])
+            new_blob = self._create_new_blob(blob.shape, kmeans.cluster_centers_, features_clusters)
+            return new_blob
+
+    @staticmethod
+    def _create_new_blob(shape: Tuple[int], coordinates: np.ndarray, features: np.ndarray) -> np.ndarray:
+        new_blob = np.zeros(shape)
+        coordinates = np.around(coordinates).astype(int)
+        coordinates = tuple(np.transpose(coordinates))
+        new_blob[coordinates] = features
+        return new_blob
 
 
 class RandomSelectionTransform(Transform):
@@ -210,7 +243,7 @@ class UniformSelectionTransform(Transform):
         nonzero = self._nonzero(blob)
         if nonzero <= self.max_blob_size:
             return blob
-        scale = (nonzero / self.max_blob_size)**(1/3)
+        scale = (nonzero / self.max_blob_size) ** (1 / 3)
         scale = math.ceil(scale)
         processed_blob = blob
         while self._nonzero(processed_blob) > self.max_blob_size:
@@ -221,57 +254,7 @@ class UniformSelectionTransform(Transform):
 
 TRANSFORMS = {
     "BlobSurfaceTransform": BlobSurfaceTransform,
+    "ClusteringTransform": ClusteringTransform,
     "RandomSelectionTransform": RandomSelectionTransform,
     "UniformSelectionTransform": UniformSelectionTransform
 }
-
-
-class Clustering(Transform):
-    """
-    class for limiting the number of points in blob using k-means clustering
-    """
-
-    def __init__(self, blob: np.ndarray = None, num_points: int = 2000, **kwargs) -> None:
-        super().__init__(blob, **kwargs)
-        self.blob = blob
-        self.num_points = num_points
-        self.name = _CLUSTERING
-
-    def preprocess(self, blob: np.ndarray) -> np.ndarray:
-        """
-        performs kmeans clustering on given blob
-        :param blob: blob to be processed
-        :return: numpy array, processed blob with nonzero points being clusters' centers
-        """
-        X = self.extract_info(blob)
-        n_clusters = min(X.shape[0], self.num_points)
-        kmeans = KMeans(n_clusters=n_clusters, random_state=23).fit(X)
-        new_blob = self.create_new_blob(blob.shape, kmeans.cluster_centers_)
-        return new_blob
-
-    def extract_info(self, blob: np.ndarray) -> np.ndarray:
-        """
-        extracts information from raw blob representation
-        :param blob: blob to be processed
-        :return: numpy array of data prepared for clustering - coordinates and features
-        """
-        coordinates = np.transpose(np.nonzero(blob))
-        features = blob[np.nonzero(blob)]
-        features = np.expand_dims(features, axis=1)
-        return np.concatenate((coordinates, features), axis=1)
-
-    def create_new_blob(self, shape: Tuple[int], cluster_centers: np.ndarray) -> np.ndarray:
-        """
-        creates new blob based on the obtained cluster centers
-        :param shape: tuple of integers, shape of the original blob
-        :param cluster_centers: numpy array, obtained cluster centers
-        :return: numpy array, the created blob
-        """
-        new_blob = np.zeros(shape)
-        split = np.hsplit(cluster_centers, np.array([3, 6]))
-        coordinates, features = split[0], split[1]
-        coordinates = np.around(coordinates).astype(int)
-        coordinates = tuple(np.transpose(coordinates))
-        features = np.squeeze(features, axis=1)
-        new_blob[coordinates] = features
-        return new_blob
