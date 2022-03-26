@@ -63,7 +63,7 @@ if __name__ == "__main__":
             result_labels.extend(dataset.encoder.inverse_transform(labels))
             result_predictions.extend(dataset.encoder.inverse_transform(preds_encoded))
 
-        epoch(run=run, preds=predictions, target=groundtruth, epoch=0)
+        epoch(run=run, preds=predictions, target=groundtruth, epoch_num=0)
         run['seed'].log(rng_seed)
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
