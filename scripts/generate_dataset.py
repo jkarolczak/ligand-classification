@@ -26,7 +26,7 @@ def main(cfg: Dict) -> None:
         output_path = os.path.join(output_dir, f_name)
         np.savez(output_path, blob=blob)
         if not idx % 100:
-            with open("log.txt", "a") as fp:
+            with open("../log.txt", "a") as fp:
                 fp.write(f"{idx + cfg['start']},{datetime.now()}\n")
 
 
