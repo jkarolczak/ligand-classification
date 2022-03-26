@@ -1,8 +1,6 @@
 input_dir: ../data/blobs_full
-output_dir: ../data/blobs_transformed
+output_dir: ../data/blobs_uniform_2000
 steps:
   - name: BlobSurfaceTransform
     config:
-      spacing: [ 1.0, 1.0, 1.0 ]
-      method: lewiner
-
+      neighbourhood: 22
