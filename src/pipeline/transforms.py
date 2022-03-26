@@ -5,12 +5,9 @@ from typing import Callable, Dict, Tuple, Union
 import numpy as np
 import itertools
 import math
-from skimage.measure import marching_cubes
 
 from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
-
-from plotting import plot_interactive_trisurf
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful

@@ -17,7 +17,9 @@ def main(cfg: Dict) -> None:
 
     transformation_pipeline = Pipeline(cfg["steps"])
 
-    for idx, f_name in enumerate(files):
+    start = cfg["start"]
+    end = cfg["end"]
+    for idx, f_name in enumerate(files[start:end]):
         input_path = os.path.join(input_dir, f_name)
         blob = np.load(input_path)["blob"]
         blob = transformation_pipeline.preprocess(blob)
@@ -25,7 +27,7 @@ def main(cfg: Dict) -> None:
         np.savez(output_path, blob=blob)
         if not idx % 100:
             with open("log.txt", "a") as fp:
-                fp.write(f"{idx},{datetime.now()}\n")
+                fp.write(f"{idx + cfg['start']},{datetime.now()}\n")
 
 
 if __name__ == "__main__":

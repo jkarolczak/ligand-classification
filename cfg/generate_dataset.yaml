@@ -1,5 +1,7 @@
 input_dir: ../data/blobs_full
-output_dir: ../data/blobs_uniform_2000
+output_dir: ../data/blobs_shell_22
+start: 0
+end: -1
 steps:
   - name: BlobSurfaceTransform
     config:
