@@ -23,7 +23,7 @@ if __name__ == "__main__":
     run = get_run(tags=["holdout"])
     run["seed"] = rng_seed
 
-    dataset = LigandDataset("../data", cfg["dataset_path"], max_blob_size=2000, rng_seed=rng_seed)
+    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], max_blob_size=2000, rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=cfg["batch_size"],

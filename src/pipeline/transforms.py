@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import Dict, Union, Callable
-
-from typing import Tuple
+from typing import Callable, Dict, Tuple, Union
 
 import numpy as np
 import itertools
@@ -75,7 +73,7 @@ class BlobSurfaceTransform(Transform):
         return _masks[int(self.neighbourhood)]
 
     @staticmethod
-    def _filter(neighbourhood: np.ndarray) -> None:
+    def _filter(neighbourhood: np.ndarray) -> float:
         if np.any(neighbourhood == 0):
             return neighbourhood[int(neighbourhood.shape[0] / 2)]
         return 0.0
@@ -115,6 +113,8 @@ class ClusteringTransform(Transform):
         blob, there are no modifications made and the whole blob is returned.
         :return type: np.ndarray
         """
+        if self.__dict__.get('max_blob_size') is None:
+            raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
         coordinates = np.transpose(np.nonzero(blob))
         features = blob[np.nonzero(blob)]
         if coordinates.shape[0] <= self.max_blob_size:
@@ -148,6 +148,8 @@ class RandomSelectionTransform(Transform):
         "max_blob_size" whole blob, without modification is returned.
         :return type: np.ndarray
         """
+        if self.__dict__.get('max_blob_size') is None:
+            raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
         non_zeros = blob.nonzero()
         if non_zeros[0].shape[0] <= self.max_blob_size:
             return blob
