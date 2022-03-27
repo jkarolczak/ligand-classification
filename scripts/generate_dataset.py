@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
     output_dir = cfg["output_dir"]
     os.makedirs(output_dir, exist_ok=True)
+    os.makedirs("../log", exist_ok=True)
 
     transformation_pipeline = Pipeline(cfg["steps"])
 
