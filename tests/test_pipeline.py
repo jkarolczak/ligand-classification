@@ -30,14 +30,14 @@ def test_uniform_selection_transform(config):
         assert transformed.shape == blob.shape
         assert np.sum(transformed > 0) <= config['max_blob_size']
 
-        
+
 @pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 22}, {"neighbourhood": 26}])
 def test_blob_surface_transform(config):
     transforms = BlobSurfaceTransform(config)
     for blob in blobs():
         transformed = transforms.preprocess(blob)
         assert transformed.shape == blob.shape
-        assert np.sum(transformed > 0) <= np.sum(transformed > 0)
+        assert np.sum(transformed > 0) <= np.sum(blob > 0)
 
 
 @pytest.mark.parametrize("config", [{"max_blob_size": 200}, {"max_blob_size": 2000}, {"max_blob_size": 10000}])
@@ -46,5 +46,19 @@ def test_random_selection(config):
     for blob in blobs():
         transformed = transforms.preprocess(blob)
         assert transformed.shape == blob.shape
-        assert np.sum(transformed > 0) <= np.sum(transformed > 0)
+        if np.sum(blob > 0) > config["max_blob_size"]:
+            assert np.sum(transformed > 0) == config["max_blob_size"]
+        else:
+            assert np.sum(transformed > 0) == np.sum(blob > 0)
 
+
+@pytest.mark.parametrize("config", [{"max_blob_size": 200}, {"max_blob_size": 1000}, {"max_blob_size": 2000}])
+def test_clustering(config):
+    transforms = ClusteringTransform(config)
+    for blob in blobs():
+        transformed = transforms.preprocess(blob)
+        assert transformed.shape == blob.shape
+        if np.sum(blob > 0) > config["max_blob_size"]:
+            assert np.sum(transformed > 0) == config["max_blob_size"]
+        else:
+            assert np.sum(transformed > 0) == np.sum(blob > 0)

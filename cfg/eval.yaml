@@ -1,7 +1,8 @@
 model: TransLoc3D
 statedict_path: ../best.pt
 device: cuda
-dataset_path: ../data/holdout.csv
+dataset_dir: ../data/blobs_full
+dataset_file: ../data/holdout.csv
 batch_size: 64
 no_workers: 8
 epochs: 100

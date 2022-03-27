@@ -1,7 +1,6 @@
-import os
 from abc import ABC, abstractmethod
 
-from typing import Dict, Union, Callable
+from typing import Callable, Dict, Tuple, Union
 
 import numpy as np
 import itertools
@@ -9,9 +8,9 @@ import math
 from skimage.measure import marching_cubes
 
 from scipy.ndimage import generic_filter
+from sklearn.cluster import KMeans
 
 from plotting import plot_interactive_trisurf
-
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -74,7 +73,7 @@ class BlobSurfaceTransform(Transform):
         return _masks[int(self.neighbourhood)]
 
     @staticmethod
-    def _filter(neighbourhood: np.ndarray) -> None:
+    def _filter(neighbourhood: np.ndarray) -> float:
         if np.any(neighbourhood == 0):
             return neighbourhood[int(neighbourhood.shape[0] / 2)]
         return 0.0
@@ -96,6 +95,45 @@ class BlobSurfaceTransform(Transform):
         return blob
 
 
+class ClusteringTransform(Transform):
+    """
+    A class that limits the number of voxels in the blob using k-means clustering.
+
+    :param config: has to contain "max_blob_size" (maximal number of nonzero voxels in the blob)
+    """
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        """
+        performs kmeans clustering on given blob
+        :param blob: blob to be processed
+        :type blob: np.ndarray
+        :returns: processed blob with number of voxels limited to max_blob_size. If the value of "max_blob_size" is
+        greater than the number of nonzero voxels in blob, new blob with nonzero voxels being clusters' centers is
+        returned. Otherwise, when the value of "max_blob_size" is less or equal to the number of nonzero voxels in the
+        blob, there are no modifications made and the whole blob is returned.
+        :return type: np.ndarray
+        """
+        if self.__dict__.get('max_blob_size') is None:
+            raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
+        coordinates = np.transpose(np.nonzero(blob))
+        features = blob[np.nonzero(blob)]
+        if coordinates.shape[0] <= self.max_blob_size:
+            return blob
+        else:
+            kmeans = KMeans(n_clusters=self.max_blob_size, random_state=23).fit(coordinates)
+            features_clusters = np.array([features[kmeans.labels_ == i].mean() for i in np.unique(kmeans.labels_)])
+            new_blob = self._create_new_blob(blob.shape, kmeans.cluster_centers_, features_clusters)
+            return new_blob
+
+    @staticmethod
+    def _create_new_blob(shape: Tuple[int], coordinates: np.ndarray, features: np.ndarray) -> np.ndarray:
+        new_blob = np.zeros(shape)
+        coordinates = np.around(coordinates).astype(int)
+        coordinates = tuple(np.transpose(coordinates))
+        new_blob[coordinates] = features
+        return new_blob
+
+
 class RandomSelectionTransform(Transform):
     """
     A class that limit voxels in the blob by drawing non-zero voxels. This class extends `Transformer` class.
@@ -110,6 +148,8 @@ class RandomSelectionTransform(Transform):
         "max_blob_size" whole blob, without modification is returned.
         :return type: np.ndarray
         """
+        if self.__dict__.get('max_blob_size') is None:
+            raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
         non_zeros = blob.nonzero()
         if non_zeros[0].shape[0] <= self.max_blob_size:
             return blob
@@ -124,8 +164,8 @@ class RandomSelectionTransform(Transform):
         mask[x, y, z] = 1.0
 
         return blob * mask
-        
-    
+
+
 class UniformSelectionTransform(Transform):
     """
     A class that limits the number of voxels in the blob sampling only the middle voxels within n x n x n blocks.
@@ -205,7 +245,7 @@ class UniformSelectionTransform(Transform):
         nonzero = self._nonzero(blob)
         if nonzero <= self.max_blob_size:
             return blob
-        scale = (nonzero / self.max_blob_size)**(1/3)
+        scale = (nonzero / self.max_blob_size) ** (1 / 3)
         scale = math.ceil(scale)
         processed_blob = blob
         while self._nonzero(processed_blob) > self.max_blob_size:
@@ -216,6 +256,7 @@ class UniformSelectionTransform(Transform):
 
 TRANSFORMS = {
     "BlobSurfaceTransform": BlobSurfaceTransform,
+    "ClusteringTransform": ClusteringTransform,
     "RandomSelectionTransform": RandomSelectionTransform,
     "UniformSelectionTransform": UniformSelectionTransform
 }
