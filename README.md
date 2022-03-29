@@ -55,3 +55,19 @@ with <path-to-folder> pointing to the folder containing data folder and cloned l
     - thanks to the above, all commits merged into the `main` branch will be applied to the specific branch
 
 ![update branch](static/readme-images/update-branch.jpg "update branch")
+
+## Data
+
+### Labels (.csv)
+
+- All [[download](https://ligands.blob.core.windows.net/ligands/cmb_blob_labels.csv)]
+- Train set [[download](https://ligands.blob.core.windows.net/ligands/train.csv)]
+- Holdout [[download](https://ligands.blob.core.windows.net/ligands/holdout.csv)]
+
+### Datasets
+
+- Raw [[download](https://ligands.blob.core.windows.net/ligands/cmb_blob_labels.csv)]
+- Surface (neighbourhood=22) + uniform selection (max_blob_size=2000,
+  method=basic) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_basic.tar.gz)]
+- Surface (neighbourhood=22) + uniform selection (max_blob_size=2000,
+  method=max) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_max.tar.gz)]

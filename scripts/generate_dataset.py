@@ -1,6 +1,8 @@
 import multiprocessing as mp
 import os
+import sys
 from datetime import datetime
+from typing import Tuple
 
 import numpy as np
 
@@ -8,7 +10,7 @@ from cfg import read_config
 from pipeline import Pipeline
 
 
-def main(x) -> None:
+def main(x: Tuple[int, str]) -> None:
     idx, f_name = x
     input_path = os.path.join(input_dir, f_name)
     blob = np.load(input_path)["blob"]
@@ -16,7 +18,7 @@ def main(x) -> None:
     output_path = os.path.join(output_dir, f_name)
     np.savez_compressed(output_path, blob=blob)
     if not idx % 100:
-        with open("../log/generate_dataset.txt", "a") as fp:
+        with open("../logs/generate_dataset.txt", "a") as fp:
             fp.write(f"{idx + cfg['start']},{datetime.now()}\n")
 
 
@@ -27,7 +29,7 @@ if __name__ == "__main__":
 
     output_dir = cfg["output_dir"]
     os.makedirs(output_dir, exist_ok=True)
-    os.makedirs("../log", exist_ok=True)
+    os.makedirs("../logs", exist_ok=True)
 
     transformation_pipeline = Pipeline(cfg["steps"])
 
