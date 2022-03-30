@@ -64,7 +64,6 @@ class LigandDataset(Dataset):
         blob = np.load(blob_path)["blob"]
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)
-        features = (features - features.mean()) / features.std()
         return (coordinates, features, label)
 
 
