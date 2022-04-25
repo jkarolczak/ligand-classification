@@ -96,7 +96,9 @@ class ClusteringTransform(Transform):
     """
     A class that limits the number of voxels in the blob using k-means clustering.
 
-    :param config: has to contain "max_blob_size" (maximal number of nonzero voxels in the blob)
+    :param config: has to contain "max_blob_size" (maximal number of nonzero voxels in the blob),
+    "n_init" (number of time the k-means algorithm will be run with different centroid seeds),
+    "max_iter" (maximum number of iterations of the k-means algorithm for a single run)
     """
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
@@ -112,12 +114,19 @@ class ClusteringTransform(Transform):
         """
         if self.__dict__.get('max_blob_size') is None:
             raise ValueError("{} requires 'max_blob_size' key in config dictionary".format(type(self).__name__))
+        if self.__dict__.get('n_init') is None:
+            raise ValueError("{} requires 'n_init' key in config dictionary".format(type(self).__name__))
+        if self.__dict__.get('max_iter') is None:
+            raise ValueError("{} requires 'max_iter' key in config dictionary".format(type(self).__name__))
         coordinates = np.transpose(np.nonzero(blob))
         features = blob[np.nonzero(blob)]
         if coordinates.shape[0] <= self.max_blob_size:
             return blob
         else:
-            kmeans = KMeans(n_clusters=self.max_blob_size, random_state=23).fit(coordinates)
+            kmeans = KMeans(n_clusters=self.max_blob_size,
+                            n_init=self.n_init,
+                            max_iter=self.max_iter,
+                            random_state=23).fit(coordinates)
             features_clusters = np.array([features[kmeans.labels_ == i].mean() for i in np.unique(kmeans.labels_)])
             new_blob = self._create_new_blob(blob.shape, kmeans.cluster_centers_, features_clusters)
             return new_blob

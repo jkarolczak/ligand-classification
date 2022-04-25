@@ -52,7 +52,10 @@ def test_random_selection(config):
             assert np.sum(transformed > 0) == np.sum(blob > 0)
 
 
-@pytest.mark.parametrize("config", [{"max_blob_size": 200}, {"max_blob_size": 1000}, {"max_blob_size": 2000}])
+@pytest.mark.parametrize("config", [
+    {"max_blob_size": 200, "n_init": 1, "max_iter": 5},
+    {"max_blob_size": 1000, "n_init": 1, "max_iter": 5},
+    {"max_blob_size": 2000, "n_init": 1, "max_iter": 5}])
 def test_clustering(config):
     transforms = ClusteringTransform(config)
     for blob in blobs():
