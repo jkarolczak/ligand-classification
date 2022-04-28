@@ -10,6 +10,8 @@ from cfg import read_config
 from data import LigandDataset, dataset_split, collation_fn
 
 if __name__ == "__main__":
+    torch.manual_seed(23)
+
     cfg = read_config("../cfg/train.yaml")
 
     device = torch.device("cuda" if torch.cuda.is_available() and cfg["device"] != "cpu" else "cpu")
@@ -18,6 +20,10 @@ if __name__ == "__main__":
     run = log.get_run()
 
     dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"])
+
+    run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
+    run["config/batch_accum"] = cfg["accum_iter"]
+    run["config/batch_size"] = cfg["batch_size"]
 
     train, test = dataset_split(dataset=dataset)
 
