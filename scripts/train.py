@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"])
+    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], sample_size=cfg["dataset_sample_size"])
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
     run["config/batch_accum"] = cfg["accum_iter"]
