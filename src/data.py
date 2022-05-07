@@ -1,4 +1,5 @@
 import os
+import random
 from copy import deepcopy
 from random import seed
 from typing import Tuple
@@ -51,18 +52,42 @@ class LigandDataset(Dataset):
         If specified, limit the maximum number of instances of each class up to sample_size
         """
         if sample_size:
-            self.class_counter = dict(zip(list(self.encoder.classes_), [0 for _ in range(len(self.encoder.classes_))]))
-            files = []
-            labels = []
-            for file, class_name in zip(self.files, self.labels_names):
-                if self.class_counter[class_name] < sample_size:
-                    self.class_counter[class_name] += 1
-                    files.append(file)
-                    labels.append(class_name)
-                else:
-                    pass
-            self.files = files
-            self.labels = self.encoder.transform(labels)
+            self.sample_size = sample_size
+            self.class_counter = None
+            # random seed that surely won't be encountered during training (no such epoch number)
+            self.undersample(2137)
+
+    def undersample(self, seed: int = None) -> None:
+        """
+        a utility method to create a dataset with maximum of 'sample_size' instances of each class
+
+        :param seed: integer to be used as the random seed, by default it should simply be epoch number in the training
+        loop
+        """
+        random.seed(seed)
+
+        # initialize to default values -> entire dataset
+        self.files = list(self.file_ligand_map.keys())
+        self.labels = self.encoder.fit_transform(self.labels_names)
+
+        files = []
+        labels = []
+
+        # pairwise shuffle of files and labels
+        tmp = list(zip(self.files, self.labels))
+        random.shuffle(tmp)
+        self.files, self.labels = zip(*tmp)
+
+        # initialize a dictionary with key = class, value = number of instances
+        self.class_counter = dict(zip(list(self.encoder.classes_), [0 for _ in range(len(self.encoder.classes_))]))
+        for file, class_name in zip(self.files, self.labels_names):
+            if self.class_counter[class_name] < self.sample_size:
+                self.class_counter[class_name] += 1
+                files.append(file)
+                labels.append(class_name)
+
+        self.files = files
+        self.labels = self.encoder.transform(labels)
 
     def _get_coords_feats(self, batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
@@ -135,12 +160,11 @@ def dataset_split(
 
 
 if __name__ == '__main__':
-    dataset = LigandDataset('/home/witold/PycharmProjects/ligand-classification/data/blobs_full',
-                            labels_file_path='/home/witold/PycharmProjects/ligand-classification/data/labels_three.csv',
-                            sample_size=10
-                            )
-
-    train_dataloader = DataLoader(dataset=dataset, batch_size=3, collate_fn=collation_fn,
-                                  num_workers=1, shuffle=True)
-    for idx, (coords, feats, labels) in enumerate(train_dataloader):
-        print(idx, labels.shape)
+    dataset = LigandDataset('../data/blobs_full', '../data/labels_three.csv', sample_size=10)
+    print(f"initial dataset size {len(dataset)}")
+    for e in range(10):
+        dataset.undersample(e)
+        print(f"after undersampling in epoch {e} dataset size {len(dataset)}")
+        train_dataloader = DataLoader(dataset, batch_size=2, collate_fn=collation_fn, num_workers=2, shuffle=True)
+        for idx, (coords, feats, labels) in enumerate(train_dataloader):
+            print(idx, coords.shape, feats.shape, labels.shape)
