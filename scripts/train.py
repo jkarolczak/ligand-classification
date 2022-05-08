@@ -43,6 +43,7 @@ if __name__ == "__main__":
 
     accum_iter = cfg["accum_iter"]
     for e in range(cfg["epochs"]):
+        train_dataloader.dataset.undersample(e)
         model.train()
         for idx, (coords, feats, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)

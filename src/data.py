@@ -157,14 +157,3 @@ def dataset_split(
     test.files, test.labels = files_test, labels_test
 
     return train, test
-
-
-if __name__ == '__main__':
-    dataset = LigandDataset('../data/blobs_full', '../data/labels_three.csv', sample_size=10)
-    print(f"initial dataset size {len(dataset)}")
-    for e in range(10):
-        dataset.undersample(e)
-        print(f"after undersampling in epoch {e} dataset size {len(dataset)}")
-        train_dataloader = DataLoader(dataset, batch_size=2, collate_fn=collation_fn, num_workers=2, shuffle=True)
-        for idx, (coords, feats, labels) in enumerate(train_dataloader):
-            print(idx, coords.shape, feats.shape, labels.shape)
