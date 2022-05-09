@@ -1,7 +1,10 @@
-    addict==2.4.0
-    numpy==1.22.3
-    pandas==1.4.1
-    PyYAML==6.0
-    scikit-image==0.19.2
-    scikit-learn==1.0.2
-    yapf==0.32.0
+addict==2.4.0
+numpy==1.22.3
+pandas==1.4.1
+PyYAML==6.0
+scikit-image==0.19.2
+scikit-learn==1.0.2
+yapf==0.32.0
+scipy~=1.8.0
+plotly~=5.6.0
+pytest~=7.1.0

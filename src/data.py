@@ -1,26 +1,28 @@
 import os
+import random
 from copy import deepcopy
-from random import choices, seed
+from random import seed
 from typing import Tuple
 
 import MinkowskiEngine as ME
 import numpy as np
 import pandas as pd
 import torch
-from torch import tensor
-from torch.utils.data import Dataset
-from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
+from torch import tensor
+from torch.utils.data import Dataset, DataLoader
 
 
 class LigandDataset(Dataset):
-    """A class to represent a ligands dataset."""
+    """A class to represent a ligands' dataset."""
 
     def __init__(
             self,
             annotations_file_path: str,
             labels_file_path: str = None,
-            rng_seed: int = 23
+            rng_seed: int = 23,
+            sample_size: int = None
     ):
         """
         :param annotations_file_path: path to the directory containing directory
@@ -28,6 +30,7 @@ class LigandDataset(Dataset):
         :param labels_file_path: string with path to the file containing csv definition
         of the dataset, default '{annotations_file_path}/cmb_blob_labels.csv', this
         file has to contain columns 'ligands' and 'blob_map_file'
+        :param sample_size: maximal number of instances of each class present in the dataset
         """
         seed(rng_seed)
         self.annotations_file_path = annotations_file_path
@@ -42,9 +45,49 @@ class LigandDataset(Dataset):
             "ligand"
         ]
         self.files = list(self.file_ligand_map.keys())
-        self.labels = list(self.file_ligand_map.values())
+        self.labels_names = list(self.file_ligand_map.values())
         self.encoder = LabelBinarizer()
-        self.labels = self.encoder.fit_transform(self.labels)
+        self.labels = self.encoder.fit_transform(self.labels_names)
+        """
+        If specified, limit the maximum number of instances of each class up to sample_size
+        """
+        if sample_size:
+            self.sample_size = sample_size
+            self.class_counter = None
+            # random seed that surely won't be encountered during training (no such epoch number)
+            self.undersample(2137)
+
+    def undersample(self, seed: int = None) -> None:
+        """
+        a utility method to create a dataset with maximum of 'sample_size' instances of each class
+
+        :param seed: integer to be used as the random seed, by default it should simply be epoch number in the training
+        loop
+        """
+        random.seed(seed)
+
+        # initialize to default values -> entire dataset
+        self.files = list(self.file_ligand_map.keys())
+        self.labels = self.encoder.fit_transform(self.labels_names)
+
+        files = []
+        labels = []
+
+        # pairwise shuffle of files and labels
+        tmp = list(zip(self.files, self.labels))
+        random.shuffle(tmp)
+        self.files, self.labels = zip(*tmp)
+
+        # initialize a dictionary with key = class, value = number of instances
+        self.class_counter = dict(zip(list(self.encoder.classes_), [0 for _ in range(len(self.encoder.classes_))]))
+        for file, class_name in zip(self.files, self.labels_names):
+            if self.class_counter[class_name] < self.sample_size:
+                self.class_counter[class_name] += 1
+                files.append(file)
+                labels.append(class_name)
+
+        self.files = files
+        self.labels = self.encoder.transform(labels)
 
     def _get_coords_feats(self, batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
@@ -64,7 +107,7 @@ class LigandDataset(Dataset):
         blob = np.load(blob_path)["blob"]
         blob = tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)
-        return (coordinates, features, label)
+        return coordinates, features, label
 
 
 def collation_fn(blobel):
