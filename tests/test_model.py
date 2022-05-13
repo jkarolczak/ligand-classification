@@ -1,3 +1,4 @@
+import torch
 import pytest
 import MinkowskiEngine as ME
 
@@ -13,6 +14,7 @@ def batch():
     return ME.SparseTensor(feats, coords.contiguous())
 
 
+@pytest.mark.skip
 def test_softmax(batch):
     cfg = read_config("../cfg/train.yaml")
     model = models.create(cfg["model"])
