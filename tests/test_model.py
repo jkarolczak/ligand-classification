@@ -7,7 +7,6 @@
 # from data import LigandDataset
 # 
 # 
-# @pytest.fixture
 # def batch():
 #     x = torch.ones((4, 8, 8, 8), dtype=torch.float32)
 #     coords, feats = LigandDataset._get_coords_feats(x)
