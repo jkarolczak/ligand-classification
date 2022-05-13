@@ -89,7 +89,8 @@ class LigandDataset(Dataset):
         self.files = files
         self.labels = self.encoder.transform(labels)
 
-    def _get_coords_feats(self, batch: torch.Tensor) -> ME.SparseTensor:
+    @staticmethod
+    def _get_coords_feats(batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
         features = []
         for idx in coordinates:
