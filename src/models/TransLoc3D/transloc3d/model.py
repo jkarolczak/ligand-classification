@@ -28,8 +28,8 @@ class ECALayer(nn.Module):
         # Apply 1D convolution along the channel dimension
         y = (
             self.conv(y_sparse.F.unsqueeze(-1).transpose(-1, -2))
-            .transpose(-1, -2)
-            .squeeze(-1)
+                .transpose(-1, -2)
+                .squeeze(-1)
         )
         # y is (batch_size, channels) tensor
 
@@ -286,6 +286,22 @@ class TransLoc3DFPN(nn.Module):
         return x
 
 
+class ProbModule(nn.Module):
+    def __init__(self, features: int, activation: nn.Module = nn.ReLU()):
+        super().__init__()
+        self.features = features
+        self.net = nn.Sequential(
+            nn.Linear(self.features, self.features),
+            activation,
+            nn.Linear(self.features, self.features),
+            nn.Softmax(dim=-1)
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.net(x)
+        return x
+
+
 class TransLoc3D(nn.Module):
     def __init__(self, cfg):
         super().__init__()
@@ -308,10 +324,12 @@ class TransLoc3D(nn.Module):
             raise NotImplementedError(
                 "Pool type has not implemented: {}".format(cfg.pool_cfg.type)
             )
+        self.prob_module = ProbModule(cfg.pool_cfg.out_channels)
 
     def forward(self, x):
         x = self.backbone(x)
         # assert len(x.shape) == 2
         # x: [bs, feat_size]
         x = self.pool(x)
+        x = self.prob_module(x)
         return x
