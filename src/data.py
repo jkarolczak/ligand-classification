@@ -59,8 +59,6 @@ class LigandDataset(Dataset):
         self.min_size = min_size
         self.max_size = max_size
 
-        self.sample(2137)
-
     def sample(self, seed: int = None) -> None:
         """
         a utility method to create a dataset with maximum of 'max_size' instances of each class and minimum of
