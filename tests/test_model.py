@@ -13,9 +13,9 @@
 #     coords, feats = LigandDataset._get_coords_feats(x)
 #     return ME.SparseTensor(feats, coords.contiguous())
 # 
-# 
+#
 # def test_softmax(batch):
 #     cfg = read_config("../cfg/train.yaml")
 #     model = models.create(cfg["model"])
 #     y_hat = model(batch)
-#     assert y_hat.sum(-1).mean() == 2
+#     assert y_hat.sum(-1).mean() == 1
