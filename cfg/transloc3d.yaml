@@ -19,7 +19,8 @@ backbone_cfg:
 pool_cfg:
   type: NetVlad
   in_channels: 512
-  out_channels: 219
+  out_channels: 1024
+  out_classes: 219
   cluster_size: 64
   gating: True
   add_bn: True

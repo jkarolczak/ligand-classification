@@ -7,13 +7,13 @@
 # from data import LigandDataset
 # 
 # 
+# @pytest.fixture
 # def batch():
 #     x = torch.ones((4, 8, 8, 8), dtype=torch.float32)
 #     coords, feats = LigandDataset._get_coords_feats(x)
 #     return ME.SparseTensor(feats, coords.contiguous())
 # 
-# 
-# @pytest.mark.skip
+#
 # def test_softmax(batch):
 #     cfg = read_config("../cfg/train.yaml")
 #     model = models.create(cfg["model"])

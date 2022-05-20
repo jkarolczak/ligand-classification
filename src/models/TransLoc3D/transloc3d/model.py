@@ -287,13 +287,14 @@ class TransLoc3DFPN(nn.Module):
 
 
 class ProbModule(nn.Module):
-    def __init__(self, features: int, activation: nn.Module = nn.ReLU()):
+    def __init__(self, in_features: int, out_features: int, activation: nn.Module = nn.ReLU()):
         super().__init__()
-        self.features = features
+        self.in_features = in_features
+        self.out_features = out_features
         self.net = nn.Sequential(
-            nn.Linear(self.features, self.features),
+            nn.Linear(self.in_features, self.in_features),
             activation,
-            nn.Linear(self.features, self.features),
+            nn.Linear(self.in_features, self.out_features),
             nn.Softmax(dim=-1)
         )
 
@@ -324,7 +325,7 @@ class TransLoc3D(nn.Module):
             raise NotImplementedError(
                 "Pool type has not implemented: {}".format(cfg.pool_cfg.type)
             )
-        self.prob_module = ProbModule(cfg.pool_cfg.out_channels)
+        self.prob_module = ProbModule(cfg.pool_cfg.out_channels, cfg.pool_cfg.out_classes)
 
     def forward(self, x):
         x = self.backbone(x)
