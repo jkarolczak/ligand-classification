@@ -19,7 +19,8 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], sample_size=cfg["dataset_sample_size"])
+    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+                            max_size=cfg["dataset_max_size"])
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
     run["config/batch_accum"] = cfg["accum_iter"]
@@ -43,7 +44,7 @@ if __name__ == "__main__":
 
     accum_iter = cfg["accum_iter"]
     for e in range(cfg["epochs"]):
-        train_dataloader.dataset.undersample(e)
+        train_dataloader.dataset.sample(e)
         model.train()
         for idx, (coords, feats, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)

@@ -2,7 +2,8 @@ model: TransLoc3D
 device: cuda
 dataset_dir: ../data/blobs_full
 dataset_file: ../data/train.csv
-dataset_sample_size: 2000
+dataset_min_size: 2000
+dataset_max_size: 5000
 batch_size: 64
 no_workers: 8
 epochs: 100
