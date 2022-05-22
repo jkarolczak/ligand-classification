@@ -44,6 +44,8 @@ def config(
 
     run["config/dataset/instances"] = dataset.labels.shape[0]
     run["config/dataset/labels"] = dataset.labels.shape[1]
+    run["config/dataset/min_size"] = dataset.min_size
+    run["config/dataset/max_size"] = dataset.max_size
 
     run["config/criterion/class"] = type(criterion).__name__
     run["config/optimizer/class"] = type(optimizer).__name__
