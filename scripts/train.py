@@ -1,6 +1,8 @@
 import gc
+import random
 
 import torch
+import numpy as np
 import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
@@ -8,6 +10,13 @@ import models
 import log
 from cfg import read_config
 from data import LigandDataset, dataset_split, collation_fn
+
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2 ** 32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
 
 if __name__ == "__main__":
     torch.manual_seed(23)
@@ -28,10 +37,15 @@ if __name__ == "__main__":
 
     train, test = dataset_split(dataset=dataset)
 
+    g_train, g_test = torch.Generator(), torch.Generator()
+    g_train.manual_seed(42)
+    g_test.manual_seed(42)
     train_dataloader = DataLoader(dataset=train, batch_size=cfg["batch_size"], collate_fn=collation_fn,
-                                  num_workers=cfg["no_workers"], shuffle=True)
+                                  num_workers=cfg["no_workers"], worker_init_fn=seed_worker, generator=g_train,
+                                  shuffle=True)
     test_dataloader = DataLoader(dataset=test, batch_size=cfg["batch_size"], collate_fn=collation_fn,
-                                 num_workers=cfg["no_workers"], shuffle=True)
+                                 num_workers=cfg["no_workers"], worker_init_fn=seed_worker, generator=g_test,
+                                 shuffle=True)
 
     model = models.create(cfg["model"])
     model.to(device)
