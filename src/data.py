@@ -167,6 +167,19 @@ def dataset_split(
     train = deepcopy(dataset)
     test = deepcopy(dataset)
     train.files, train.labels = files_train, labels_train
+    train.labels_names = train.encoder.inverse_transform(train.labels)
+
+    train_label_files_map = collections.defaultdict(list)
+    for k, v in zip(train.files, train.labels_names):
+        train_label_files_map[v].append(k)
+    train.label_files_map = train_label_files_map
+
     test.files, test.labels = files_test, labels_test
+    test.labels_names = test.encoder.inverse_transform(test.labels)
+
+    test_label_files_map = collections.defaultdict(list)
+    for k, v in zip(test.files, test.labels_names):
+        test_label_files_map[v].append(k)
+    test.label_files_map = test_label_files_map
 
     return train, test
