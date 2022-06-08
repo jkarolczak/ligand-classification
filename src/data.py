@@ -178,7 +178,7 @@ def dataset_split(
     test.labels_names = test.encoder.inverse_transform(test.labels)
 
     test_label_files_map = collections.defaultdict(list)
-    for k, v in zip(teset.files, test.labels_names):
+    for k, v in zip(test.files, test.labels_names):
         test_label_files_map[v].append(k)
     test.label_files_map = test_label_files_map
 
