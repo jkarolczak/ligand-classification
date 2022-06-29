@@ -6,9 +6,12 @@ num_top_down: 2
 conv0_kernel_size: 5
 feature_size: 256
 block: ECABasicBlock
-pooling: GeM
+pooling: netvlad # see src/models/MinkLoc3Dv2/models/layers/pooling_wrapper.py for available options
 
 coordinates: cartesian # ?
 quantization_step: 0.01 # ?
 
 normalize_embeddings: False # ?
+
+input_dim: 1
+output_dim: 219
