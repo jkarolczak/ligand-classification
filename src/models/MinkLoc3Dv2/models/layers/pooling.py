@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import MinkowskiEngine as ME
 
-from models.layers.netvlad import NetVLADLoupe
+from .netvlad import NetVLADLoupe
 
 
 class MAC(nn.Module):

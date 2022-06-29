@@ -3,7 +3,7 @@
 import torch.nn as nn
 import MinkowskiEngine as ME
 from MinkowskiEngine.modules.resnet_block import BasicBlock
-from models.resnet import ResNetBase
+from .resnet import ResNetBase
 
 
 class MinkFPN(ResNetBase):

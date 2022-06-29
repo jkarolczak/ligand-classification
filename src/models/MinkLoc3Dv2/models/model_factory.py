@@ -2,18 +2,18 @@
 
 import torch.nn as nn
 
-from models.minkloc import MinkLoc
-from misc.utils import ModelParams
+from .minkloc import MinkLoc
+from ..misc.utils import ModelParams
 from MinkowskiEngine.modules.resnet_block import BasicBlock, Bottleneck
-from models.layers.eca_block import ECABasicBlock
-from models.minkfpn import MinkFPN
-from models.layers.pooling_wrapper import PoolingWrapper
+from .layers.eca_block import ECABasicBlock
+from .minkfpn import MinkFPN
+from .layers.pooling_wrapper import PoolingWrapper
 
 
 def model_factory(model_params: ModelParams):
-    in_channels = 1
+    in_channels = model_params.input_dim
 
-    if model_params.model == 'MinkLoc':
+    if model_params.model == 'MinkLoc3Dv2':
         block_module = create_resnet_block(model_params.block)
         backbone = MinkFPN(in_channels=in_channels, out_channels=model_params.feature_size,
                            num_top_down=model_params.num_top_down, conv0_kernel_size=model_params.conv0_kernel_size,

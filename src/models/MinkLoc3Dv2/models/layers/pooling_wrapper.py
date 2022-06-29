@@ -1,4 +1,4 @@
-from models.layers.pooling import MAC, SPoC, GeM, NetVLADWrapper
+from .pooling import MAC, SPoC, GeM, NetVLADWrapper
 import torch.nn as nn
 import MinkowskiEngine as ME
 

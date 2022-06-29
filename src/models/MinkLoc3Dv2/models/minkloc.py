@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import MinkowskiEngine as ME
 
-from models.layers.pooling_wrapper import PoolingWrapper
+from .layers.pooling_wrapper import PoolingWrapper
 
 
 class MinkLoc(torch.nn.Module):
