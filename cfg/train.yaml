@@ -1,4 +1,4 @@
-model: TransLoc3D
+model: MinkLoc3Dv2
 device: cuda
 dataset_dir: ../data/blobs_full
 dataset_file: ../data/train.csv
