@@ -18,16 +18,18 @@ class MinkLoc(torch.nn.Module):
         self.stats = {}
 
     def forward(self, batch):
-        x = ME.SparseTensor(batch['features'], coordinates=batch['coords'])
-        x = self.backbone(x)
-        # x is (num_points, n_features) tensor
+        # TODO: review
+        # x = ME.SparseTensor(batch['features'], coordinates=batch['coords']) # <- original
+        # x = self.backbone(x) # <- original
+        x = self.backbone(batch)  # <- mine
+        # x is (num_points, n_features) tensor # <- originally commented
         assert x.shape[1] == self.pooling.in_dim, f'Backbone output tensor has: {x.shape[1]} channels. ' \
                                                   f'Expected: {self.pooling.in_dim}'
         x = self.pooling(x)
         if hasattr(self.pooling, 'stats'):
             self.stats.update(self.pooling.stats)
 
-        #x = x.flatten(1)
+        # x = x.flatten(1) # <- originally commented
         assert x.dim() == 2, f'Expected 2-dimensional tensor (batch_size,output_dim). Got {x.dim()} dimensions.'
         assert x.shape[1] == self.pooling.output_dim, f'Output tensor has: {x.shape[1]} channels. ' \
                                                       f'Expected: {self.pooling.output_dim}'
@@ -35,8 +37,9 @@ class MinkLoc(torch.nn.Module):
         if self.normalize_embeddings:
             x = F.normalize(x, dim=1)
 
-        # x is (batch_size, output_dim) tensor
-        return {'global': x}
+        # x is (batch_size, output_dim) tensor # <- originally commented
+        return x  # <- mine
+        # return {'global': x} # TODO: <- review
 
     def print_info(self):
         print('Model class: MinkLoc')
