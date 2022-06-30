@@ -11,11 +11,10 @@ from cfg import read_config
 
 class ModelParams:
     def __init__(self, model_params_path):
-        # TODO: adjust to use our config parser
-        config = read_config(model_params_path)
-        # config = configparser.ConfigParser()
-        # config.read(model_params_path)
-        # params = config['MODEL']
+        config = read_config(model_params_path) # TODO: review <- mine
+        # config = configparser.ConfigParser() # <- original
+        # config.read(model_params_path)# <- original
+        # params = config['MODEL']# <- original
 
         self.model_params_path = model_params_path
         # self.model = params.get('model')
