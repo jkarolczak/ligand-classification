@@ -70,7 +70,7 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
 
     micro_recall = torchmetrics.functional.recall(preds, target, average="micro")
     micro_precision = torchmetrics.functional.precision(preds, target, average="micro")
-    micro_f1 = torchmetrics.functional.f1(preds, target, average="micro")
+    micro_f1 = torchmetrics.functional.classification.f_beta.f1_score(preds, target, average="micro")
 
     cohen_kappa = torchmetrics.functional.cohen_kappa(
         preds, target, num_classes=num_classes
