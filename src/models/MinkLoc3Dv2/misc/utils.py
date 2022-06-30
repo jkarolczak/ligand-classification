@@ -5,7 +5,7 @@ import configparser
 import time
 import numpy as np
 
-# from datasets.quantization import PolarQuantizer, CartesianQuantizer
+from .quantization import PolarQuantizer, CartesianQuantizer
 from cfg import read_config
 
 
@@ -25,20 +25,22 @@ class ModelParams:
         # Model dependent
         #######################################################################
 
-        # self.coordinates = params.get('coordinates', 'polar')
-        # assert self.coordinates in ['polar', 'cartesian'], f'Unsupported coordinates: {self.coordinates}'
-        #
-        # if 'polar' in self.coordinates:
-        #     # 3 quantization steps for polar coordinates: for sectors (in degrees), rings (in meters) and z coordinate (in meters)
-        #     self.quantization_step = tuple([float(e) for e in params['quantization_step'].split(',')])
-        #     assert len(self.quantization_step) == 3, f'Expected 3 quantization steps: for sectors (degrees), rings (meters) and z coordinate (meters)'
-        #     self.quantizer = PolarQuantizer(quant_step=self.quantization_step)
-        # elif 'cartesian' in self.coordinates:
-        #     # Single quantization step for cartesian coordinates
-        #     self.quantization_step = params.getfloat('quantization_step')
-        #     self.quantizer = CartesianQuantizer(quant_step=self.quantization_step)
-        # else:
-        #     raise NotImplementedError(f"Unsupported coordinates: {self.coordinates}")
+        self.coordinates = config['coordinates']
+        assert self.coordinates in ['polar', 'cartesian'], f'Unsupported coordinates: {self.coordinates}'
+
+        if 'polar' in self.coordinates:
+            # 3 quantization steps for polar coordinates: for sectors (in degrees), rings (in meters) and z
+            # coordinate (in meters)
+            self.quantization_step = tuple([float(e) for e in config['quantization_step']])
+            assert len(self.quantization_step) == 3, f'Expected 3 quantization steps: for sectors (degrees), rings (' \
+                                                     f'meters) and z coordinate (meters) '
+            self.quantizer = PolarQuantizer(quant_step=self.quantization_step)
+        elif 'cartesian' in self.coordinates:
+            # Single quantization step for cartesian coordinates
+            self.quantization_step = config['quantization_step']
+            self.quantizer = CartesianQuantizer(quant_step=self.quantization_step)
+        else:
+            raise NotImplementedError(f"Unsupported coordinates: {self.coordinates}")
 
         # Use cosine similarity instead of Euclidean distance
         # When Euclidean distance is used, embedding normalization is optional
