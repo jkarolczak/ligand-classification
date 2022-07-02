@@ -64,6 +64,9 @@ if __name__ == "__main__":
 
         epoch(run=run, preds=predictions, target=groundtruth, epoch_num=0)
         run['seed'] = rng_seed
+        run['config/dataset/name'] = cfg["dataset_file"]
+        run['config/model/name'] = cfg["model"]
+        run['config/model/file'] = cfg["statedict_path"]
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
     df.to_csv("predictions.csv")
