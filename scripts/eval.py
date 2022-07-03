@@ -1,5 +1,4 @@
 import pickle
-import sys
 from random import randrange
 
 import pandas as pd
@@ -23,7 +22,7 @@ if __name__ == "__main__":
     run = get_run(tags=["holdout"])
     run["seed"] = rng_seed
 
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], max_blob_size=2000, rng_seed=rng_seed)
+    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=cfg["batch_size"],
@@ -64,7 +63,7 @@ if __name__ == "__main__":
             result_predictions.extend(dataset.encoder.inverse_transform(preds_encoded))
 
         epoch(run=run, preds=predictions, target=groundtruth, epoch_num=0)
-        run['seed'].log(rng_seed)
+        run['seed'] = rng_seed
 
     df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
     df.to_csv("predictions.csv")
