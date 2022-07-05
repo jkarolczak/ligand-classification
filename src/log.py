@@ -70,7 +70,7 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
 
     micro_recall = torchmetrics.functional.recall(preds, target, average="micro")
     micro_precision = torchmetrics.functional.precision(preds, target, average="micro")
-    micro_f1 = torchmetrics.functional.f1(preds, target, average="micro")
+    micro_f1 = torchmetrics.functional.classification.f_beta.f1_score(preds, target, average="micro")
 
     cohen_kappa = torchmetrics.functional.cohen_kappa(
         preds, target, num_classes=num_classes
@@ -88,7 +88,7 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
     run["eval/cross_entropy"].log(cross_entropy)
 
     time = str(datetime.now()).replace(' ', '-')
-    line = f"{time},{epoch_num}"
+    line = f"{time},{epoch_num},"
     for metric in [accuracy, top5_accuracy, top10_accuracy, top20_accuracy, macro_recall, micro_recall, micro_precision,
                    micro_f1, cohen_kappa, cross_entropy]:
         line += f"{metric},"

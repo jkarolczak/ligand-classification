@@ -1,9 +1,10 @@
 import torch.nn as nn
 
-from .create import transloc3d
+from .create import transloc3d, minkloc3dv2
 
 MODELS = {
-    "transloc3d": transloc3d
+    "transloc3d": transloc3d,
+    "minkloc3dv2": minkloc3dv2
 }
 
 
