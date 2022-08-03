@@ -263,58 +263,16 @@ class UniformSelectionTransform(Transform):
 
 # WHEN RUNNING A TEST, BEFORE AND AFTER PLOTS ARE SHOWN
 
-def plot_volume_3d(blob, title, opacity=0.1, surface_count=15, colorscale="brbg"):
+def plot_3d_pointcloud(coordinates: np.ndarray) -> None:
     """
-    REMOVE BEFORE MERGING, ONLY TO FACILITATE VALIDATION
+    remove before merging
     """
-    import plotly.graph_objects as go
+    import plotly.express as px
 
-    x, y, z = blob.shape
-    max_dim = max(x, y, z)
-    x_pad = (max_dim - x) / 2
-    y_pad = (max_dim - y) / 2
-    z_pad = (max_dim - z) / 2
+    x, y, z = coordinates.T
 
-    data = np.pad(
-        blob,
-        (
-            (int(np.ceil(x_pad)), int(np.floor(x_pad))),
-            (int(np.ceil(y_pad)), int(np.floor(y_pad))),
-            (int(np.ceil(z_pad)), int(np.floor(z_pad))),
-        ),
-        "constant",
-        constant_values=0,
-    )
-
-    X, Y, Z = np.mgrid[
-              -1: 1: max_dim * 1j, -1: 1: max_dim * 1j, -1: 1: max_dim * 1j
-              ]
-
-    fig = go.Figure(
-        data=go.Volume(
-            x=X.flatten(),
-            y=Y.flatten(),
-            z=Z.flatten(),
-            value=data.flatten(),
-            isomin=float(blob[blob > 0].min()),
-            isomax=float(blob[blob > 0].max()),
-            opacity=opacity,
-            surface_count=surface_count,
-            colorscale=colorscale,
-        )
-    )
-
-    fig.update_layout(
-        title={
-            "text": title,
-            "y": 0.9,
-            "x": 0.5,
-            "xanchor": "center",
-            "yanchor": "top",
-        }
-    )
-
-    return fig
+    fig = px.scatter_3d(x=x, y=y, z=z)
+    fig.show()
 
 
 class PCATransform(Transform):
@@ -326,23 +284,35 @@ class PCATransform(Transform):
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
         """
+        :param blob: input blob
+        :type blob: np.ndarray
+        :returns: transformed array (rotated with PCA)
+        :return type: np.ndarray
         https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca
         """
-        # TODO:
-        #  1. get covariance matrix? <- Państwą mogą skorzystać pewnie z jakiegoś PCA czy SVD i powinno wyjść to samo
-        #  2. eigenvalues, eigenvectors = np.linalg.eig(covariance)
-        #  3. result = blob @ eigenvectors ?
+        #  maybe it will be better to return tuple (coordinates, features) not rounding coordinates to integers,
+        #  in that case probably should be moved to data.py (?)
 
-        # fig = plot_volume_3d(blob, 'original')
-        # fig.show()
+        coordinates = np.transpose(np.nonzero(blob))
 
-        U, S, Vt = np.linalg.svd(blob)
+        plot_3d_pointcloud(coordinates)
+        features = blob[tuple(np.transpose(coordinates))]
 
-        # fig = plot_volume_3d(result, 'rotated')
-        # fig.show()
-        #
-        # return result
-        return blob
+        center_coords = coordinates - coordinates.mean(axis=0)
+        U, S, Vt = np.linalg.svd(center_coords)
+
+        result = center_coords @ Vt.T
+        translation_vector = -result.min(axis=0)
+        result += translation_vector + 5
+
+        result = np.around(result)
+        result = result.astype(int)
+        plot_3d_pointcloud(result)
+
+        new_blob = np.zeros((result.max(axis=0) + 5))
+        result_coord = tuple(np.transpose(result))
+        new_blob[result_coord] = features
+        return new_blob
 
 
 TRANSFORMS = {
