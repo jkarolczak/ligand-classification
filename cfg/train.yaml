@@ -1,9 +1,9 @@
 model: MinkLoc3Dv2
-device: cpu
+device: cuda
 dataset_dir: ../data/blobs_full
 dataset_file: ../data/labels_three.csv
 dataset_min_size: null
-dataset_max_size: 5
+dataset_max_size: null
 batch_size: 64
 no_workers: 8
 epochs: 2
