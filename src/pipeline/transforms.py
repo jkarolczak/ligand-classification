@@ -295,7 +295,7 @@ class PCATransform(Transform):
 
         coordinates = np.transpose(np.nonzero(blob))
 
-        plot_3d_pointcloud(coordinates)
+        # plot_3d_pointcloud(coordinates)
         features = blob[tuple(np.transpose(coordinates))]
 
         center_coords = coordinates - coordinates.mean(axis=0)
@@ -307,7 +307,7 @@ class PCATransform(Transform):
 
         result = np.around(result)
         result = result.astype(int)
-        plot_3d_pointcloud(result)
+        # plot_3d_pointcloud(result)
 
         new_blob = np.zeros((result.max(axis=0) + 5))
         result_coord = tuple(np.transpose(result))
