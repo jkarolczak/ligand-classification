@@ -22,7 +22,7 @@ def main(x: Tuple[int, str]) -> None:
             fp.write(f"{idx + cfg['start']},{datetime.now()}\n")
 
 
-if name == "main":
+if __name__ == "__main__":
     cfg = read_config("../cfg/generate_dataset.yaml")
     input_dir = cfg["input_dir"]
     files = os.listdir(input_dir)
