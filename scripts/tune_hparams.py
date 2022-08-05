@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
         log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)
 
-        accum_iter = train_cfg["accum_iter"]
+        accum_iter = int(train_cfg["accum_iter"])
         for e in range(train_cfg["epochs"]):
             train_dataloader.dataset.sample(e)
             model.train()
