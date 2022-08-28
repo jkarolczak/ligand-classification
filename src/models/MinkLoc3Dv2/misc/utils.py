@@ -12,7 +12,6 @@ from cfg import read_config
 class ModelParams:
     def __init__(self, model_params_path):
         config = read_config(model_params_path)
-
         self.model_params_path = model_params_path
         self.model = "MinkLoc3Dv2"
         self.output_dim = config['output_dim']      # Size of the final descriptor
