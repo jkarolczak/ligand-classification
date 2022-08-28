@@ -1,6 +1,5 @@
 import os
 
-import numpy as np
 import pytest
 
 from pipeline.transforms import *
@@ -94,7 +93,6 @@ def padding(array, xx, yy, zz):
     return np.pad(array, pad_width=((a, aa), (b, bb), (c, cc)), mode='constant')
 
 
-@pytest.mark.skip(reason="Ania.")
 def test_pca_transform():
     transforms = PCATransform()
     a, b = blobs("../static/pca-tests-blobs")
@@ -109,4 +107,4 @@ def test_pca_transform():
     a_rot_pad = padding(a_rotated, 100, 100, 100)
     b_rot_pad = padding(b_rotated, 100, 100, 100)
     rotated = np.sum(a_rot_pad - b_rot_pad)
-    assert before > rotated
+    assert np.abs(before) > np.abs(rotated)
