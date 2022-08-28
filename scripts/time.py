@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 
 import MinkowskiEngine as ME
@@ -8,14 +7,14 @@ from torch.utils.data import DataLoader
 
 import models
 from cfg import read_config
-from data import LigandDataset, collation_fn
+from data import SparseDataset, collation_fn
 
 if __name__ == "__main__":
     cfg = read_config("../cfg/time.yaml")
 
     device = torch.device("cpu")
     dataset_path = "../data/eff_test.csv"
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], max_blob_size=2000)
+    dataset = SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], max_blob_size=2000)
 
     model = models.create(cfg["model"])
     model.load_state_dict(torch.load("../best.pt"))

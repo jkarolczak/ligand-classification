@@ -1,15 +1,15 @@
 import gc
 import random
 
-import torch
-import numpy as np
 import MinkowskiEngine as ME
+import numpy as np
+import torch
 from torch.utils.data import DataLoader
 
-import models
 import log
+import models
 from cfg import read_config
-from data import LigandDataset, dataset_split, collation_fn
+from data import SparseDataset, dataset_split, collation_fn
 
 
 def seed_worker(worker_id):
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+    dataset = SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
                             max_size=cfg["dataset_max_size"])
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]

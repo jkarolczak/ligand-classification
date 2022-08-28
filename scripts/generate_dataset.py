@@ -1,6 +1,5 @@
 import multiprocessing as mp
 import os
-import sys
 from datetime import datetime
 from typing import Tuple
 
