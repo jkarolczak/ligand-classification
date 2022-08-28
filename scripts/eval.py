@@ -34,6 +34,8 @@ if __name__ == "__main__":
     with open("../encoder.pkl", "wb") as fp:
         pickle.dump(dataset.encoder, fp)
 
+    run["config"] = cfg
+
     model = models.create(cfg["model"])
     model.load_state_dict(torch.load(cfg["statedict_path"]))
     model.to(device)

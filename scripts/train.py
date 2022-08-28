@@ -20,6 +20,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
     torch.manual_seed(23)
+    torch.use_deterministic_algorithms(True)
 
     cfg = read_config("../cfg/train.yaml")
 
