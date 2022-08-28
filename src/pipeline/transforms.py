@@ -8,6 +8,7 @@ import math
 
 from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -260,9 +261,64 @@ class UniformSelectionTransform(Transform):
         return processed_blob
 
 
+# WHEN RUNNING A TEST, BEFORE AND AFTER PLOTS ARE SHOWN
+
+def plot_3d_pointcloud(coordinates: np.ndarray) -> None:
+    """
+    remove before merging
+    """
+    import plotly.express as px
+
+    x, y, z = coordinates.T
+
+    fig = px.scatter_3d(x=x, y=y, z=z)
+    fig.show()
+
+
+class PCATransform(Transform):
+    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
+        super().__init__(config, **kwargs)
+        self.pca = PCA()
+
+    # TODO: remove plotting and plot functions before merging
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        """
+        :param blob: input blob
+        :type blob: np.ndarray
+        :returns: transformed array (rotated with PCA)
+        :return type: np.ndarray
+        https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca
+        """
+        #  maybe it will be better to return tuple (coordinates, features) not rounding coordinates to integers,
+        #  in that case probably should be moved to data.py (?)
+
+        coordinates = np.transpose(np.nonzero(blob))
+
+        # plot_3d_pointcloud(coordinates)
+        features = blob[tuple(np.transpose(coordinates))]
+
+        center_coords = coordinates - coordinates.mean(axis=0)
+        U, S, Vt = np.linalg.svd(center_coords)
+
+        result = center_coords @ Vt.T
+        translation_vector = -result.min(axis=0)
+        result += translation_vector + 5
+
+        result = np.around(result)
+        result = result.astype(int)
+        # plot_3d_pointcloud(result)
+
+        new_blob = np.zeros((result.max(axis=0) + 5))
+        result_coord = tuple(np.transpose(result))
+        new_blob[result_coord] = features
+        return new_blob
+
+
 TRANSFORMS = {
     "BlobSurfaceTransform": BlobSurfaceTransform,
     "ClusteringTransform": ClusteringTransform,
     "RandomSelectionTransform": RandomSelectionTransform,
-    "UniformSelectionTransform": UniformSelectionTransform
+    "UniformSelectionTransform": UniformSelectionTransform,
+    "PCATransform": PCATransform
 }

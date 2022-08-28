@@ -88,7 +88,7 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
     run["eval/cross_entropy"].log(cross_entropy)
 
     time = str(datetime.now()).replace(' ', '-')
-    line = f"{time},{epoch_num}"
+    line = f"{time},{epoch_num},"
     for metric in [accuracy, top5_accuracy, top10_accuracy, top20_accuracy, macro_recall, micro_recall, micro_precision,
                    micro_f1, cohen_kappa, cross_entropy]:
         line += f"{metric},"

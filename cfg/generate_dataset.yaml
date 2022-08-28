@@ -1,8 +1,7 @@
-input_dir: ../data/blobs_full
-output_dir: ../data/blobs_shell_22
+input_dir: ../data/blobs_kmeans_2000_1_2
+output_dir: ../data/blobs_pca_kmeans_2000_1_2
 start: 0
 end: -1
 steps:
-  - name: BlobSurfaceTransform
+  - name: PCATransform
     config:
-      neighbourhood: 22

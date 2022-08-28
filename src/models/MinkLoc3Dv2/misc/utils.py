@@ -11,13 +11,8 @@ from cfg import read_config
 
 class ModelParams:
     def __init__(self, model_params_path):
-        config = read_config(model_params_path) # TODO: review <- mine
-        # config = configparser.ConfigParser() # <- original
-        # config.read(model_params_path)# <- original
-        # params = config['MODEL']# <- original
-
+        config = read_config(model_params_path)
         self.model_params_path = model_params_path
-        # self.model = params.get('model')
         self.model = "MinkLoc3Dv2"
         self.output_dim = config['output_dim']      # Size of the final descriptor
         self.input_dim = config['input_dim']
