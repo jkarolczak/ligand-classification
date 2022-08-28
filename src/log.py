@@ -23,13 +23,14 @@ def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = No
     return run
 
 
-def state_dict(model: torch.nn.Module, epoch: int) -> None:
+def model(run: neptune.Run, model: torch.nn.Module, epoch: int) -> None:
     models_path = os.path.join('logs', 'models')
     os.makedirs(models_path, exist_ok=True)
     time = str(datetime.now()).replace(' ', '-')
     file_name = f'{time}-epoch-{epoch}.pt'
     file_path = os.path.join(models_path, file_name)
     torch.save(model.state_dict(), file_path)
+    run["model"].track_files(file_path)
 
 
 def config(
