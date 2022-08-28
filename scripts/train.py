@@ -104,7 +104,7 @@ if __name__ == "__main__":
                         pass
 
         scheduler.step()
-        log.state_dict(model=model, epoch=e)
+        log.model(run=run, model=model, epoch=e)
         log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e)
 
     run.stop()

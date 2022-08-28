@@ -1,4 +1,6 @@
 # data, logs and files
+*.yaml
+*.yml
 /data
 /logs
 */output

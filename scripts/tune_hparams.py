@@ -143,7 +143,7 @@ if __name__ == "__main__":
                             pass
 
             scheduler.step()
-            log.state_dict(model=model, epoch=e)
+            log.model(model=model, epoch=e)
             log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e)
 
         score = run["eval/accuracy"].fetch_values().max().value
