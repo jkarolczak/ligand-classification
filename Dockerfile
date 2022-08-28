@@ -23,7 +23,7 @@ RUN pip install pandas
 RUN pip install torchmetrics>=0.9.0
 RUN pip install addict
 RUN pip install yapf
-RUN pip install neptune-client
+RUN pip install neptune-client>=0.14.2
 
 ENV MAX_JOBS=4
 RUN pip install -U git+https://github.com/NVIDIA/MinkowskiEngine -v --no-deps \

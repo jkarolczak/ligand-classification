@@ -11,8 +11,7 @@ from .layers.pooling_wrapper import PoolingWrapper
 
 
 def model_factory(model_params: ModelParams):
-    in_channels = model_params.input_dim   # TODO: review <- added input_dim to be configurable
-    # in_channels = 1  # <- original
+    in_channels = model_params.input_dim
     if model_params.model == 'MinkLoc3Dv2':
         block_module = create_resnet_block(model_params.block)
         backbone = MinkFPN(in_channels=in_channels, out_channels=model_params.feature_size,
