@@ -94,6 +94,7 @@ def padding(array, xx, yy, zz):
     return np.pad(array, pad_width=((a, aa), (b, bb), (c, cc)), mode='constant')
 
 
+@pytest.mark.skip(reason="Ania.")
 def test_pca_transform():
     transforms = PCATransform()
     a, b = blobs("../static/pca-tests-blobs")
