@@ -1,5 +1,6 @@
 import gc
 import random
+import warnings
 
 import numpy as np
 import torch
@@ -10,6 +11,7 @@ import models
 from cfg import read_config
 from data import ContiguousDataset, dataset_split
 
+warnings.simplefilter("ignore")
 
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2 ** 32

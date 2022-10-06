@@ -109,7 +109,7 @@ class BaseDataset(Dataset, ABC):
         pass
 
 
-class ContiguousDataset(BaseDataset):
+class SparseDataset(BaseDataset):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -134,6 +134,7 @@ class ContiguousDataset(BaseDataset):
 
 class ContiguousDataset(BaseDataset):
     def __init__(self, *args, **kwargs):
+        self.num_points = 1
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, idx):
@@ -142,7 +143,8 @@ class ContiguousDataset(BaseDataset):
         blob_path = os.path.join(self.annotations_file_path, idx)
         blob = np.load(blob_path)["blob"]
         blob = torch.tensor(blob, dtype=torch.float32)
-        return blob, label
+        coordinates = torch.nonzero(blob).float()
+        return coordinates, label
 
 
 def collation_fn(blobel):
