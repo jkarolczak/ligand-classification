@@ -99,7 +99,7 @@ class TNet(nn.Module):
 
 
 class PointNet(nn.Module):
-	def __init__(self, use_rri, use_tnet=False, nearest_neighbors=20):
+	def __init__(self, use_rri, use_tnet=False, nearest_neighbors=20, *args):
 		super(PointNet, self).__init__()
 		self.use_tnet = use_tnet
 		self.tnet = TNet() if self.use_tnet else None
@@ -149,16 +149,16 @@ class DeepGMR(nn.Module):
 
 		self.est_T_inverse = gmm_register(self.template_pi, self.template_mu, self.source_mu, self.source_sigma)
 		self.est_T = gmm_register(self.source_pi, self.source_mu, self.template_mu, self.template_sigma) # [template = source * est_T]
-		self.igt = igt				# [source = template * igt]
+		#self.igt = igt				# [source = template * igt]
 
-		transformed_source = transform.transform_point_cloud(source, est_T[:, :3, :3], est_T[:, :3, 3])
+		transformed_source = transform.transform_point_cloud(source, self.est_T[:, :3, :3], self.est_T[:, :3, 3])
 
-		result = {'est_R': est_T[:, :3, :3],
-				  'est_t': est_T[:, :3, 3],
-				  'est_R_inverse': est_T_inverse[:, :3, :3],
-				  'est_t_inverese': est_T_inverse[:, :3, 3],
-				  'est_T': est_T,
-				  'est_T_inverse': est_T_inverse,
+		result = {'est_R': self.est_T[:, :3, :3],
+				  'est_t': self.est_T[:, :3, 3],
+				  'est_R_inverse': self.est_T_inverse[:, :3, :3],
+				  'est_t_inverese': self.est_T_inverse[:, :3, 3],
+				  'est_T': self.est_T,
+				  'est_T_inverse': self.est_T_inverse,
 				  'r': template_features - source_features,
 				  'transformed_source': transformed_source}
 

@@ -160,5 +160,5 @@ if __name__ == '__main__':
 	pcn = PCN()
 	y = pcn(x)
 	print("Network Architecture: ")
-	print(pn)
+	print(pcn)
 	print("Input Shape of PCN: ", x.shape, "\nOutput Shape of PCN: ", y['coarse_output'].shape)

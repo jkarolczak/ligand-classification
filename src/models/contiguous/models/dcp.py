@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+from models.contiguous.ops.transform_functions import quat2mat
 from .dgcnn import DGCNN
 from .pointnet import PointNet
 from .. ops import transform_functions as transform

@@ -240,7 +240,7 @@ class FlowEmbedding(nn.Module):
         self.corr_func = corr_func
         self.mlp_convs = nn.ModuleList()
         self.mlp_bns = nn.ModuleList()
-        if corr_func is 'concat':
+        if corr_func == 'concat':
             last_channel = in_channel*2+3
         for out_channel in mlp:
             self.mlp_convs.append(nn.Conv2d(last_channel, out_channel, 1, bias=False))
@@ -301,7 +301,7 @@ class PointNetSetUpConv(nn.Module):
                                                  nn.BatchNorm2d(out_channel),
                                                  nn.ReLU(inplace=False)))
             last_channel = out_channel
-        if len(mlp) is not 0:
+        if len(mlp) != 0:
             last_channel = mlp[-1] + f1_channel
         else:
             last_channel = last_channel + f1_channel
