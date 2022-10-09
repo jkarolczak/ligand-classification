@@ -15,4 +15,4 @@ normalize_embeddings: False
 
 input_dim: 1
 
-output_dim: 219
+output_dim: 3
