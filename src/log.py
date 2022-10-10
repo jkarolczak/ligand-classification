@@ -7,7 +7,7 @@ import torch
 import torchmetrics
 import yaml
 
-from data import LigandDataset
+from data import BaseDataset
 
 
 def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
@@ -38,7 +38,7 @@ def config(
         model: torch.nn.Module,
         criterion: torch.nn.Module,
         optimizer: torch.nn.Module,
-        dataset: LigandDataset,
+        dataset: BaseDataset,
 ) -> None:
     run["config/model/class"] = type(model).__name__
     run["config/model/structure"] = str(model)

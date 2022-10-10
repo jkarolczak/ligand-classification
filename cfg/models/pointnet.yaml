@@ -1,0 +1,5 @@
+emb_dims: 1024
+input_shape: "bnc"
+use_bn: false
+global_feat: true
+num_classes: 3

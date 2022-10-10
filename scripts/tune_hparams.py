@@ -1,20 +1,18 @@
 import gc
 import os
-import random
 from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
-import torch
-import numpy as np
 import MinkowskiEngine as ME
 import skopt
+import torch
 import yaml
 from torch.utils.data import DataLoader
 
-import models
 import log
+import models
 from cfg import read_config
-from data import LigandDataset, dataset_split, collation_fn
+from data import SparseDataset, dataset_split, collation_fn
 
 DIM_DICT = {
     "real": skopt.space.Real,
@@ -69,7 +67,7 @@ if __name__ == "__main__":
 
         run = log.get_run()
 
-        dataset = LigandDataset(train_cfg["dataset_dir"], train_cfg["dataset_file"],
+        dataset = SparseDataset(train_cfg["dataset_dir"], train_cfg["dataset_file"],
                                 min_size=train_cfg["dataset_min_size"], max_size=train_cfg["dataset_max_size"])
 
         run["config/dataset/name"] = train_cfg["dataset_dir"].split("/")[-1]

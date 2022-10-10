@@ -1,14 +1,14 @@
 import pickle
 from random import randrange
 
+import MinkowskiEngine as ME
 import pandas as pd
 import torch
-import MinkowskiEngine as ME
 from torch.utils.data import DataLoader
 
 import models
 from cfg import read_config
-from data import LigandDataset, collation_fn
+from data import SparseDataset, collation_fn
 from log import get_run, epoch
 
 if __name__ == "__main__":
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     run = get_run(tags=["holdout"])
     run["seed"] = rng_seed
 
-    dataset = LigandDataset(cfg["dataset_dir"], cfg["dataset_file"], rng_seed=rng_seed)
+    dataset = SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], rng_seed=rng_seed)
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=cfg["batch_size"],

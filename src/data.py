@@ -1,6 +1,7 @@
 import collections
 import os
 import random
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from random import seed
 from typing import Tuple
@@ -11,11 +12,10 @@ import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
-from torch import tensor
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 
-class LigandDataset(Dataset):
+class BaseDataset(Dataset, ABC):
     """A class to represent a ligands' dataset."""
 
     def __init__(
@@ -101,6 +101,18 @@ class LigandDataset(Dataset):
         self.files, self.labels = zip(*tmp)
         self.labels = self.encoder.transform(self.labels)
 
+    def __len__(self):
+        return len(self.files)
+
+    @abstractmethod
+    def __getitem__(self, idx):
+        pass
+
+
+class SparseDataset(BaseDataset):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     @staticmethod
     def _get_coords_feats(batch: torch.Tensor) -> ME.SparseTensor:
         coordinates = torch.nonzero(batch).int()
@@ -110,17 +122,29 @@ class LigandDataset(Dataset):
         features = torch.tensor(features).unsqueeze(-1)
         return coordinates, features
 
-    def __len__(self):
-        return len(self.files)
+    def __getitem__(self, idx):
+        label = torch.tensor(self.labels[idx], dtype=torch.float32)
+        idx = self.files[idx]
+        blob_path = os.path.join(self.annotations_file_path, idx)
+        blob = np.load(blob_path)["blob"]
+        blob = torch.tensor(blob, dtype=torch.float32)
+        coordinates, features = self._get_coords_feats(blob)
+        return coordinates, features, label
+
+
+class CoordsDataset(BaseDataset):
+    def __init__(self, *args, **kwargs):
+        self.num_points = 1
+        super().__init__(*args, **kwargs)
 
     def __getitem__(self, idx):
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, idx)
         blob = np.load(blob_path)["blob"]
-        blob = tensor(blob, dtype=torch.float32)
-        coordinates, features = self._get_coords_feats(blob)
-        return coordinates, features, label
+        blob = torch.tensor(blob, dtype=torch.float32)
+        coordinates = torch.nonzero(blob).float()
+        return coordinates, label
 
 
 def collation_fn(blobel):
@@ -145,8 +169,8 @@ def collation_fn(blobel):
 
 
 def dataset_split(
-        dataset: LigandDataset, train_size: float = 0.75, stratify: bool = True
-) -> Tuple[LigandDataset, LigandDataset]:
+        dataset: BaseDataset, train_size: float = 0.75, stratify: bool = True
+) -> Tuple[BaseDataset, BaseDataset]:
     """
     Splits dataset into train and test sets.
 
