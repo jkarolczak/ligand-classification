@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import ContiguousDataset, dataset_split
+from data import CoordsDataset, dataset_split
 
 warnings.simplefilter("ignore")
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = ContiguousDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+    dataset = CoordsDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
                                 max_size=cfg["dataset_max_size"])
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]

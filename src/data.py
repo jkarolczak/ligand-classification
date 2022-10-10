@@ -132,7 +132,7 @@ class SparseDataset(BaseDataset):
         return coordinates, features, label
 
 
-class ContiguousDataset(BaseDataset):
+class CoordsDataset(BaseDataset):
     def __init__(self, *args, **kwargs):
         self.num_points = 1
         super().__init__(*args, **kwargs)
