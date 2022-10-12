@@ -11,6 +11,11 @@ ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CUBLAS_WORKSPACE_CONFIG=":4096:8"
 ENV PYTHONPATH="/app/src"
 
+# ???
+RUN apt-key del 7fa2af80
+RUN apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+
 RUN apt-get update
 RUN apt-get install -y git ninja-build cmake build-essential libopenblas-dev \
     xterm xauth openssh-server tmux wget mate-desktop-environment-core
@@ -24,10 +29,11 @@ RUN pip install torchmetrics>=0.9.0
 RUN pip install addict
 RUN pip install yapf
 RUN pip install neptune-client>=0.14.2
+RUN pip install h5py
 
 ENV MAX_JOBS=4
 RUN pip install -U git+https://github.com/NVIDIA/MinkowskiEngine -v --no-deps \
                            --install-option="--force_cuda" \
                            --install-option="--blas=openblas"
-                           
+
               
