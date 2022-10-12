@@ -40,17 +40,9 @@ def model(
         neptune_config = yaml.safe_load(fp)
     with open(config_file) as fp:
         config = yaml.safe_load(fp)
-    try:
-        model = neptune.init_model(
-            model=f"{config['model']}".upper(),
-            name=config['model'],
-            project="LIGANDS/LIGANDS",
-            api_token=neptune_config["api_token"],
-        )
-    except Warning:
-        warnings.warn('eee, model already exists?')
+
     model_version = neptune.init_model_version(
-        model=f"LIGANDS-{config['model']}".upper(),
+        model=f"LIGANDS-{config['model']}",
         project="LIGANDS/LIGANDS",
         api_token=neptune_config["api_token"]
     )
@@ -73,11 +65,11 @@ def model(
     top5_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=5) if num_classes > 5 else 1)
     top10_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=10) if num_classes > 10 else 1)
     top20_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=20) if num_classes > 20 else 1)
-    run["eval/accuracy"].log(accuracy)
-    run["eval/top5_accuracy"].log(top5_accuracy)
-    run["eval/top10_accuracy"].log(top10_accuracy)
-    run["eval/top20_accuracy"].log(top20_accuracy)
-    run["eval/cross_entropy"].log(cross_entropy)
+    model_version["eval/accuracy"].log(accuracy)
+    model_version["eval/top5_accuracy"].log(top5_accuracy)
+    model_version["eval/top10_accuracy"].log(top10_accuracy)
+    model_version["eval/top20_accuracy"].log(top20_accuracy)
+    model_version["eval/cross_entropy"].log(cross_entropy)
 
     run["model"].track_files(file_path)
 
