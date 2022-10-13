@@ -34,7 +34,14 @@ def model(
         config_file: str = "../cfg/train.yaml"
 ) -> None:
     """
-
+    Register model's version, as well as save the copy to the local file system
+    :param run - an instance of current neptune.Run
+    :param model - nn.Module model instance
+    :param epoch - epoch number
+    :param target - tensor with predictions, used to provide model version with some metrics
+    :param preds - tensor with predictions, used to provide model version with some metrics
+    :param neptune_file - yaml file with neptune's API token
+    :param config_file - yaml file with training configuration - used to get a name of the model
     """
     with open(neptune_file) as fp:
         neptune_config = yaml.safe_load(fp)
@@ -42,7 +49,7 @@ def model(
         config = yaml.safe_load(fp)
 
     model_version = neptune.init_model_version(
-        model=f"LIGANDS-{config['model']}",
+        model=f"LIGANDS-{config['model']}".upper(),
         project="LIGANDS/LIGANDS",
         api_token=neptune_config["api_token"]
     )
