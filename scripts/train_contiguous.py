@@ -13,6 +13,7 @@ from data import CoordsDataset, dataset_split
 
 warnings.simplefilter("ignore")
 
+
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     run = log.get_run()
 
     dataset = CoordsDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
-                                max_size=cfg["dataset_max_size"])
+                            max_size=cfg["dataset_max_size"])
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
     run["config/batch_accum"] = cfg["accum_iter"]
@@ -63,6 +64,7 @@ if __name__ == "__main__":
         for idx, (batch, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
             batch = batch.to(device=device)
+            labels_hat = model(batch)
             try:
                 labels_hat = model(batch)
                 loss = criterion(labels_hat, labels) / accum_iter
