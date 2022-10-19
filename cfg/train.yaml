@@ -1,7 +1,7 @@
-model: MinkLoc3Dv2
-device: cpu
-dataset_dir: /home/witold/blobs_full
-dataset_file: ../data/labels_three.csv
+model: PointNet
+device: cuda
+dataset_dir: ../../data/blobs_full
+dataset_file: ../../data/labels_three.csv
 dataset_min_size: null
 dataset_max_size: null
 batch_size: 64
