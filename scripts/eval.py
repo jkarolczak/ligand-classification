@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 import models
 from cfg import read_config
-from data import SparseDataset, collation_fn
+from data import SparseDataset, collation_fn_sparse
 from log import get_run, epoch
 
 if __name__ == "__main__":
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     dataloader = DataLoader(
         dataset=dataset,
         batch_size=cfg["batch_size"],
-        collate_fn=collation_fn,
+        collate_fn=collation_fn_sparse,
         num_workers=cfg["no_workers"],
         shuffle=False,
     )

@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import SparseDataset, dataset_split, collation_fn
+from data import SparseDataset, dataset_split, collation_fn_sparse
 
 DIM_DICT = {
     "real": skopt.space.Real,
@@ -79,9 +79,11 @@ if __name__ == "__main__":
         g_train, g_test = torch.Generator(), torch.Generator()
         g_train.manual_seed(42)
         g_test.manual_seed(42)
-        train_dataloader = DataLoader(dataset=train, batch_size=int(train_cfg["batch_size"]), collate_fn=collation_fn,
+        train_dataloader = DataLoader(dataset=train, batch_size=int(train_cfg["batch_size"]),
+                                      collate_fn=collation_fn_sparse,
                                       num_workers=train_cfg["no_workers"], generator=g_train, shuffle=True)
-        test_dataloader = DataLoader(dataset=test, batch_size=int(train_cfg["batch_size"]), collate_fn=collation_fn,
+        test_dataloader = DataLoader(dataset=test, batch_size=int(train_cfg["batch_size"]),
+                                     collate_fn=collation_fn_sparse,
                                      num_workers=train_cfg["no_workers"], generator=g_test, shuffle=True)
 
         model = models.create(train_cfg["model"])

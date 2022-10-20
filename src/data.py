@@ -4,7 +4,7 @@ import random
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from random import seed
-from typing import Tuple
+from typing import List, Tuple
 
 import MinkowskiEngine as ME
 import numpy as np
@@ -137,7 +137,7 @@ class CoordsDataset(BaseDataset):
         self.num_points = 1
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, idx)
@@ -147,7 +147,31 @@ class CoordsDataset(BaseDataset):
         return coordinates, label
 
 
-def collation_fn(blobel):
+def collation_fn_contiguous(blobel: List[Tuple[torch.Tensor, torch.Tensor]]) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Implements collation function for batching torch tensors and adding padding (-1, -1, -1), where needed, to make
+    the CoordsDataset working with blobels of different size and `torch.utils.data.DataLoader`.
+
+    :param blobel: tuple of blo(b) + (la)bel => blobel
+    :type blobel: List[Tuple[torch.Tensor, torch.Tensor]]
+    """
+    coordinates = []
+    labels = []
+    max_len = 0
+    for c, l in blobel:
+        max_len = max(max_len, len(c))
+        coordinates.append(c)
+        labels.append(l)
+    for idx, c in enumerate(coordinates):
+        diff = max_len - len(c)
+        coordinates[idx] = torch.vstack([c, torch.ones((diff, 3)) * -1.0])
+
+    coordinates = torch.stack(coordinates)
+    labels = torch.stack(labels)
+    return coordinates, labels
+
+
+def collation_fn_sparse(blobel):
     """
     Implements collation function for batching the LigandsDataset using
     `torch.utils.data.DataLoader`
