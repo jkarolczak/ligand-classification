@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import CoordsDataset, dataset_split
+from data import CoordsDataset, dataset_split, collation_fn_contiguous
 
 warnings.simplefilter("ignore")
 
@@ -44,9 +44,11 @@ if __name__ == "__main__":
     g_train.manual_seed(42)
     g_test.manual_seed(42)
     train_dataloader = DataLoader(dataset=train, batch_size=cfg["batch_size"], num_workers=cfg["no_workers"],
-                                  worker_init_fn=seed_worker, generator=g_train, shuffle=True)
+                                  collate_fn=collation_fn_contiguous, worker_init_fn=seed_worker, generator=g_train,
+                                  shuffle=True)
     test_dataloader = DataLoader(dataset=test, batch_size=cfg["batch_size"], num_workers=cfg["no_workers"],
-                                 worker_init_fn=seed_worker, generator=g_test, shuffle=True)
+                                 collate_fn=collation_fn_contiguous, worker_init_fn=seed_worker, generator=g_test,
+                                 shuffle=True)
 
     model = models.create(cfg["model"])
     model.to(device)
@@ -65,17 +67,13 @@ if __name__ == "__main__":
             labels = labels.to(device=device)
             batch = batch.to(device=device)
             labels_hat = model(batch)
-            try:
-                labels_hat = model(batch)
-                loss = criterion(labels_hat, labels) / accum_iter
-                loss.backward()
-                del labels_hat
+            loss = criterion(labels_hat, labels) / accum_iter
+            loss.backward()
+            del labels_hat
 
-                if not idx % accum_iter:
-                    optimizer.step()
-                    optimizer.zero_grad()
-            except:
-                pass
+            if not idx % accum_iter:
+                optimizer.step()
+                optimizer.zero_grad()
 
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()
@@ -98,14 +96,11 @@ if __name__ == "__main__":
                     groundtruth = labels
                     predictions = preds
                 else:
-                    try:
-                        groundtruth = torch.cat([groundtruth, labels], 0)
-                        predictions = torch.cat([predictions, preds], 0)
-                    except:
-                        pass
+                    groundtruth = torch.cat([groundtruth, labels], 0)
+                    predictions = torch.cat([predictions, preds], 0)
 
         scheduler.step()
-        log.model(run=run, model=model, epoch=e)
+        log.model(run=run, model=model, epoch=e, preds=predictions, target=groundtruth)
         log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e)
 
     run.stop()
