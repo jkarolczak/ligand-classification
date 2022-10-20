@@ -13,7 +13,7 @@ from data import CoordsDataset, dataset_split, collation_fn_contiguous
 
 warnings.simplefilter("ignore")
 
-
+#TODO: check nll_loss
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
