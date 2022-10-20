@@ -4,7 +4,7 @@ from models.create import transloc3d, minkloc3dv2, pointnet
 
 MODELS = {
     "transloc3d": transloc3d,
-    "minkloc3dv2": minkloc3dv2,
+    "minkloc3d": minkloc3dv2,
     "pointnet": pointnet
 }
 

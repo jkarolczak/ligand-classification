@@ -23,13 +23,60 @@ def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = No
     return run
 
 
-def model(run: neptune.Run, model: torch.nn.Module, epoch: int) -> None:
+def model(
+        run: neptune.Run,
+        model: torch.nn.Module,
+        epoch: int,
+        preds: torch.Tensor,
+        target: torch.Tensor,
+        neptune_file: str = "../cfg/neptune.yaml",
+        config_file: str = "../cfg/train.yaml"
+) -> None:
+    """
+    Register model's version, as well as save the copy to the local file system
+    :param run - an instance of current neptune.Run
+    :param model - nn.Module model instance
+    :param epoch - epoch number
+    :param target - tensor with predictions, used to provide model version with some metrics
+    :param preds - tensor with predictions, used to provide model version with some metrics
+    :param neptune_file - yaml file with neptune's API token
+    :param config_file - yaml file with training configuration - used to get a name of the model
+    """
+    with open(neptune_file) as fp:
+        neptune_config = yaml.safe_load(fp)
+    with open(config_file) as fp:
+        config = yaml.safe_load(fp)
+
+    model_version = neptune.init_model_version(
+        model=f"LIGANDS-{config['model']}".upper(),
+        project="LIGANDS/LIGANDS",
+        api_token=neptune_config["api_token"]
+    )
+
     models_path = os.path.join('logs', 'models')
     os.makedirs(models_path, exist_ok=True)
     time = str(datetime.now()).replace(' ', '-')
     file_name = f'{time}-epoch-{epoch}.pt'
     file_path = os.path.join(models_path, file_name)
     torch.save(model.state_dict(), file_path)
+
+    model_version['model'].upload(file_path)
+    num_classes = target.shape[1]
+
+    cross_entropy = torch.nn.functional.cross_entropy(preds, target)
+
+    target = torch.argmax(target, axis=1)
+
+    accuracy = torchmetrics.functional.accuracy(preds, target)
+    top5_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=5) if num_classes > 5 else 1)
+    top10_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=10) if num_classes > 10 else 1)
+    top20_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=20) if num_classes > 20 else 1)
+    model_version["eval/accuracy"].log(accuracy)
+    model_version["eval/top5_accuracy"].log(top5_accuracy)
+    model_version["eval/top10_accuracy"].log(top10_accuracy)
+    model_version["eval/top20_accuracy"].log(top20_accuracy)
+    model_version["eval/cross_entropy"].log(cross_entropy)
+
     run["model"].track_files(file_path)
 
 
