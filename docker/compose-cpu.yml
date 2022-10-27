@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  minkowski_cpu:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: DockerfileCPU
+    volumes:
+      - "../:/app:rw"
+      - "${DATA_PATH}:/app/data:rw"
+    working_dir: /app
+    tty: true
+    stdin_open: true
