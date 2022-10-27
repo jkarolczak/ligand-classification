@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from time import time
 import numpy as np
 
-from pointnet2 import pointnet2_utils 
+from .pointnet2 import pointnet2_utils
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))

@@ -7,6 +7,7 @@ from models.sparse.MinkLoc3Dv2.misc.utils import ModelParams
 from models.sparse.MinkLoc3Dv2.models.model_factory import model_factory
 from models.sparse.TransLoc3D import create_model, Config
 from models.sparse.TransLoc3D.transloc3d.model import TransLoc3D
+from models.contiguous.riconv2.riconv2_cls import get_model
 
 
 def transloc3d() -> TransLoc3D:
@@ -39,7 +40,6 @@ def riconv2():
     riconv2_params = read_config("../cfg/models/riconv2.yaml")
     num_classes = riconv2_params.pop("num_classes")
     use_normals = riconv2_params.pop("use_normals")
-    model = importlib.import_module("riconv2_cls")
-    classifier = model.get_model(num_classes, 2, normal_channel=use_normals)
+    classifier = get_model(num_classes, 2, normal_channel=use_normals)
     classifier.apply(inplace_relu)
     return classifier

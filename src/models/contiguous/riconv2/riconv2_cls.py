@@ -8,10 +8,10 @@ Website: https://wwww.zhiyuanzhang.net
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from riconv2_utils import RIConv2SetAbstraction
+from .riconv2_utils import RIConv2SetAbstraction, compute_LRA
 
 class get_model(nn.Module):
-    def __init__(self,num_class, n, normal_channel=True):
+    def __init__(self, num_class, n, normal_channel=True):
         super(get_model, self).__init__()
         in_channel = 64
         self.normal_channel = normal_channel
@@ -38,7 +38,7 @@ class get_model(nn.Module):
             xyz = xyz[:, :, :3]
         else:
             # compute the LRA and use as normal
-            norm = None
+            norm = compute_LRA(xyz)
         
         l0_xyz, l0_norm, l0_points = self.sa0(xyz, norm, None)
         l1_xyz, l1_norm, l1_points = self.sa1(l0_xyz, l0_norm, l0_points)
