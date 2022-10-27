@@ -1,9 +1,7 @@
-version: "3"
+version: '3'
 
 services:
   minkowski_cpu:
-    env_file:
-      - .env
     build:
       context: .
       dockerfile: DockerfileCPU
@@ -13,3 +11,5 @@ services:
     working_dir: /app
     tty: true
     stdin_open: true
+    network_mode: "host"
+    entrypoint: /bin/bash
