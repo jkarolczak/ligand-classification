@@ -1,7 +1,7 @@
 from .classifier import Classifier
-from .pointnet import PointNet
 # from .pointconv import create_pointconv
-# from .dgcnn import DGCNN
+from .dgcnn import DGCNN
+from .pointnet import PointNet
 # from .ppfnet import PPFNet
 from .pooling import Pooling
 # from .segmentation import Segmentation

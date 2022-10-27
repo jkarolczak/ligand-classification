@@ -1,5 +1,5 @@
 from cfg import read_config
-from models.contiguous.models import PointNet, Classifier
+from models.contiguous.models import PointNet, Classifier, DGCNN
 from models.sparse import MinkLoc3Dv2
 from models.sparse.MinkLoc3Dv2.misc.utils import ModelParams
 from models.sparse.MinkLoc3Dv2.models.model_factory import model_factory
@@ -19,9 +19,16 @@ def minkloc3dv2() -> MinkLoc3Dv2:
     return model
 
 
+def continguous_model(cls: type, params_path: str) -> object:
+    params = read_config(params_path)
+    num_classes = params.pop("num_classes")
+    model = cls(**params)
+    return Classifier(model, num_classes=num_classes)
+
+
 def pointnet() -> PointNet:
-    pointnet_params = read_config("../cfg/models/pointnet.yaml")
-    num_classes = pointnet_params.pop("num_classes")
-    pn = PointNet(**pointnet_params)
-    model = Classifier(pn, num_classes=num_classes)
-    return model
+    return continguous_model(PointNet, "../cfg/models/pointnet.yaml")
+
+
+def dgcnn() -> DGCNN:
+    return continguous_model(DGCNN, "../cfg/models/dgcnn.yaml")
