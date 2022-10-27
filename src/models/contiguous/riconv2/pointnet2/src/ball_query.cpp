@@ -1,11 +1,11 @@
 #include <torch/serialize/tensor.h>
 #include <vector>
-#include <THC/THC.h>
+#include <ATen/cuda/CUDAContext.h>
+
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include "ball_query_gpu.h"
 
-extern THCState *state;
 
 #define CHECK_CUDA(x) TORCH_CHECK(x.type().is_cuda(), #x, " must be a CUDAtensor ")
 #define CHECK_CONTIGUOUS(x) TORCH_CHECK(x.is_contiguous(), #x, " must be contiguous ")
