@@ -1,0 +1,3 @@
+emb_dims: 256
+input_shape: "bnc"
+num_classes: 44
