@@ -12,7 +12,7 @@ services:
     volumes:
       - "../:/app:rw"
       - "${DATA_PATH}:/app/data:rw"
-    working_dir: /app
+    working_dir: /app/scripts
     tty: true
     stdin_open: true
     network_mode: "host"
