@@ -137,6 +137,14 @@ class CoordsDataset(BaseDataset):
         self.num_points = 1
         super().__init__(*args, **kwargs)
 
+    @staticmethod
+    def _pc_normalize(pc: np.array) -> np.array:
+        centroid = torch.mean(pc, axis=0)
+        pc = pc - centroid
+        m = torch.max(torch.sqrt(torch.sum(pc ** 2, axis=1)))
+        pc = pc / m
+        return pc
+
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
@@ -144,6 +152,7 @@ class CoordsDataset(BaseDataset):
         blob = np.load(blob_path)["blob"]
         blob = torch.tensor(blob, dtype=torch.float32)
         coordinates = torch.nonzero(blob).float()
+        coordinates = self._pc_normalize(coordinates)
         return coordinates, label
 
 
@@ -164,7 +173,7 @@ def collation_fn_contiguous(blobel: List[Tuple[torch.Tensor, torch.Tensor]]) -> 
         labels.append(l)
     for idx, c in enumerate(coordinates):
         diff = max_len - len(c)
-        coordinates[idx] = torch.vstack([c, torch.ones((diff, 3)) * -1.0])
+        coordinates[idx] = torch.vstack([c, torch.ones((diff, 3)) * 0.0])
 
     coordinates = torch.stack(coordinates)
     labels = torch.stack(labels)
