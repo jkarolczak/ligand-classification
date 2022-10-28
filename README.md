@@ -14,7 +14,7 @@ We provide a docker setup with all dependencies and runtime configuration. To st
 1. Have installed:
     - [docker](https://docs.docker.com/engine/install/)  (>=20.0.0)
     - [docker compose](https://docker-docs.netlify.app/compose/install/#install-compose) (>=2.0.0!, notice, that the
-      page suggest installing older version)
+      page suggests installing older version)
     - additionally, to run using GPU:
         - [cuda](https://developer.nvidia.com/cuda-downloads) (>=11.3)
           , [nvcc](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html)
