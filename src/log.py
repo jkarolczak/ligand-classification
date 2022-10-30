@@ -11,7 +11,6 @@ from data import BaseDataset
 
 
 def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
-    print(os.getcwd())
     with open(file) as fp:
         config = yaml.safe_load(fp)
     run = neptune.init(
@@ -76,6 +75,8 @@ def model(
     model_version["eval/top10_accuracy"].log(top10_accuracy)
     model_version["eval/top20_accuracy"].log(top20_accuracy)
     model_version["eval/cross_entropy"].log(cross_entropy)
+    model_version["run"] = run["sys/id"].fetch()
+    model_version["epoch"] = epoch
 
     run["model"].track_files(file_path)
 
