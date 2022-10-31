@@ -1,4 +1,3 @@
-import pickle
 from random import randrange
 
 import MinkowskiEngine as ME
@@ -6,6 +5,7 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
+import log
 import models
 from cfg import read_config
 from data import SparseDataset, collation_fn_sparse
@@ -31,13 +31,11 @@ if __name__ == "__main__":
         shuffle=False,
     )
 
-    with open("../encoder.pkl", "wb") as fp:
-        pickle.dump(dataset.encoder, fp)
-
     run["config"] = cfg
 
-    model = models.create(cfg["model"])
-    model.load_state_dict(torch.load(cfg["statedict_path"]))
+    model = models.create(cfg["model_name"])
+    state_dict = log.fetch_state_dict(cfg["model_name"], cfg["model_run_id"], cfg["model_epoch"])
+    model.load_state_dict(state_dict)
     model.to(device)
 
     result_labels = []

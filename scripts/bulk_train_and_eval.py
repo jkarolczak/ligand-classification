@@ -1,6 +1,8 @@
+import os
 from typing import Dict, Tuple, Union
 
 import neptune.new as neptune
+import numpy as np  # noqa
 import yaml
 
 
@@ -12,22 +14,47 @@ def get_last_run_epoch(config: Dict[str, Union[str, bool]]) -> Tuple[int, int]:
     return id, epoch
 
 
-def get_model_from_run_epoch(model_name: str, run_id: int, epoch: int, config: Dict[str, Union[str, bool]]) -> str:
-    full_model_name = f"LIGANDS-{model_name.upper()}"
-    model = neptune.init_model(project=config["project"], api_token=config["api_token"], with_id=full_model_name)
-    df = model.fetch_model_versions_table(columns=["run", "epoch"]).to_pandas()
-    model_id = df[(df["run"] == run_id) & (df["epoch"] == epoch)].iloc[0]["sys/id"]
-    return model_id
-
-
 def read_neptune_cfg(file: str = "../cfg/neptune.yaml") -> Dict[str, Union[str, bool]]:
     with open(file) as fp:
         config = yaml.safe_load(fp)
     return config
 
 
+columns = ["dataset_dir", "batch_size", "lr", "accum_iter", "dataset_min_size", "dataset_max_size"]
+values = [
+    ["../data/blobs_shell_22", 64, 1e-3, 1, None, None],
+    ["../data/blobs_shell_22", 64, 1e-3, 4, None, None],
+    ["../data/blobs_shell_22", 64, 1e-3, 16, None, None],
+    ["../data/blobs_shell_22", 64, 1e-2, 4, None, None],
+    ["../data/blobs_shell_22", 64, 1e-3, 4, 2000, None],
+    ["../data/blobs_shell_22", 64, 1e-3, 4, None, 20000],
+    ["../data/blobs_shell_22", 64, 1e-3, 4, 2000, 20000],
+]
+
 if __name__ == "__main__":
     neptune_cfg = read_neptune_cfg()
-    run_id, epoch = get_last_run_epoch(config=neptune_cfg)
-    model_id = get_model_from_run_epoch("minkloc3d", run_id, epoch, neptune_cfg)
-    print(model_id)
+
+    with open("../cfg/train.yaml") as fp:
+        train_config = yaml.safe_load(fp)
+    with open("../cfg/eval.yaml") as fp:
+        eval_config = yaml.safe_load(fp)
+
+    for vals in values:
+        for key, val in zip(columns, vals):
+            train_config[key] = val
+            if key in eval_config.keys():
+                eval_config[key] = val
+
+        with open("../cfg/train.yaml", "w") as fp:
+            yaml.dump(train_config, fp)
+
+        os.system("python ./train_sparse.py")
+
+        run_id, epoch = get_last_run_epoch(config=neptune_cfg)
+        eval_config["model_name"] = train_config["model"]
+        eval_config["model_run_id"] = str(run_id)
+        eval_config["model_epoch"] = int(epoch)
+        with open("../cfg/eval.yaml", "w") as fp:
+            yaml.dump(eval_config, fp)
+
+        os.system("python ./eval.py")

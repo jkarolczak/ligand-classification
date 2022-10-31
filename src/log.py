@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, OrderedDict, Dict
 
 import neptune.new as neptune
 import torch
@@ -13,13 +13,38 @@ from data import BaseDataset
 def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
     with open(file) as fp:
         config = yaml.safe_load(fp)
-    run = neptune.init(
+    run = neptune.init_run(
         project=config["project"],
         api_token=config["api_token"],
         mode="async" if config["debug"] is False else "debug",
         tags=tags if tags is not None else []
     )
     return run
+
+
+def _get_model_from_run_epoch(model_name: str, run_id: int, epoch: int, config: Dict[str, Union[str, bool]]) -> str:
+    full_model_name = f"LIGANDS-{model_name.upper()}"
+    model = neptune.init_model(project=config["project"], api_token=config["api_token"], with_id=full_model_name)
+    df = model.fetch_model_versions_table(columns=["run", "epoch"]).to_pandas()
+    model_id = df[(df["run"] == run_id) & (df["epoch"] == epoch)].iloc[0]["sys/id"]
+    return model_id
+
+
+def fetch_state_dict(
+        model_name: str,
+        run_id: str,
+        epoch: int,
+        neptune_file: str = "../cfg/neptune.yaml"
+) -> OrderedDict[str, torch.Tensor]:
+    with open(neptune_file) as fp:
+        neptune_config = yaml.safe_load(fp)
+    model_id = _get_model_from_run_epoch(model_name, run_id, epoch, neptune_config)
+    model_version = neptune.init_model_version(project=neptune_config["project"], api_token=neptune_config["api_token"],
+                                               with_id=model_id)
+    model_version["model"].download()
+    state_dict = torch.load("model.pt")
+    os.remove("model.pt")
+    return state_dict
 
 
 def model(
