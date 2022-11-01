@@ -10,17 +10,23 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .riconv2_utils import RIConv2SetAbstraction, compute_LRA
 
-class get_model(nn.Module):
+
+class RiConv2(nn.Module):
     def __init__(self, num_class, n, normal_channel=True):
-        super(get_model, self).__init__()
+        super(RiConv2, self).__init__()
         in_channel = 64
         self.normal_channel = normal_channel
-        
-        self.sa0 = RIConv2SetAbstraction(npoint=512*n, radius=0.12,  nsample=8, in_channel= 0+in_channel, mlp=[32],  group_all=False)
-        self.sa1 = RIConv2SetAbstraction(npoint=256*n,  radius=0.16,  nsample=16, in_channel=32 + in_channel, mlp=[64],  group_all=False)
-        self.sa2 = RIConv2SetAbstraction(npoint=128*n,  radius=0.24,  nsample=32, in_channel=64 + in_channel, mlp=[128],  group_all=False)
-        self.sa3 = RIConv2SetAbstraction(npoint=64*n,  radius=0.48,  nsample=64, in_channel=128 + in_channel, mlp=[256],  group_all=False)
-        self.sa4 = RIConv2SetAbstraction(npoint=None, radius=None, nsample=None, in_channel=256 + in_channel, mlp=[512],  group_all=True)
+
+        self.sa0 = RIConv2SetAbstraction(npoint=512 * n, radius=0.12, nsample=8, in_channel=0 + in_channel, mlp=[32],
+                                         group_all=False)
+        self.sa1 = RIConv2SetAbstraction(npoint=256 * n, radius=0.16, nsample=16, in_channel=32 + in_channel, mlp=[64],
+                                         group_all=False)
+        self.sa2 = RIConv2SetAbstraction(npoint=128 * n, radius=0.24, nsample=32, in_channel=64 + in_channel, mlp=[128],
+                                         group_all=False)
+        self.sa3 = RIConv2SetAbstraction(npoint=64 * n, radius=0.48, nsample=64, in_channel=128 + in_channel, mlp=[256],
+                                         group_all=False)
+        self.sa4 = RIConv2SetAbstraction(npoint=None, radius=None, nsample=None, in_channel=256 + in_channel, mlp=[512],
+                                         group_all=True)
 
         channels = [512, 256]
         self.fc1 = nn.Linear(512, 256)
@@ -39,7 +45,7 @@ class get_model(nn.Module):
         else:
             # compute the LRA and use as normal
             norm = compute_LRA(xyz)
-        
+
         l0_xyz, l0_norm, l0_points = self.sa0(xyz, norm, None)
         l1_xyz, l1_norm, l1_points = self.sa1(l0_xyz, l0_norm, l0_points)
         l2_xyz, l2_norm, l2_points = self.sa2(l1_xyz, l1_norm, l1_points)
