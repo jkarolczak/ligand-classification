@@ -13,7 +13,7 @@ from data import CoordsDataset, dataset_split, collation_fn_contiguous
 
 warnings.simplefilter("ignore")
 
-#TODO: check nll_loss
+
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
@@ -22,7 +22,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
     torch.manual_seed(23)
-    torch.use_deterministic_algorithms(True)
+    # torch.use_deterministic_algorithms(True)
 
     cfg = read_config("../cfg/train.yaml")
 
@@ -55,7 +55,8 @@ if __name__ == "__main__":
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.NLLLoss()
 
     log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)
 
@@ -66,8 +67,12 @@ if __name__ == "__main__":
         for idx, (batch, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
             batch = batch.to(device=device)
-            labels_hat = model(batch)
-            loss = criterion(labels_hat, labels) / accum_iter
+            try:
+                labels_hat = model(batch)
+            except:
+                continue
+            # loss = criterion(labels_hat, labels) / accum_iter
+            loss = criterion(labels_hat, torch.argmax(labels, axis=1)) / accum_iter
             loss.backward()
             del labels_hat
 
