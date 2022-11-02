@@ -28,7 +28,7 @@ We provide a docker setup with all dependencies and runtime configuration. To st
     - `DATA_PATH` - if your name is Adaś and you are computer you should leave it as it is. If your name is Ania, Witek
       or Konrad, RNG guesses it is `../../data/`. In other cases set the path to the folder containing data
 5. Start container using `./start.sh`. If you want to run container on cpu use `./start.sh cpu`.
-6. To stop use `./stop.sh` or `./stop.sh` for cpu respectively.
+6. To stop use `./stop.sh` or `./stop.sh cpu` for cpu respectively.
 
 ### PyCharm setup: ###
 

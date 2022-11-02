@@ -34,5 +34,6 @@ blob_details/output/volume_graph.html
 cfg/neptune.yaml
 
 # docker configs
+docker/.env
 !docker/compose-cpu.yml
 !docker/compose-gpu.yml
