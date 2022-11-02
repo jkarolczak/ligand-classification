@@ -36,8 +36,7 @@ def fetch_state_dict(
         epoch: int,
         neptune_file: str = "../cfg/neptune.yaml"
 ) -> OrderedDict[str, torch.Tensor]:
-    with open(neptune_file) as fp:
-        neptune_config = yaml.safe_load(fp)
+    neptune_config = read_config(neptune_file)
     model_id = _get_model_from_run_epoch(model_name, run_id, epoch, neptune_config)
     model_version = neptune.init_model_version(project=neptune_config["project"], api_token=neptune_config["api_token"],
                                                with_id=model_id)
