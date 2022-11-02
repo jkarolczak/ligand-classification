@@ -5,6 +5,8 @@ import neptune.new as neptune
 import numpy as np  # noqa
 import yaml
 
+from cfg import read_config
+
 
 def get_last_run_epoch(config: Dict[str, Union[str, bool]]) -> Tuple[int, int]:
     project = neptune.init_project(name=config["project"], api_token=config["api_token"], mode="read-only")
@@ -12,12 +14,6 @@ def get_last_run_epoch(config: Dict[str, Union[str, bool]]) -> Tuple[int, int]:
     run = neptune.init_run(project=config["project"], api_token=config["api_token"], mode="read-only", with_id=id)
     epoch = run["eval/top5_accuracy"].fetch_values()["value"].argmax()
     return id, epoch
-
-
-def read_neptune_cfg(file: str = "../cfg/neptune.yaml") -> Dict[str, Union[str, bool]]:
-    with open(file) as fp:
-        config = yaml.safe_load(fp)
-    return config
 
 
 columns = ["dataset_dir", "batch_size", "lr", "accum_iter", "dataset_min_size", "dataset_max_size"]
@@ -32,12 +28,9 @@ values = [
 ]
 
 if __name__ == "__main__":
-    neptune_cfg = read_neptune_cfg()
-
-    with open("../cfg/train.yaml") as fp:
-        train_config = yaml.safe_load(fp)
-    with open("../cfg/eval.yaml") as fp:
-        eval_config = yaml.safe_load(fp)
+    neptune_cfg = read_config("../cfg/neptune.yaml")
+    train_config = read_config("../cfg/train.yaml")
+    eval_config = read_config("../cfg/train.yaml")
 
     for vals in values:
         for key, val in zip(columns, vals):

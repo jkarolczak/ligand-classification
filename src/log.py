@@ -7,12 +7,12 @@ import torch
 import torchmetrics
 import yaml
 
+from cfg import read_config
 from data import BaseDataset
 
 
 def get_run(file: str = "../cfg/neptune.yaml", tags: Union[List[str], None] = None) -> neptune.Run:
-    with open(file) as fp:
-        config = yaml.safe_load(fp)
+    config = read_config(file)
     run = neptune.init_run(
         project=config["project"],
         api_token=config["api_token"],
