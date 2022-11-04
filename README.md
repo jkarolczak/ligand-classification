@@ -83,5 +83,5 @@ We provide a docker setup with all dependencies and runtime configuration. To st
 To use RiConv, install the Pointnet++ cuda operation library by running the following commands:
 ```
 cd src/models/contiguous/riconv2/pointnet2/
-python setup.py install
+python3 setup.py install
 ```
