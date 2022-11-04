@@ -55,8 +55,7 @@ if __name__ == "__main__":
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
-    # criterion = torch.nn.CrossEntropyLoss()
-    criterion = torch.nn.NLLLoss()
+    criterion = torch.nn.CrossEntropyLoss()
 
     log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)
 
@@ -67,12 +66,8 @@ if __name__ == "__main__":
         for idx, (batch, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
             batch = batch.to(device=device)
-            try:
-                labels_hat = model(batch)
-            except:
-                continue
-            # loss = criterion(labels_hat, labels) / accum_iter
-            loss = criterion(labels_hat, torch.argmax(labels, axis=1)) / accum_iter
+            labels_hat = model(batch)
+            loss = criterion(labels_hat, labels) / accum_iter
             loss.backward()
             del labels_hat
 
@@ -106,6 +101,6 @@ if __name__ == "__main__":
 
         scheduler.step()
         log.model(run=run, model=model, epoch=e, preds=predictions, target=groundtruth)
-        log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e)
+        log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e, model_name=cfg["model"])
 
     run.stop()

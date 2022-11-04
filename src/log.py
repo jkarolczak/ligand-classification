@@ -76,8 +76,10 @@ def model(
     model_version["eval/top5_accuracy"].log(top5_accuracy)
     model_version["eval/top10_accuracy"].log(top10_accuracy)
     model_version["eval/top20_accuracy"].log(top20_accuracy)
-    model_version["eval/cross_entropy"].log(cross_entropy)
-    model_version["eval/nll_loss"].log(nll_loss)
+    if config['model'].lower() != 'riconv2':
+        model_version["eval/cross_entropy"].log(cross_entropy)
+    else:
+        model_version["eval/nll_loss"].log(nll_loss)
 
     run["model"].track_files(file_path)
 
@@ -104,7 +106,7 @@ def config(
 
 
 def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
-          epoch_num: int) -> None:
+          epoch_num: int, model_name: str) -> None:
     num_classes = target.shape[1]
 
     cross_entropy = torch.nn.functional.cross_entropy(preds, target)
@@ -136,8 +138,10 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
     run["eval/micro_precision"].log(micro_precision)
     run["eval/micro_f1"].log(micro_f1)
     run["eval/cohen_kappa"].log(cohen_kappa)
-    run["eval/cross_entropy"].log(cross_entropy)
-    run["eval/nll_loss"].log(nll_loss)
+    if model_name.lower() != 'riconv2':
+        run["eval/cross_entropy"].log(cross_entropy)
+    else:
+        run["eval/nll_loss"].log(nll_loss)
 
     time = str(datetime.now()).replace(' ', '-')
     line = f"{time},{epoch_num},"

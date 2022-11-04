@@ -24,7 +24,8 @@ class BaseDataset(Dataset, ABC):
             labels_file_path: str = None,
             rng_seed: int = 23,
             min_size: int = None,
-            max_size: int = None
+            max_size: int = None,
+            normalize: bool = False
     ):
         """
         :param annotations_file_path: path to the directory containing directory
@@ -34,6 +35,7 @@ class BaseDataset(Dataset, ABC):
         file has to contain columns 'ligands' and 'blob_map_file'
         :param max_size: maximal number of instances of each class present in the dataset
         :param min_size: minimal number of instances of each class present in the dataset
+        :param normalize: whether to normalize the point clout
         """
         seed(rng_seed)
         self.annotations_file_path = annotations_file_path
@@ -58,6 +60,7 @@ class BaseDataset(Dataset, ABC):
 
         self.min_size = min_size
         self.max_size = max_size
+        self.normalize = normalize
 
     def sample(self, seed: int = None) -> None:
         """
@@ -152,7 +155,8 @@ class CoordsDataset(BaseDataset):
         blob = np.load(blob_path)["blob"]
         blob = torch.tensor(blob, dtype=torch.float32)
         coordinates = torch.nonzero(blob).float()
-        coordinates = self._pc_normalize(coordinates)
+        if self.normalize:
+            coordinates = self._pc_normalize(coordinates)
         return coordinates, label
 
 
