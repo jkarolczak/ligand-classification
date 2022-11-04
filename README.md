@@ -76,3 +76,12 @@ We provide a docker setup with all dependencies and runtime configuration. To st
   method=basic) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_basic.tar.gz)]
 - Surface (neighbourhood=22) + uniform selection (max_blob_size=2000,
   method=max) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_max.tar.gz)]
+
+
+## RiConv
+
+To use RiConv, install the Pointnet++ cuda operation library by running the following commands:
+```
+cd src/models/contiguous/riconv2/pointnet2/
+python setup.py install
+```

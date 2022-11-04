@@ -1,7 +1,7 @@
 import gc
 import random
+import warnings
 
-import MinkowskiEngine as ME
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -9,7 +9,9 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import SparseDataset, dataset_split, collation_fn_sparse
+from data import CoordsDataset, dataset_split, collation_fn_contiguous
+
+warnings.simplefilter("ignore")
 
 
 def seed_worker(worker_id):
@@ -20,7 +22,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
     torch.manual_seed(23)
-    torch.use_deterministic_algorithms(True)
+    # torch.use_deterministic_algorithms(True)
 
     cfg = read_config("../cfg/train.yaml")
 
@@ -29,8 +31,8 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
-                            max_size=cfg["dataset_max_size"])
+    dataset = CoordsDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+                            max_size=cfg["dataset_max_size"], normalize=True)
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
     run["config/batch_accum"] = cfg["accum_iter"]
@@ -41,11 +43,11 @@ if __name__ == "__main__":
     g_train, g_test = torch.Generator(), torch.Generator()
     g_train.manual_seed(42)
     g_test.manual_seed(42)
-    train_dataloader = DataLoader(dataset=train, batch_size=cfg["batch_size"], collate_fn=collation_fn_sparse,
-                                  num_workers=cfg["no_workers"], worker_init_fn=seed_worker, generator=g_train,
+    train_dataloader = DataLoader(dataset=train, batch_size=cfg["batch_size"], num_workers=cfg["no_workers"],
+                                  collate_fn=collation_fn_contiguous, worker_init_fn=seed_worker, generator=g_train,
                                   shuffle=True)
-    test_dataloader = DataLoader(dataset=test, batch_size=cfg["batch_size"], collate_fn=collation_fn_sparse,
-                                 num_workers=cfg["no_workers"], worker_init_fn=seed_worker, generator=g_test,
+    test_dataloader = DataLoader(dataset=test, batch_size=cfg["batch_size"], num_workers=cfg["no_workers"],
+                                 collate_fn=collation_fn_contiguous, worker_init_fn=seed_worker, generator=g_test,
                                  shuffle=True)
 
     model = models.create(cfg["model"])
@@ -53,7 +55,7 @@ if __name__ == "__main__":
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.NLLLoss()
 
     log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)
 
@@ -61,20 +63,20 @@ if __name__ == "__main__":
     for e in range(cfg["epochs"]):
         train_dataloader.dataset.sample(e)
         model.train()
-        for idx, (coords, feats, labels) in enumerate(train_dataloader):
+        for idx, (batch, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
-            batch = ME.SparseTensor(feats, coords, device=device)
+            batch = batch.to(device=device)
             try:
                 labels_hat = model(batch)
-                loss = criterion(labels_hat, labels) / accum_iter
-                loss.backward()
-                del labels_hat
-
-                if not idx % accum_iter:
-                    optimizer.step()
-                    optimizer.zero_grad()
             except:
-                pass
+                continue
+            loss = criterion(labels_hat, torch.argmax(labels, axis=1)) / accum_iter
+            loss.backward()
+            del labels_hat
+
+            if not idx % accum_iter:
+                optimizer.step()
+                optimizer.zero_grad()
 
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()
@@ -84,10 +86,10 @@ if __name__ == "__main__":
         model.eval()
         with torch.no_grad():
             groundtruth, predictions = None, None
-            for idx, (coords, feats, labels) in enumerate(test_dataloader):
+            for idx, (batch, labels) in enumerate(test_dataloader):
+                labels = labels.to(device=device)
+                batch = batch.to(device=device)
                 torch.cuda.empty_cache()
-
-                batch = ME.SparseTensor(feats, coords, device=device)
                 preds = model(batch)
 
                 labels = labels.to(cpu)
@@ -97,11 +99,8 @@ if __name__ == "__main__":
                     groundtruth = labels
                     predictions = preds
                 else:
-                    try:
-                        groundtruth = torch.cat([groundtruth, labels], 0)
-                        predictions = torch.cat([predictions, preds], 0)
-                    except:
-                        pass
+                    groundtruth = torch.cat([groundtruth, labels], 0)
+                    predictions = torch.cat([predictions, preds], 0)
 
         scheduler.step()
         log.model(run=run, model=model, epoch=e, preds=predictions, target=groundtruth)

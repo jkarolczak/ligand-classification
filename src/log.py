@@ -90,6 +90,7 @@ def model(
 
     target = torch.argmax(target, axis=1)
 
+    nll_loss = torch.nn.functional.nll_loss(preds, target)
     accuracy = torchmetrics.functional.accuracy(preds, target)
     top5_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=5) if num_classes > 5 else 1)
     top10_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=10) if num_classes > 10 else 1)
@@ -98,7 +99,10 @@ def model(
     model_version["eval/top5_accuracy"].log(top5_accuracy)
     model_version["eval/top10_accuracy"].log(top10_accuracy)
     model_version["eval/top20_accuracy"].log(top20_accuracy)
-    model_version["eval/cross_entropy"].log(cross_entropy)
+    if config['model'].lower() != 'riconv2':
+        model_version["eval/cross_entropy"].log(cross_entropy)
+    else:
+        model_version["eval/nll_loss"].log(nll_loss)
     model_version["run"] = run["sys/id"].fetch()
     model_version["epoch"] = epoch
 
@@ -127,13 +131,14 @@ def config(
 
 
 def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
-          epoch_num: int) -> None:
+          epoch_num: int, model_name: str) -> None:
     num_classes = target.shape[1]
 
     cross_entropy = torch.nn.functional.cross_entropy(preds, target)
 
     target = torch.argmax(target, axis=1)
 
+    nll_loss = torch.nn.functional.nll_loss(preds, target)
     accuracy = torchmetrics.functional.accuracy(preds, target)
     top5_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=5) if num_classes > 5 else 1)
     top10_accuracy = (torchmetrics.functional.accuracy(preds, target, top_k=10) if num_classes > 10 else 1)
@@ -158,12 +163,15 @@ def epoch(run: neptune.Run, preds: torch.Tensor, target: torch.Tensor,
     run["eval/micro_precision"].log(micro_precision)
     run["eval/micro_f1"].log(micro_f1)
     run["eval/cohen_kappa"].log(cohen_kappa)
-    run["eval/cross_entropy"].log(cross_entropy)
+    if model_name.lower() != 'riconv2':
+        run["eval/cross_entropy"].log(cross_entropy)
+    else:
+        run["eval/nll_loss"].log(nll_loss)
 
     time = str(datetime.now()).replace(' ', '-')
     line = f"{time},{epoch_num},"
     for metric in [accuracy, top5_accuracy, top10_accuracy, top20_accuracy, macro_recall, micro_recall, micro_precision,
-                   micro_f1, cohen_kappa, cross_entropy]:
+                   micro_f1, cohen_kappa, cross_entropy, nll_loss]:
         line += f"{metric},"
 
     os.makedirs('logs', exist_ok=True)
