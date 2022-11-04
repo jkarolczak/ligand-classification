@@ -1,8 +1,8 @@
-model: TransLoc3D
-statedict_path: ../best.pt
-device: cuda
-dataset_dir: ../data/blobs_full
-dataset_file: ../data/holdout.csv
 batch_size: 64
+dataset_dir: ../data/blobs_shell_22
+dataset_file: ../data/holdout.csv
+device: cuda
+model_epoch: 0
+model_name: MinkLoc3D
+model_run_id: LIGANDS-622
 no_workers: 8
-epochs: 100

@@ -10,9 +10,7 @@ pooling: netvlad # see src/models/MinkLoc3Dv2/models/layers/pooling_wrapper.py f
 
 coordinates: cartesian
 quantization_step: 0.01
-
 normalize_embeddings: False
 
 input_dim: 1
-
 output_dim: 219

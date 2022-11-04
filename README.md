@@ -9,21 +9,26 @@
 
 ### Docker
 
-**Building Docker image from Dockerfile**
-No additional configuration is required, simply execute in ligands-classification folder:
+We provide a docker setup with all dependencies and runtime configuration. To start the container follow:
 
-```
-docker build . -t <name-of-image>
-```
-
-**Running existing Docker image**
-The recommended way of running our Docker image would be:
-
-```
-sudo docker run --rm -it --init --gpus=all --ipc=host --volume="<path-to-folder>:/app" -w="/app" <name-of-image> /bin/bash
-```
-
-with <path-to-folder> pointing to the folder containing data folder and cloned ligands-classification repository
+1. Have installed:
+    - [docker](https://docs.docker.com/engine/install/)  (>=20.0.0)
+    - [docker compose](https://docker-docs.netlify.app/compose/install/#install-compose) (>=2.0.0!, notice, that the
+      page suggests installing older version)
+    - additionally, to run using GPU:
+        - [cuda](https://developer.nvidia.com/cuda-downloads) (>=11.3)
+          , [nvcc](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html)
+          and [cudnn](https://developer.nvidia.com/cudnn) (>= 8.0)
+        - [nvidia docker runtime](https://developer.nvidia.com/nvidia-container-runtime)
+2. Clone this repository.
+3. `sudo chmod 744 ./start.sh ./stop.sh`
+4. Set the environment configuration in the `docker/.env`:
+    - `PYTORCH`, `CUDA`, `CUDNN` - only for GPU, modify only if needed. Before changing verify against Minkowski Engine
+      requirements
+    - `DATA_PATH` - if your name is Adaś and you are computer you should leave it as it is. If your name is Ania, Witek
+      or Konrad, RNG guesses it is `../../data/`. In other cases set the path to the folder containing data
+5. Start container using `./start.sh`. If you want to run container on cpu use `./start.sh cpu`.
+6. To stop use `./stop.sh` or `./stop.sh cpu` for cpu respectively.
 
 ### PyCharm setup: ###
 
