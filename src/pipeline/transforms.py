@@ -1,3 +1,5 @@
+import os
+import time
 from abc import ABC, abstractmethod
 
 from typing import Callable, Dict, Tuple, Union
@@ -5,10 +7,14 @@ from typing import Callable, Dict, Tuple, Union
 import numpy as np
 import itertools
 import math
+import open3d as o3d
+import torch
 
 from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+
+from models.contiguous.riconv2.riconv2_utils import compute_LRA, pc_normalize
 
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
@@ -315,10 +321,86 @@ class PCATransform(Transform):
         return new_blob
 
 
+class NormalsTransform(Transform):
+    """
+        A class that estimates normals for each voxel in given pointcloud.
+        The method of estimating normals can be either 'open3d' or 'riconv'.
+        This class extends 'Transformer' class.
+
+        :param config: configuration dictionary with string 'method' (dictating the method of estimating normals),
+        if the chosen method is 'open3d' configuration dictionary should also contain integer 'knn',
+        if the chosen method is 'riconv' configuration should also contain bool 'weighting', integer 'nsample' and string 'device' ('cuda' or 'cpu')
+        """
+
+    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
+        super().__init__(config, **kwargs)
+        if self.__dict__.get('method') is None:
+            raise ValueError("{} requires 'method' key in config dictionary".format(type(self).__name__))
+        self.method = config['method']
+        if self.method == 'open3d':
+            if self.__dict__.get('knn') is None:
+                raise ValueError("{} requires 'knn' key in config dictionary".format(type(self).__name__))
+            self._method = self._open3d_estimation
+            self.knn = config['knn']
+        elif self.method == 'riconv':
+            if self.__dict__.get('weighting') is None:
+                raise ValueError("{} requires 'weighting' key in config dictionary".format(type(self).__name__))
+            if self.__dict__.get('nsample') is None:
+                raise ValueError("{} requires 'nsample' key in config dictionary".format(type(self).__name__))
+            if self.__dict__.get('device') is None:
+                raise ValueError("{} requires 'device' key in config dictionary".format(type(self).__name__))
+            self._method = self._riconv_estimation
+            self.weighting = config['weighting']
+            self.nsample = config['nsample']
+            self.device = config['device']
+        else:
+            raise ValueError("{} requires method to be 'open3d' or 'riconv'".format(type(self).__name__))
+
+    def _open3d_estimation(self, coordinates):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(coordinates)
+        pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=self.knn))
+        normals = np.asarray(pcd.normals)
+        return np.hstack((coordinates, normals))
+
+    def _riconv_estimation(self, coordinates):
+        coordinates_norm = pc_normalize(coordinates)
+        coordinates_norm = torch.Tensor(coordinates_norm).unsqueeze(dim=0)
+        coordinates_norm.to(self.device)
+        normals = compute_LRA(coordinates_norm, weighting=self.weighting, nsample=self.nsample).squeeze().cpu().numpy()
+        return np.hstack((coordinates, normals))
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        coordinates = np.transpose(np.nonzero(blob))
+        time_now = time.time()
+        coords_normals = self._method(coordinates)
+        return coords_normals, time.time() - time_now  # delete returning time
+
+
+
 TRANSFORMS = {
     "BlobSurfaceTransform": BlobSurfaceTransform,
     "ClusteringTransform": ClusteringTransform,
     "RandomSelectionTransform": RandomSelectionTransform,
     "UniformSelectionTransform": UniformSelectionTransform,
-    "PCATransform": PCATransform
+    "PCATransform": PCATransform,
+    "NormalsTransform": NormalsTransform,
 }
+
+
+if __name__ == '__main__':
+    time_o3d, time_riconvcpu, time_riconvgpu = [], [], []
+    path = '../../../data/shell_200'
+    files = os.listdir(path)[:100]
+    nt_o3d = NormalsTransform({'method': 'open3d', 'knn': 16})
+    nt_riconvgpu = NormalsTransform({'method': 'riconv', 'weighting': False, 'nsample': 16, 'device': 'cuda'})
+    nt_riconvcpu = NormalsTransform({'method': 'riconv', 'weighting': False, 'nsample': 16, 'device': 'cpu'})
+    for file in files:
+        blob = np.load(os.path.join(path, file))['blob']
+        _, time_diff = nt_o3d.preprocess(blob)
+        time_o3d.append(time_diff)
+        _, time_diff = nt_riconvgpu.preprocess(blob)
+        time_riconvgpu.append(time_diff)
+        _, time_diff = nt_riconvcpu.preprocess(blob)
+        time_riconvcpu.append(time_diff)
+    print(f'open3d: {np.mean(time_o3d)}, riconv_cpu: {np.mean(time_riconvcpu)}, riconv_gpu: {np.mean(time_riconvgpu)}')
