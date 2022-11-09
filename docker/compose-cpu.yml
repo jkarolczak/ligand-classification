@@ -3,8 +3,8 @@ version: '3'
 services:
   minkowski_cpu:
     build:
-      context: .
-      dockerfile: DockerfileCPU
+      context: ..
+      dockerfile: docker/DockerfileCPU
     volumes:
       - "../:/app:rw"
       - "${DATA_PATH}:/app/data:rw"
