@@ -372,10 +372,8 @@ class NormalsTransform(Transform):
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
         coordinates = np.transpose(np.nonzero(blob))
-        time_now = time.time()
         coords_normals = self._method(coordinates)
-        return coords_normals, time.time() - time_now  # delete returning time
-
+        return coords_normals
 
 
 TRANSFORMS = {
@@ -386,21 +384,3 @@ TRANSFORMS = {
     "PCATransform": PCATransform,
     "NormalsTransform": NormalsTransform,
 }
-
-
-if __name__ == '__main__':
-    time_o3d, time_riconvcpu, time_riconvgpu = [], [], []
-    path = '../../../data/shell_200'
-    files = os.listdir(path)[:100]
-    nt_o3d = NormalsTransform({'method': 'open3d', 'knn': 16})
-    nt_riconvgpu = NormalsTransform({'method': 'riconv', 'weighting': False, 'nsample': 16, 'device': 'cuda'})
-    nt_riconvcpu = NormalsTransform({'method': 'riconv', 'weighting': False, 'nsample': 16, 'device': 'cpu'})
-    for file in files:
-        blob = np.load(os.path.join(path, file))['blob']
-        _, time_diff = nt_o3d.preprocess(blob)
-        time_o3d.append(time_diff)
-        _, time_diff = nt_riconvgpu.preprocess(blob)
-        time_riconvgpu.append(time_diff)
-        _, time_diff = nt_riconvcpu.preprocess(blob)
-        time_riconvcpu.append(time_diff)
-    print(f'open3d: {np.mean(time_o3d)}, riconv_cpu: {np.mean(time_riconvcpu)}, riconv_gpu: {np.mean(time_riconvgpu)}')

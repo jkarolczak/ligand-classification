@@ -90,10 +90,12 @@ if __name__ == "__main__":
                 labels = labels.to(device=device)
                 batch = batch.to(device=device)
                 torch.cuda.empty_cache()
-                preds = model(batch)
-
-                labels = labels.to(cpu)
-                preds = preds.to(cpu)
+                try:
+                    preds = model(batch)
+                    labels = labels.to(cpu)
+                    preds = preds.to(cpu)
+                except:
+                    continue
 
                 if groundtruth is None:
                     groundtruth = labels
@@ -105,5 +107,4 @@ if __name__ == "__main__":
         scheduler.step()
         log.model(run=run, model=model, epoch=e, preds=predictions, target=groundtruth)
         log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e, model_name=cfg["model"])
-
     run.stop()
