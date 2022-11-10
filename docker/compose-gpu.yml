@@ -7,8 +7,8 @@ services:
         PYTORCH: ${PYTORCH}
         CUDA: ${CUDA}
         CUDNN: ${CUDNN}
-      context: .
-      dockerfile: DockerfileGPU
+      context: ..
+      dockerfile: docker/DockerfileGPU
     volumes:
       - "../:/app:rw"
       - "${DATA_PATH}:/app/data:rw"

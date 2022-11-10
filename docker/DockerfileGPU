@@ -1,33 +1,59 @@
 ARG PYTORCH
 ARG CUDA
 ARG CUDNN
+ARG DEBIAN_FRONTEND=noninteractive
 
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
-##############################################
-# You should modify this to match your GPU compute capability
+# environment setup
 ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX 8.0"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CUBLAS_WORKSPACE_CONFIG=":4096:8"
 ENV PYTHONPATH="/app/src"
-
-# ???
 RUN apt-key del 7fa2af80
 RUN apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
 
-RUN apt-get update
+# common dependencies
+RUN apt-get update --fix-missing
 RUN apt-get install -y git ninja-build cmake build-essential libopenblas-dev \
-    xterm xauth openssh-server tmux wget mate-desktop-environment-core
+    xterm xauth openssh-server tmux wget mate-desktop-environment-core libssl-dev
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN pip install sklearn pandas torchmetrics addict yapf neptune-client h5py
 
+# MinkowskiEngine for sparse NN operators
 ENV MAX_JOBS=4
 RUN pip install -U git+https://github.com/NVIDIA/MinkowskiEngine -v --no-deps \
                            --install-option="--force_cuda" \
                            --install-option="--blas=openblas"
 
-              
+# Open3D for computing normals
+WORKDIR /
+RUN git clone https://github.com/isl-org/Open3D
+RUN sed -i '6d' /Open3D/util/install_deps_ubuntu.sh
+RUN yes | /Open3D/util/install_deps_ubuntu.sh
+RUN mkdir /build
+WORKDIR /build
+RUN yes | apt remove cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.24.3/cmake-3.24.3.tar.gz
+RUN tar zxvf cmake-3.24.3.tar.gz
+WORKDIR /build/cmake-3.24.3
+RUN ./bootstrap
+RUN make
+RUN make install
+RUN mkdir /Open3D/build
+WORKDIR /Open3D/build
+RUN cmake -DGLIBCXX_USE_CXX11_ABI=OFF -DBUILD_CUDA_MODULE=ON ..
+RUN make -j$(nproc)
+RUN make install
+RUN make install-pip-package
+
+# RIConv dependencies
+ADD ./src/models/contiguous/riconv2/pointnet2/ /riconv-deps/
+WORKDIR /riconv-deps
+RUN python3 setup.py install
+
+RUN rm -rf /build /Open3D
