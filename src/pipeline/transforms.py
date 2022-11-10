@@ -13,6 +13,7 @@ import torch
 from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from tqdm import tqdm
 
 from models.contiguous.riconv2.riconv2_utils import compute_LRA, pc_normalize
 
@@ -384,3 +385,14 @@ TRANSFORMS = {
     "PCATransform": PCATransform,
     "NormalsTransform": NormalsTransform,
 }
+
+if __name__ == '__main__':
+    path = '../../../data/shell_200'
+    files = os.listdir(path)
+    nt_o3d = NormalsTransform({'method': 'open3d', 'knn': 16})
+    output_dir = '../../../data/shell_normals_200'
+    for file in tqdm(files):
+        output_path = os.path.join(output_dir, file)
+        blob = np.load(os.path.join(path, file))['blob']
+        b = nt_o3d.preprocess(blob)
+        np.savez_compressed(output_path, blob=b)

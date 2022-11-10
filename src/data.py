@@ -160,6 +160,21 @@ class CoordsDataset(BaseDataset):
         return coordinates, label
 
 
+class RiconvDataset(CoordsDataset):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        label = torch.tensor(self.labels[idx], dtype=torch.float32)
+        idx = self.files[idx]
+        blob_path = os.path.join(self.annotations_file_path, idx)
+        pcd = np.load(blob_path)
+        pcd = torch.tensor(pcd, dtype=torch.float32)
+        if self.normalize:
+            pcd[, :3] = self._pc_normalize(pcd[, :3])
+        return pcd, label
+
+
 def collation_fn_contiguous(blobel: List[Tuple[torch.Tensor, torch.Tensor]]) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Implements collation function for batching torch tensors and adding padding (-1, -1, -1), where needed, to make
@@ -177,7 +192,8 @@ def collation_fn_contiguous(blobel: List[Tuple[torch.Tensor, torch.Tensor]]) -> 
         labels.append(l)
     for idx, c in enumerate(coordinates):
         diff = max_len - len(c)
-        coordinates[idx] = torch.vstack([c, torch.ones((diff, 3)) * 0.0])
+        choose = np.random.choice(len(c), diff, replace=True)
+        coordinates[idx] = torch.vstack([c, c[choose]])
 
     coordinates = torch.stack(coordinates)
     labels = torch.stack(labels)
