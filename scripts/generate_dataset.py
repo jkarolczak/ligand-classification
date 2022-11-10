@@ -1,5 +1,6 @@
 import multiprocessing as mp
 import os
+from joblib import Parallel, delayed
 from datetime import datetime
 from typing import Tuple
 
@@ -38,5 +39,5 @@ if __name__ == "__main__":
     idxs = list(range(len(files)))
 
     tot = [(idx, f_name) for idx, f_name in zip(idxs, files)]
-    with mp.Pool() as pool:
-        results = pool.map(main, tot, chunksize=1)
+
+    Parallel(n_jobs=mp.cpu_count())(delayed(main)(x) for x in tot)
