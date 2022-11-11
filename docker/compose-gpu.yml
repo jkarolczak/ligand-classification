@@ -18,3 +18,5 @@ services:
     network_mode: "host"
     entrypoint: /bin/bash
     runtime: nvidia
+    environment:
+      MKL_THREADING_LAYER: 1

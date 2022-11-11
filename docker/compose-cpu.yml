@@ -13,3 +13,5 @@ services:
     stdin_open: true
     network_mode: "host"
     entrypoint: /bin/bash
+    environment:
+      MKL_THREADING_LAYER: 1
