@@ -5,6 +5,8 @@ from typing import Callable, Dict, Tuple, Union
 import numpy as np
 import itertools
 import math
+import open3d as o3d
+import torch
 
 from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
@@ -315,10 +317,122 @@ class PCATransform(Transform):
         return new_blob
 
 
+class NormalsTransform(Transform):
+    """
+        A class that estimates normals for each voxel in given pointcloud.
+        The method of estimating normals can be either 'open3d' or 'riconv'.
+        This class extends 'Transformer' class.
+
+        :param config: configuration dictionary with string 'method' (dictating the method of estimating normals),
+        if the chosen method is 'open3d' configuration dictionary should also contain integer 'knn',
+        if the chosen method is 'riconv' configuration should also contain bool 'weighting', integer 'nsample' and string 'device' ('cuda' or 'cpu')
+        """
+
+    def __init__(self, config: Union[Dict, None] = None, **kwargs) -> None:
+        super().__init__(config, **kwargs)
+        if self.__dict__.get('method') is None:
+            raise ValueError("{} requires 'method' key in config dictionary".format(type(self).__name__))
+        self.method = config['method']
+        if self.method == 'open3d':
+            if self.__dict__.get('knn') is None:
+                raise ValueError("{} requires 'knn' key in config dictionary".format(type(self).__name__))
+            self._method = self._open3d_estimation
+            self.knn = config['knn']
+        elif self.method == 'riconv':
+            if self.__dict__.get('weighting') is None:
+                raise ValueError("{} requires 'weighting' key in config dictionary".format(type(self).__name__))
+            if self.__dict__.get('nsample') is None:
+                raise ValueError("{} requires 'nsample' key in config dictionary".format(type(self).__name__))
+            if self.__dict__.get('device') is None:
+                raise ValueError("{} requires 'device' key in config dictionary".format(type(self).__name__))
+            self._method = self._riconv_estimation
+            self.weighting = config['weighting']
+            self.nsample = config['nsample']
+            self.device = config['device']
+        else:
+            raise ValueError("{} requires method to be 'open3d' or 'riconv'".format(type(self).__name__))
+
+    def _open3d_estimation(self, coordinates):
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(coordinates)
+        pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=self.knn))
+        normals = np.asarray(pcd.normals)
+        return np.hstack((coordinates, normals))
+
+    @staticmethod
+    def _pc_normalize(pc):
+        l = pc.shape[0]
+        centroid = np.mean(pc, axis=0)
+        pc = pc - centroid
+        m = np.max(np.sqrt(np.sum(pc ** 2, axis=1)))
+        pc = pc / m
+        return pc
+
+    @staticmethod
+    def _index_points(points, idx):
+        """
+
+        Input:
+            points: input points data, [B, N, C]
+            idx: sample index data, [B, S]
+        Return:
+            new_points:, indexed points data, [B, S, C]
+        """
+        device = points.device
+        B = points.shape[0]
+        view_shape = list(idx.shape)
+        view_shape[1:] = [1] * (len(view_shape) - 1)
+        repeat_shape = list(idx.shape)
+        repeat_shape[0] = 1
+        batch_indices = torch.arange(B, dtype=torch.long).to(device).view(view_shape).repeat(repeat_shape)
+
+        new_points = points[batch_indices, idx, :]
+        return new_points
+
+    def _compute_LRA(self, xyz, weighting=False, nsample=64):
+        dists = torch.cdist(xyz, xyz)
+
+        dists, idx = torch.topk(dists, nsample, dim=-1, largest=False, sorted=False)
+        dists = dists.unsqueeze(-1)
+
+        group_xyz = self._index_points(xyz, idx)
+        group_xyz = group_xyz - xyz.unsqueeze(2)
+
+        if weighting:
+            dists_max, _ = dists.max(dim=2, keepdim=True)
+            dists = dists_max - dists
+            dists_sum = dists.sum(dim=2, keepdim=True)
+            weights = dists / dists_sum
+            weights[weights != weights] = 1.0
+            M = torch.matmul(group_xyz.transpose(3, 2), weights * group_xyz)
+        else:
+            M = torch.matmul(group_xyz.transpose(3, 2), group_xyz)
+
+        eigen_values, vec = M.symeig(eigenvectors=True)
+
+        LRA = vec[:, :, :, 0]
+        LRA_length = torch.norm(LRA, dim=-1, keepdim=True)
+        LRA = LRA / LRA_length
+        return LRA  # B N 3
+
+    def _riconv_estimation(self, coordinates):
+        coordinates_norm = self._pc_normalize(coordinates)
+        coordinates_norm = torch.Tensor(coordinates_norm).unsqueeze(dim=0)
+        coordinates_norm.to(self.device)
+        normals = self._compute_LRA(coordinates_norm, weighting=self.weighting, nsample=self.nsample).squeeze().cpu().numpy()
+        return np.hstack((coordinates, normals))
+
+    def preprocess(self, blob: np.ndarray) -> np.ndarray:
+        coordinates = np.transpose(np.nonzero(blob))
+        coords_normals = self._method(coordinates)
+        return coords_normals
+
+
 TRANSFORMS = {
     "BlobSurfaceTransform": BlobSurfaceTransform,
     "ClusteringTransform": ClusteringTransform,
     "RandomSelectionTransform": RandomSelectionTransform,
     "UniformSelectionTransform": UniformSelectionTransform,
-    "PCATransform": PCATransform
+    "PCATransform": PCATransform,
+    "NormalsTransform": NormalsTransform,
 }

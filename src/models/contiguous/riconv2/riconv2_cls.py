@@ -5,11 +5,9 @@ Email: cszyzhang@gmail.com
 Website: https://wwww.zhiyuanzhang.net
 """
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .riconv2_utils import RIConv2SetAbstraction, compute_LRA
-
 
 class RiConv2(nn.Module):
     def __init__(self, num_class, n, normal_channel=True):

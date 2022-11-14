@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import CoordsDataset, dataset_split, collation_fn_contiguous
+from data import dataset_split, collation_fn_contiguous, RiconvDataset
 
 warnings.simplefilter("ignore")
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     run = log.get_run()
 
-    dataset = CoordsDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+    dataset = RiconvDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
                             max_size=cfg["dataset_max_size"], normalize=True)
 
     run["config/dataset/name"] = cfg["dataset_dir"].split("/")[-1]
@@ -90,10 +90,12 @@ if __name__ == "__main__":
                 labels = labels.to(device=device)
                 batch = batch.to(device=device)
                 torch.cuda.empty_cache()
-                preds = model(batch)
-
-                labels = labels.to(cpu)
-                preds = preds.to(cpu)
+                try:
+                    preds = model(batch)
+                    labels = labels.to(cpu)
+                    preds = preds.to(cpu)
+                except:
+                    continue
 
                 if groundtruth is None:
                     groundtruth = labels
@@ -105,5 +107,4 @@ if __name__ == "__main__":
         scheduler.step()
         log.model(run=run, model=model, epoch=e, preds=predictions, target=groundtruth)
         log.epoch(run=run, preds=predictions, target=groundtruth, epoch_num=e, model_name=cfg["model"])
-
     run.stop()
