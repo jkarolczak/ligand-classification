@@ -12,8 +12,6 @@ from scipy.ndimage import generic_filter
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
-from models.contiguous.riconv2.riconv2_utils import compute_LRA, pc_normalize
-
 """
 while writing our functions, we can specify the expected type of arguments and return. This is especially useful
 for people browsing and reviewing our code. Almighty Python language offers some useful helpers:
@@ -361,11 +359,67 @@ class NormalsTransform(Transform):
         normals = np.asarray(pcd.normals)
         return np.hstack((coordinates, normals))
 
+    @staticmethod
+    def _pc_normalize(pc):
+        l = pc.shape[0]
+        centroid = np.mean(pc, axis=0)
+        pc = pc - centroid
+        m = np.max(np.sqrt(np.sum(pc ** 2, axis=1)))
+        pc = pc / m
+        return pc
+
+    @staticmethod
+    def _index_points(points, idx):
+        """
+
+        Input:
+            points: input points data, [B, N, C]
+            idx: sample index data, [B, S]
+        Return:
+            new_points:, indexed points data, [B, S, C]
+        """
+        device = points.device
+        B = points.shape[0]
+        view_shape = list(idx.shape)
+        view_shape[1:] = [1] * (len(view_shape) - 1)
+        repeat_shape = list(idx.shape)
+        repeat_shape[0] = 1
+        batch_indices = torch.arange(B, dtype=torch.long).to(device).view(view_shape).repeat(repeat_shape)
+
+        new_points = points[batch_indices, idx, :]
+        return new_points
+
+    def _compute_LRA(self, xyz, weighting=False, nsample=64):
+        dists = torch.cdist(xyz, xyz)
+
+        dists, idx = torch.topk(dists, nsample, dim=-1, largest=False, sorted=False)
+        dists = dists.unsqueeze(-1)
+
+        group_xyz = self._index_points(xyz, idx)
+        group_xyz = group_xyz - xyz.unsqueeze(2)
+
+        if weighting:
+            dists_max, _ = dists.max(dim=2, keepdim=True)
+            dists = dists_max - dists
+            dists_sum = dists.sum(dim=2, keepdim=True)
+            weights = dists / dists_sum
+            weights[weights != weights] = 1.0
+            M = torch.matmul(group_xyz.transpose(3, 2), weights * group_xyz)
+        else:
+            M = torch.matmul(group_xyz.transpose(3, 2), group_xyz)
+
+        eigen_values, vec = M.symeig(eigenvectors=True)
+
+        LRA = vec[:, :, :, 0]
+        LRA_length = torch.norm(LRA, dim=-1, keepdim=True)
+        LRA = LRA / LRA_length
+        return LRA  # B N 3
+
     def _riconv_estimation(self, coordinates):
-        coordinates_norm = pc_normalize(coordinates)
+        coordinates_norm = self._pc_normalize(coordinates)
         coordinates_norm = torch.Tensor(coordinates_norm).unsqueeze(dim=0)
         coordinates_norm.to(self.device)
-        normals = compute_LRA(coordinates_norm, weighting=self.weighting, nsample=self.nsample).squeeze().cpu().numpy()
+        normals = self._compute_LRA(coordinates_norm, weighting=self.weighting, nsample=self.nsample).squeeze().cpu().numpy()
         return np.hstack((coordinates, normals))
 
     def preprocess(self, blob: np.ndarray) -> np.ndarray:
