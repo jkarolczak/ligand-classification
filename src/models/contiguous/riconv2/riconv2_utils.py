@@ -29,9 +29,6 @@ def load_state_dict(link: str, model: torch.nn.Module) -> torch.nn.Module:
     model_dict = model.state_dict()
     keys = list(model_dict.keys())[:-2]
     
-    # print(pretrained_weights["fc2.weight"].shape)
-    # print(model_dict["fc2.weight"].shape)
-    
     for key in keys:
         model_dict[key] = pretrained_weights[key]
     return model
