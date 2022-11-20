@@ -5,13 +5,34 @@ Email: cszyzhang@gmail.com
 Website: https://wwww.zhiyuanzhang.net
 """
 
+import os
+from time import time
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from time import time
-import numpy as np
+import wget
 
 from .pointnet2 import pointnet2_utils
+
+
+def get_weights(link: str):
+    fname = wget.download(link)
+    pretrained_dict = torch.load(fname)["model_state_dict"]
+    os.remove(fname)
+    return pretrained_dict
+
+
+def load_state_dict(link: str, model: torch.nn.Module) -> torch.nn.Module:
+    pretrained_weights = get_weights(link)
+    model_dict = model.state_dict()
+    keys = list(model_dict.keys())[:-2]
+    
+    for key in keys:
+        model_dict[key] = pretrained_weights[key]
+    return model
+
 
 def timeit(tag, t):
     print("{}: {}s".format(tag, time() - t))

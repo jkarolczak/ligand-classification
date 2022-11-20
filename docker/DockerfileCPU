@@ -12,7 +12,7 @@ RUN apt-get install -y pip git ninja-build cmake build-essential libopenblas-dev
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN pip install scikit-learn pandas torchmetrics addict yapf neptune-client h5py
+RUN pip install scikit-learn pandas torchmetrics addict yapf neptune-client h5py wget
 
 ENV MAX_JOBS=4
 RUN pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu

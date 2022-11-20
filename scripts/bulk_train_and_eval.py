@@ -18,19 +18,19 @@ def get_last_run_epoch(config: Dict[str, Union[str, bool]]) -> Tuple[int, int]:
 
 columns = ["dataset_dir", "batch_size", "lr", "accum_iter", "dataset_min_size", "dataset_max_size"]
 values = [
-    ["../data/blobs_shell_22", 64, 1e-3, 1, None, None],
-    ["../data/blobs_shell_22", 64, 1e-3, 4, None, None],
-    ["../data/blobs_shell_22", 64, 1e-3, 16, None, None],
-    ["../data/blobs_shell_22", 64, 1e-2, 4, None, None],
-    ["../data/blobs_shell_22", 64, 1e-3, 4, 2000, None],
-    ["../data/blobs_shell_22", 64, 1e-3, 4, None, 20000],
-    ["../data/blobs_shell_22", 64, 1e-3, 4, 2000, 20000],
+    ["../data/blobs_uniform_2000_max", 128, 1e-3, 4, None, None],
+    ["../data/blobs_uniform_2000_max", 128, 1e-3, 1, None, None],
+    ["../data/blobs_uniform_2000_max", 128, 1e-2, 1, None, None],
+    ["../data/blobs_uniform_2000_max", 128, 1e-2, 4, None, None],
+    ["../data/blobs_uniform_2000_max", 128, 1e-3, 4, 2000, None],
+    ["../data/blobs_uniform_2000_max", 128, 1e-3, 4, None, 50000],
+    ["../data/blobs_uniform_2000_max", 128, 1e-3, 4, 2000, 50000],
 ]
 
 if __name__ == "__main__":
     neptune_cfg = read_config("../cfg/neptune.yaml")
     train_config = read_config("../cfg/train.yaml")
-    eval_config = read_config("../cfg/train.yaml")
+    eval_config = read_config("../cfg/eval.yaml")
 
     for vals in values:
         for key, val in zip(columns, vals):
@@ -40,7 +40,6 @@ if __name__ == "__main__":
 
         with open("../cfg/train.yaml", "w") as fp:
             yaml.dump(train_config, fp)
-
         os.system("python ./train_sparse.py")
 
         run_id, epoch = get_last_run_epoch(config=neptune_cfg)

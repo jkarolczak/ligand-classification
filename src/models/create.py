@@ -6,6 +6,7 @@ from models.sparse.MinkLoc3Dv2.models.model_factory import model_factory
 from models.sparse.TransLoc3D import create_model, Config
 from models.sparse.TransLoc3D.transloc3d.model import TransLoc3D
 from models.contiguous.riconv2.riconv2_cls import RiConv2
+from models.contiguous.riconv2.riconv2_utils import load_state_dict
 
 
 def transloc3d() -> TransLoc3D:
@@ -39,4 +40,6 @@ def riconv2() -> RiConv2:
     use_normals = riconv2_params.pop("use_normals")
     classifier = RiConv2(num_classes, 2, normal_channel=use_normals)
     classifier.apply(_inplace_relu)
+    if riconv2_params["pretrained_weights"]:
+        classifier = load_state_dict(riconv2_params["pretrained_weights"], classifier)
     return classifier

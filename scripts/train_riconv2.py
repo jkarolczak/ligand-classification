@@ -1,9 +1,11 @@
 import gc
+import os
 import random
 import warnings
 
 import numpy as np
 import torch
+import wget
 from torch.utils.data import DataLoader
 
 import log
@@ -27,8 +29,10 @@ if __name__ == "__main__":
     cfg = read_config("../cfg/train.yaml")
 
     device = torch.device("cuda" if torch.cuda.is_available() and cfg["device"] != "cpu" else "cpu")
-    cpu = torch.device("cpu")
-
+    cpu = torch.device("cpu")   
+    
+    model = models.create(cfg["model"])
+    model.to(device)
     run = log.get_run()
 
     dataset = RiconvDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
@@ -50,11 +54,8 @@ if __name__ == "__main__":
                                  collate_fn=collation_fn_contiguous, worker_init_fn=seed_worker, generator=g_test,
                                  shuffle=True)
 
-    model = models.create(cfg["model"])
-    model.to(device)
-
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=24, gamma=0.1)
     criterion = torch.nn.NLLLoss()
 
     log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)

@@ -1,2 +1,3 @@
 num_classes: 219
 use_normals: true
+pretrained_weights: https://github.com/cszyzhang/riconv2/blob/main/log/classification_modelnet40/pretrained/checkpoints/best_model.pth?raw=true
