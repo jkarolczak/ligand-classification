@@ -43,7 +43,6 @@ def list_datasets_dir(root_dir: str = "../data") -> List[Tuple[str, str]]:
 
 if __name__ == "__main__":
     azure_conn = get_azure_connection()
-    ligand_ds = [list_datasets_dir()[-3]]
     ligand_ds = list_datasets_dir()
     for ds_name, ds_path in ligand_ds:
         out_file, out_path = make_tarfile(ds_name, ds_path)
