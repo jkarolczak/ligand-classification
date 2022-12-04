@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/DockerfileDeploy
+    volumes:
+      - "../:/app:rw"
+    working_dir: /app/scripts
+    tty: true
+    stdin_open: true
+    network_mode: "host"
+    entrypoint: streamlit run /app/src/deploy/app.py --server.port $DEPLOY_PORT
+    environment:
+      MKL_THREADING_LAYER: 1
