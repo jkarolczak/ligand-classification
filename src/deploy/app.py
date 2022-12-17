@@ -1,4 +1,5 @@
 import streamlit as st
+import yaml
 
 from deploy.inference import predict
 from deploy.parsing import parse
@@ -26,8 +27,8 @@ def main():
                 viz = volume_3d(blob, "Blob")
                 col1.plotly_chart(viz, use_container_width=True, height=500)
                 preds = predict(blob)
-                col2_predictions.dataframe(preds, use_container_width=True)
-                # TODO: add funny chemical image of the class with the highest probability
+                with col2_predictions.container():
+                    st.components.v1.html(preds, width=650, height=1000, scrolling=True)
             else:
                 col2_predictions.error("No file has been uploaded.")
 

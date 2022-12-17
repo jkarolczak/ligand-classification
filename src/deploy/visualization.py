@@ -1,52 +1,39 @@
-import numpy as np
-import plotly.graph_objects as go
+from skimage.measure import marching_cubes
+import plotly.figure_factory as ff
 
 
-def volume_3d(blob, title, opacity=0.1, surface_count=15, colorscale="PuBu"):
-    x, y, z = blob.shape
-    max_dim = max(x, y, z)
-    x_pad = (max_dim - x) / 2
-    y_pad = (max_dim - y) / 2
-    z_pad = (max_dim - z) / 2
-
-    data = np.pad(
-        blob,
-        (
-            (int(np.ceil(x_pad)), int(np.floor(x_pad))),
-            (int(np.ceil(y_pad)), int(np.floor(y_pad))),
-            (int(np.ceil(z_pad)), int(np.floor(z_pad))),
-        ),
-        "constant",
-        constant_values=0,
+def volume_3d(blob, title, cutoff_val=0.0, grid_unit=0.2, color="#009988", opacity=0.5, save=False):
+    """
+    Creates an interactive #d visualization of a given volume.
+    :param blob: 3D numpy array
+    :param title: title of plot
+    :param cutoff_val: value considered as void
+    :param grid_unit: unit of each voxel; by default 0.2 Angstrom
+    :param color: mesh color
+    :param opacity: mesh opacity
+    :param save: if True than image is saved to a file
+    :return: plotly figure
+    """
+    verts, faces, _, _ = marching_cubes(
+        blob, cutoff_val, spacing=(grid_unit, grid_unit, grid_unit)
     )
-
-    X, Y, Z = np.mgrid[
-      -1: 1: max_dim * 1j, -1: 1: max_dim * 1j, -1: 1: max_dim * 1j
-      ]
-
-    fig = go.Figure(
-        data=go.Volume(
-            x=X.flatten(),
-            y=Y.flatten(),
-            z=Z.flatten(),
-            value=data.flatten(),
-            isomin=float(blob[blob > 0].min()),
-            isomax=float(blob[blob > 0].max()),
-            opacity=opacity,
-            surface_count=surface_count,
-            colorscale=colorscale
-        )
+    fig = ff.create_trisurf(
+        x=verts[:, 0],
+        y=verts[:, 1],
+        z=verts[:, 2],
+        title=" ",
+        simplices=faces,
+        colormap=[color, color],
+        show_colorbar=False,
     )
-
     fig.update_layout(
-        title={
-            "text": title,
-            "y": 0.9,
-            "x": 0.5,
-            "xanchor": "center",
-            "yanchor": "top",
-        },
-        height=600
-    )
+        autosize=False,
+        width=1000,
+        height=1000, )
+    if opacity < 1:
+        fig["data"][0].update(opacity=opacity)
 
-    return fig
+    if save:
+        fig.write_image(f"{title}.png")
+    else:
+        return fig

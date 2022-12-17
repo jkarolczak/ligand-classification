@@ -1,0 +1,113 @@
+<head>
+    <style>
+        a:-webkit-any-link {
+            text-decoration: none !important;
+        }
+
+        #root {
+            font-family: "Source Sans Pro", sans-serif;
+        }
+
+        .pdb-img {
+            visibility: hidden;
+            display: block;
+            background-color: white;
+            position: fixed;
+            width: 300px;
+            overflow: visible;
+            border: 1px solid black;
+        }
+
+        .pdb-img span {
+            display: block;
+            text-align: center;
+            line-height: 2;
+            text-decoration: none;
+            color: rgba(49, 51, 63, 0.6);
+        }
+
+        .pdb-img {
+            margin: 10px;
+        }
+
+        .pdb-img img {
+            margin: 10px;
+        }
+
+        .ligand-name, .ligand-name a {
+            color: black;
+        }
+
+        .pdb-elem {
+            text-decoration: none;
+            color: rgba(49, 51, 63, 0.6);
+        }
+
+        .pdb-elem:hover .pdb-img {
+            visibility: visible;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        .id {
+            width: 20px;
+            padding: 15px;
+        }
+
+        td.label {
+            width: 600px;
+        }
+
+        .proba {
+           width: 150px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: rgb(240, 242, 246);
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root">
+        <table>
+            <tr>
+                <th class="id"></th>
+                <th class="label">Label</th>
+                <th class="proba">Probability</th>
+            </tr>
+            {% for row in rows %}
+            <tr>
+                <td class="id">
+                    {{ row[0] }}
+                </td>
+                <td class="label">
+                    {% for class, class_meta in row[1].items() %}
+                    {% if loop.first %}{% else %} <b> or </b> {% endif %}
+                    <a href="https://checkmyblob.bioreproducibility.org/server/ligands/#{{ class }}" target="_blank" title="Click to read more about {{ class }}"><span style="text-decoration: none;" class="ligand-name">{{ class }}</span></a>
+                    (
+                    {% for ligand in class_meta %}
+                    {% if loop.first %}{% else %} + {% endif %}
+
+                    <a class="pdb-elem" target="_blank" href="{{ ligand["url_pdb"] }}">
+                        <span class="pdb-code">{{ ligand["ligand"] }}</span>
+                        <div class="pdb-img">
+                            <span>Click to visit {{ ligand["ligand"] }} in PDB</span>
+                            <img alt="{{ ligand["ligand"] }}" src="{{ ligand["url_svg"] }}">
+                        </div>
+                    </a>
+                    {% endfor %}
+                    )
+                {% endfor %}
+                </td>
+                <td class="proba">
+                    {{ row[2] }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
