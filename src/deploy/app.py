@@ -1,5 +1,4 @@
 import streamlit as st
-import yaml
 
 from deploy.inference import predict
 from deploy.parsing import parse
@@ -8,12 +7,28 @@ from deploy.visualization import volume_3d
 
 def main():
     st.set_page_config(
-        page_title="Blobaversum",
-        page_icon="🏀",
+        page_title="Ligand classification",
+        page_icon="⚛",
         layout="wide"
     )
 
-    st.markdown('# Ligand classification using deep learning')
+    st.markdown("""
+    # Ligand classification using deep learning
+    
+    ---
+    By using this application, you can run an inference pipeline that takes 3D point clouds representing ligands as 
+    inputs and outputs a list of the 10 most likely ligands based on the inputs. To run inference, upload a file using 
+    input field on the right-hand-side. On the left panel, you will see a visualization of the uploaded ligand and on 
+    the right panel, you will see a ranking of the 10 most likely classes that the ligand belongs to. More information 
+    about ligands can be found in the table. All ligands within a class can be viewed by clicking on the class name. 
+    Additionally there is list of building ligands that are visualised when there is a cursor on the  name. Click on a 
+    ligand's name to see its Protein Data Bank entry.
+    
+    The application was created as a Bachelor dissertation by Anna Przybyłowska, Konrad Szewczyk, Witold Taisner and 
+    Jacek Karolczak, under supervision of Ph.D. Dariusz Brzeziński.
+    
+    --- 
+    """)
     col1, col2 = st.columns(2)
     col1.markdown("## Input")
     col2.markdown("## Predictions")

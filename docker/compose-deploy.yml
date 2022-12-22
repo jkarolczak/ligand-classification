@@ -5,7 +5,7 @@ services:
     image: jkarolczak/ligand-deploy
     volumes:
       - "../:/app:rw"
-    working_dir: /app/scripts
+    working_dir: /app
     tty: true
     stdin_open: true
     network_mode: "host"
