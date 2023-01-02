@@ -52,18 +52,18 @@ class BlobSurfaceTransform(Transform):
     A class that limit voxels in the blob by removing all voxels that don't create surface of the blob. It removes
     voxels that don't have any 0 in their neighbourhood. This class extends `Transformer` class.
 
-    :param config: has to contain key "neighbourhood" defining the neighbourhood, one of 6, 22 or 26
+    :param config: has to contain key "neighbourhood" defining the neighbourhood, one of 6, 18 or 26
     """
 
     def _footprint(self):
-        assert int(self.neighbourhood) in [6, 22, 26]
+        assert int(self.neighbourhood) in [6, 18, 26]
         _masks = {
             6: np.array([
                 [[0, 0, 0], [0, 1, 0], [0, 0, 0]],
                 [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
                 [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
             ]),
-            22: np.array([
+            18: np.array([
                 [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
                 [[1, 1, 1], [1, 1, 1], [1, 1, 1]],
                 [[0, 1, 0], [1, 1, 1], [0, 1, 0]],

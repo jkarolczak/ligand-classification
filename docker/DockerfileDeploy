@@ -13,7 +13,7 @@ RUN apt-get install -y \
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN pip install pandas streamlit==1.15.0 numpy plotly pyyaml scikit-image
+RUN pip install pandas streamlit==1.15.0 numpy plotly pyyaml scikit-image plyfile addict open3d yapf wget
 
 ENV MAX_JOBS=4
 RUN pip install torch --extra-index-url https://download.pytorch.org/whl/cpu

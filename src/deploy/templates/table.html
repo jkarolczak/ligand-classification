@@ -86,22 +86,24 @@
                 </td>
                 <td class="label">
                     {% for class, class_meta in row[1].items() %}
-                    {% if loop.first %}{% else %} <b> or </b> {% endif %}
-                    <a href="https://checkmyblob.bioreproducibility.org/server/ligands/#{{ class }}" target="_blank" title="Click to read more about {{ class }}"><span style="text-decoration: none;" class="ligand-name">{{ class }}</span></a>
-                    (
-                    {% for ligand in class_meta %}
-                    {% if loop.first %}{% else %} + {% endif %}
+                        {% if loop.first %}{% else %} <b> or </b> {% endif %}
+                        <a href="https://checkmyblob.bioreproducibility.org/server/ligands/#{{ class }}" target="_blank" title="Click to read more about {{ class }}"><span style="text-decoration: none;" class="ligand-name">{{ class }}</span></a>
+                        {% if class_meta is not none %}
+                        (
+                            {% for ligand in class_meta %}
+                                {% if loop.first %}{% else %} + {% endif %}
 
-                    <a class="pdb-elem" target="_blank" href="{{ ligand["url_pdb"] }}">
-                        <span class="pdb-code">{{ ligand["ligand"] }}</span>
-                        <div class="pdb-img">
-                            <span>Click to visit {{ ligand["ligand"] }} in PDB</span>
-                            <img alt="{{ ligand["ligand"] }}" src="{{ ligand["url_svg"] }}">
-                        </div>
-                    </a>
+                                <a class="pdb-elem" target="_blank" href="{{ ligand["url_pdb"] }}">
+                                    <span class="pdb-code">{{ ligand["ligand"] }}</span>
+                                    <div class="pdb-img">
+                                        <span>Click to visit {{ ligand["ligand"] }} in PDB</span>
+                                        <img alt="{{ ligand["ligand"] }}" src="{{ ligand["url_svg"] }}">
+                                    </div>
+                                </a>
+                        {% endfor %}
+                        )
+                        {% endif %}
                     {% endfor %}
-                    )
-                {% endfor %}
                 </td>
                 <td class="proba">
                     {{ row[2] }}

@@ -29,7 +29,7 @@ def volume_3d(blob, title, cutoff_val=0.0, grid_unit=0.2, color="#009988", opaci
     fig.update_layout(
         autosize=False,
         width=1000,
-        height=1000, )
+        height=700, )
     if opacity < 1:
         fig["data"][0].update(opacity=opacity)
 

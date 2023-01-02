@@ -1,8 +1,12 @@
 import streamlit as st
 
-from deploy.inference import predict
+from deploy.inference import predict, load_model
 from deploy.parsing import parse
+from deploy.preprocessing import preprocess
 from deploy.visualization import volume_3d
+
+
+model = None
 
 
 def main():
@@ -29,6 +33,10 @@ def main():
     
     --- 
     """)
+
+    global model
+    model = load_model()
+
     col1, col2 = st.columns(2)
     col1.markdown("## Input")
     col2.markdown("## Predictions")
@@ -41,7 +49,8 @@ def main():
                 blob = parse(file_val)
                 viz = volume_3d(blob, "Blob")
                 col1.plotly_chart(viz, use_container_width=True, height=500)
-                preds = predict(blob)
+                blob = preprocess(blob)
+                preds = predict(blob, model)
                 with col2_predictions.container():
                     st.components.v1.html(preds, width=650, height=1000, scrolling=True)
             else:
