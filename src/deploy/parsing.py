@@ -79,13 +79,35 @@ def parse_xyz_pts_txt(byte_obj: _io.BytesIO, ext: str) -> np.ndarray:
     :param byte_obj: input object to be parsed.
     :type byte_obj: _io.BytesIO
     :param ext: file extension
-    "type ext: str
+    :type ext: str
     :returns: point cloud
     :rtype: np.ndarray
     """
     if ext == 'pts':
         _ = byte_obj.readline()
     points = np.loadtxt(byte_obj, encoding="bytes")
+    return _construct_blob(points)
+
+
+def parse_csv(byte_obj: _io.BytesIO) -> np.ndarray:
+    """
+    Parse csv files
+    - csv file structure: should contain only numerical data (without any header), each line should have
+        the following format:
+        x, y, z, feature
+        where x, y, z are coordinates and feature is a feature value at point with the given x, y, z coordinates;
+        lines should be separated with \n character
+
+    :param byte_obj: input object to be parsed.
+    :type byte_obj: _io.BytesIO
+    :returns: point cloud
+    :rtype: np.ndarray
+    """
+    try:
+        points = np.loadtxt(byte_obj, delimiter=',', encoding="bytes")
+    except ValueError:
+        _ = byte_obj.readline()
+        points = np.loadtxt(byte_obj, delimiter=',', encoding="bytes")
     return _construct_blob(points)
 
 
@@ -109,3 +131,5 @@ def parse(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
         return parse_ply(byte_object)
     elif ext == "xyz" or ext == "pts" or ext == "txt":
         return parse_xyz_pts_txt(byte_object, ext)
+    elif ext == "csv":
+        return parse_csv(byte_object)
