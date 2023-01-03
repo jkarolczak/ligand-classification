@@ -28,15 +28,17 @@ def main():
     
     ---
     By using this application, you can run an inference pipeline that takes 3D point clouds representing ligands as 
-    inputs and outputs a list of the 10 most likely ligands based on the inputs. To run inference, upload a file using 
-    input field on the right-hand-side. On the left panel, you will see a visualization of the uploaded ligand and on 
-    the right panel, you will see a ranking of the 10 most likely classes that the ligand belongs to. More information 
-    about ligands can be found in the table. All ligands within a class can be viewed by clicking on the class name. 
-    Additionally there is list of building ligands that are visualised when there is a cursor on the  name. Click on a 
-    ligand's name to see its Protein Data Bank entry.
+    inputs and outputs a list of the 10 most likely ligands based on the inputs. The classification is made using deep 
+    learning model for place recognition problem, namely [MinkLoc3DV2](https://arxiv.org/abs/2203.00972). To run 
+    inference, upload a file using input field on the right-hand-side. On the left panel, you will see a visualization 
+    of the uploaded ligand and on the right panel, you will see a ranking of the 10 most likely classes that the ligand 
+    belongs to. More information about ligands can be found in the table. All ligands within a class can be viewed by 
+    clicking on the class name. Additionally there is list of building ligands that are visualised when there is a 
+    cursor on the  name. Click on a ligand's name to see its Protein Data Bank entry.
     
     The application was created as a Bachelor dissertation by Anna Przybyłowska, Konrad Szewczyk, Witold Taisner and 
-    Jacek Karolczak, under supervision of Ph.D. Dariusz Brzeziński.
+    Jacek Karolczak, under supervision of Ph.D. Dariusz Brzeziński. The source code is publicly available on 
+    [GitHub](https://github.com/jkarolczak/ligand-classification)
     
     --- 
     """)
@@ -59,7 +61,7 @@ def main():
         - the first line contains information about number of points (lines)
         - each line describe a voxel following the pattern `x y z density`
     - `.csv`
-        - without any header
+        - files with headers and headerless are supported
         - each line describe a voxel following the pattern `x, y, z, density`
     """)
     col2.markdown("## Predictions")
