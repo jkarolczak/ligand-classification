@@ -30,7 +30,7 @@ def test_uniform_selection_transform(config):
         assert np.sum(transformed > 0) <= config['max_blob_size']
 
 
-@pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 22}, {"neighbourhood": 26}])
+@pytest.mark.parametrize("config", [{"neighbourhood": 6}, {"neighbourhood": 18}, {"neighbourhood": 26}])
 def test_blob_surface_transform(config):
     transforms = BlobSurfaceTransform(config)
     for blob in blobs():
