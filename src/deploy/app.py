@@ -43,7 +43,7 @@ def main():
     col2_predictions = col2.empty()
     col2_predictions.info("Upload a blob to see predictions.")
     with col1.form("test"):
-        file_val = st.file_uploader("Input", type=["npy", "npz"])
+        file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
         if st.form_submit_button():
             if file_val:
                 blob = parse(file_val)
