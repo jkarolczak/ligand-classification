@@ -1,0 +1,1231 @@
+13P-like:
+  13P-like:
+  - ligand: 13P
+    url_pdb: https://www4.rcsb.org/ligand/13P
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/1/13P.svg
+1PE-like:
+  1PE-like:
+  - ligand: 1PE
+    url_pdb: https://www4.rcsb.org/ligand/1PE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/1/1PE.svg
+2CV:
+  2CV:
+  - ligand: 2CV
+    url_pdb: https://www4.rcsb.org/ligand/2CV
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/2/2CV.svg
+2PE:
+  2PE:
+  - ligand: 2PE
+    url_pdb: https://www4.rcsb.org/ligand/2PE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/2/2PE.svg
+3BV:
+  3BV:
+  - ligand: 3BV
+    url_pdb: https://www4.rcsb.org/ligand/3BV
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/3/3BV.svg
+5GP-like:
+  5GP-like:
+  - ligand: 5GP
+    url_pdb: https://www4.rcsb.org/ligand/5GP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/5/5GP.svg
+A2G:
+  A2G:
+  - ligand: A2G
+    url_pdb: https://www4.rcsb.org/ligand/A2G
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/A2G.svg
+A3P:
+  A3P:
+  - ligand: A3P
+    url_pdb: https://www4.rcsb.org/ligand/A3P
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/A3P.svg
+ACO:
+  ACO:
+  - ligand: ACO
+    url_pdb: https://www4.rcsb.org/ligand/ACO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ACO.svg
+ACT-like:
+  ACT-like:
+  - ligand: ACT
+    url_pdb: https://www4.rcsb.org/ligand/ACT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ACT.svg
+ACT-like_ZN-like:
+  ACT-like_ZN-like:
+  - ligand: ACT
+    url_pdb: https://www4.rcsb.org/ligand/ACT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ACT.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+ADE-like:
+  ADE-like:
+  - ligand: ADE
+    url_pdb: https://www4.rcsb.org/ligand/ADE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ADE.svg
+ADN-like:
+  ADN-like:
+  - ligand: ADN
+    url_pdb: https://www4.rcsb.org/ligand/ADN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ADN.svg
+ADP-like:
+  ADP-like:
+  - ligand: ADP
+    url_pdb: https://www4.rcsb.org/ligand/ADP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ADP.svg
+ADP-like_MG-like:
+  ADP-like_MG-like:
+  - ligand: ADP
+    url_pdb: https://www4.rcsb.org/ligand/ADP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ADP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+ADP-like_MG-like_MG-like:
+  ADP-like_MG-like_MG-like:
+  - ligand: ADP
+    url_pdb: https://www4.rcsb.org/ligand/ADP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ADP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+AGS:
+  AGS:
+  - ligand: AGS
+    url_pdb: https://www4.rcsb.org/ligand/AGS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AGS.svg
+AKG-like:
+  AKG-like:
+  - ligand: AKG
+    url_pdb: https://www4.rcsb.org/ligand/AKG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AKG.svg
+AKG-like_ZN-like:
+  AKG-like_ZN-like:
+  - ligand: AKG
+    url_pdb: https://www4.rcsb.org/ligand/AKG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AKG.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+ALA-like:
+  ALA-like:
+  - ligand: ALA
+    url_pdb: https://www4.rcsb.org/ligand/ALA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ALA.svg
+AMP-like:
+  AMP-like:
+  - ligand: AMP
+    url_pdb: https://www4.rcsb.org/ligand/AMP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AMP.svg
+APR-like:
+  APR-like:
+  - ligand: APR
+    url_pdb: https://www4.rcsb.org/ligand/APR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/APR.svg
+ARG-like:
+  ARG-like:
+  - ligand: ARG
+    url_pdb: https://www4.rcsb.org/ligand/ARG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ARG.svg
+ASP-like:
+  ASP-like:
+  - ligand: ASP
+    url_pdb: https://www4.rcsb.org/ligand/ASP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ASP.svg
+ATP-like:
+  ATP-like:
+  - ligand: ATP
+    url_pdb: https://www4.rcsb.org/ligand/ATP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ATP.svg
+ATP-like_CA-like:
+  ATP-like_CA-like:
+  - ligand: ATP
+    url_pdb: https://www4.rcsb.org/ligand/ATP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ATP.svg
+  - ligand: CA
+    url_pdb: https://www4.rcsb.org/ligand/CA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CA.svg
+ATP-like_MG-like:
+  ATP-like_MG-like:
+  - ligand: ATP
+    url_pdb: https://www4.rcsb.org/ligand/ATP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ATP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+ATP-like_MG-like_MG-like:
+  ATP-like_MG-like_MG-like:
+  - ligand: ATP
+    url_pdb: https://www4.rcsb.org/ligand/ATP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/ATP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+AZI-like:
+  AZI-like:
+  - ligand: AZI
+    url_pdb: https://www4.rcsb.org/ligand/AZI
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AZI.svg
+B3P:
+  B3P:
+  - ligand: B3P
+    url_pdb: https://www4.rcsb.org/ligand/B3P
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/B3P.svg
+BCL:
+  BCL:
+  - ligand: BCL
+    url_pdb: https://www4.rcsb.org/ligand/BCL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BCL.svg
+BCR:
+  BCR:
+  - ligand: BCR
+    url_pdb: https://www4.rcsb.org/ligand/BCR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BCR.svg
+BEN-like:
+  BEN-like:
+  - ligand: BEN
+    url_pdb: https://www4.rcsb.org/ligand/BEN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BEN.svg
+BGC-like:
+  BGC-like:
+  - ligand: BGC
+    url_pdb: https://www4.rcsb.org/ligand/BGC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BGC.svg
+BLA-like:
+  BLA-like:
+  - ligand: BLA
+    url_pdb: https://www4.rcsb.org/ligand/BLA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BLA.svg
+BMA-like:
+  BMA-like:
+  - ligand: BMA
+    url_pdb: https://www4.rcsb.org/ligand/BMA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BMA.svg
+BMA-like_NAG_NAG:
+  BMA-like_NAG_NAG:
+  - ligand: BMA
+    url_pdb: https://www4.rcsb.org/ligand/BMA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BMA.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+BME-like:
+  BME-like:
+  - ligand: BME
+    url_pdb: https://www4.rcsb.org/ligand/BME
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BME.svg
+BMP-like:
+  BMP-like:
+  - ligand: BMP
+    url_pdb: https://www4.rcsb.org/ligand/BMP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BMP.svg
+BNG:
+  BNG:
+  - ligand: BNG
+    url_pdb: https://www4.rcsb.org/ligand/BNG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BNG.svg
+BO2:
+  BO2:
+  - ligand: BO2
+    url_pdb: https://www4.rcsb.org/ligand/BO2
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BO2.svg
+BOG:
+  BOG:
+  - ligand: BOG
+    url_pdb: https://www4.rcsb.org/ligand/BOG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BOG.svg
+BPH:
+  BPH:
+  - ligand: BPH
+    url_pdb: https://www4.rcsb.org/ligand/BPH
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BPH.svg
+BR-like:
+  BR-like:
+  - ligand: BR
+    url_pdb: https://www4.rcsb.org/ligand/BR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BR.svg
+BTB-like:
+  BTB-like:
+  - ligand: BTB
+    url_pdb: https://www4.rcsb.org/ligand/BTB
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BTB.svg
+BTN-like:
+  BTN-like:
+  - ligand: BTN
+    url_pdb: https://www4.rcsb.org/ligand/BTN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/B/BTN.svg
+C2E:
+  C2E:
+  - ligand: C2E
+    url_pdb: https://www4.rcsb.org/ligand/C2E
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/C2E.svg
+C8E-like:
+  C8E-like:
+  - ligand: C8E
+    url_pdb: https://www4.rcsb.org/ligand/C8E
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/C8E.svg
+CA-like:
+  CA-like:
+  - ligand: CA
+    url_pdb: https://www4.rcsb.org/ligand/CA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CA.svg
+CA-like_CA-like:
+  CA-like_CA-like:
+  - ligand: CA
+    url_pdb: https://www4.rcsb.org/ligand/CA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CA.svg
+  - ligand: CA
+    url_pdb: https://www4.rcsb.org/ligand/CA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CA.svg
+CAC-like:
+  CAC-like:
+  - ligand: CAC
+    url_pdb: https://www4.rcsb.org/ligand/CAC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CAC.svg
+CAP_MG-like:
+  CAP_MG-like:
+  - ligand: CAP
+    url_pdb: https://www4.rcsb.org/ligand/CAP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CAP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+CD-like:
+  CD-like:
+  - ligand: CD
+    url_pdb: https://www4.rcsb.org/ligand/CD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CD.svg
+CDL:
+  CDL:
+  - ligand: CDL
+    url_pdb: https://www4.rcsb.org/ligand/CDL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CDL.svg
+CHD-like:
+  CHD-like:
+  - ligand: CHD
+    url_pdb: https://www4.rcsb.org/ligand/CHD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CHD.svg
+CHT-like:
+  CHT-like:
+  - ligand: CHT
+    url_pdb: https://www4.rcsb.org/ligand/CHT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CHT.svg
+CIT-like:
+  CIT-like:
+  - ligand: CIT
+    url_pdb: https://www4.rcsb.org/ligand/CIT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CIT.svg
+CL-like:
+  CL-like:
+  - ligand: CL
+    url_pdb: https://www4.rcsb.org/ligand/CL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CL.svg
+CL-like_ZN-like:
+  CL-like_ZN-like:
+  - ligand: CL
+    url_pdb: https://www4.rcsb.org/ligand/CL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CL.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+CLA-like:
+  CLA-like:
+  - ligand: CLA
+    url_pdb: https://www4.rcsb.org/ligand/CLA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CLA.svg
+CLR:
+  CLR:
+  - ligand: CLR
+    url_pdb: https://www4.rcsb.org/ligand/CLR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CLR.svg
+CMP-like:
+  CMP-like:
+  - ligand: CMP
+    url_pdb: https://www4.rcsb.org/ligand/CMP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CMP.svg
+COA:
+  COA:
+  - ligand: COA
+    url_pdb: https://www4.rcsb.org/ligand/COA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/COA.svg
+CPS:
+  CPS:
+  - ligand: CPS
+    url_pdb: https://www4.rcsb.org/ligand/CPS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CPS.svg
+CTP-like:
+  CTP-like:
+  - ligand: CTP
+    url_pdb: https://www4.rcsb.org/ligand/CTP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CTP.svg
+CXS-like:
+  CXS-like:
+  - ligand: CXS
+    url_pdb: https://www4.rcsb.org/ligand/CXS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CXS.svg
+CYC-like:
+  CYC-like:
+  - ligand: CYC
+    url_pdb: https://www4.rcsb.org/ligand/CYC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CYC.svg
+CYS-like:
+  CYS-like:
+  - ligand: CYS
+    url_pdb: https://www4.rcsb.org/ligand/CYS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/C/CYS.svg
+D12-like:
+  D12-like:
+  - ligand: D12
+    url_pdb: https://www4.rcsb.org/ligand/D12
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/D12.svg
+DCP-like:
+  DCP-like:
+  - ligand: DCP
+    url_pdb: https://www4.rcsb.org/ligand/DCP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DCP.svg
+DCP-like_MG-like:
+  DCP-like_MG-like:
+  - ligand: DCP
+    url_pdb: https://www4.rcsb.org/ligand/DCP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DCP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+DIO-like:
+  DIO-like:
+  - ligand: DIO
+    url_pdb: https://www4.rcsb.org/ligand/DIO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DIO.svg
+DMF-like:
+  DMF-like:
+  - ligand: DMF
+    url_pdb: https://www4.rcsb.org/ligand/DMF
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DMF.svg
+DMS-like:
+  DMS-like:
+  - ligand: DMS
+    url_pdb: https://www4.rcsb.org/ligand/DMS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DMS.svg
+DMU:
+  DMU:
+  - ligand: DMU
+    url_pdb: https://www4.rcsb.org/ligand/DMU
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DMU.svg
+DTT:
+  DTT:
+  - ligand: DTT
+    url_pdb: https://www4.rcsb.org/ligand/DTT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DTT.svg
+DUR-like:
+  DUR-like:
+  - ligand: DUR
+    url_pdb: https://www4.rcsb.org/ligand/DUR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/D/DUR.svg
+EDO-like:
+  EDO-like:
+  - ligand: EDO
+    url_pdb: https://www4.rcsb.org/ligand/EDO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/E/EDO.svg
+EPE:
+  EPE:
+  - ligand: EPE
+    url_pdb: https://www4.rcsb.org/ligand/EPE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/E/EPE.svg
+F3S:
+  F3S:
+  - ligand: F3S
+    url_pdb: https://www4.rcsb.org/ligand/F3S
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/F3S.svg
+F6P:
+  F6P:
+  - ligand: F6P
+    url_pdb: https://www4.rcsb.org/ligand/F6P
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/F6P.svg
+FAD-like:
+  FAD-like:
+  - ligand: FAD
+    url_pdb: https://www4.rcsb.org/ligand/FAD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FAD.svg
+FBP:
+  FBP:
+  - ligand: FBP
+    url_pdb: https://www4.rcsb.org/ligand/FBP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FBP.svg
+FES-like:
+  FES-like:
+  - ligand: FES
+    url_pdb: https://www4.rcsb.org/ligand/FES
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FES.svg
+FMN-like:
+  FMN-like:
+  - ligand: FMN
+    url_pdb: https://www4.rcsb.org/ligand/FMN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FMN.svg
+FMT-like:
+  FMT-like:
+  - ligand: FMT
+    url_pdb: https://www4.rcsb.org/ligand/FMT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FMT.svg
+FOL-like:
+  FOL-like:
+  - ligand: FOL
+    url_pdb: https://www4.rcsb.org/ligand/FOL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FOL.svg
+FUC:
+  FUC:
+  - ligand: FUC
+    url_pdb: https://www4.rcsb.org/ligand/FUC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FUC.svg
+FUC_NAG:
+  FUC_NAG:
+  - ligand: FUC
+    url_pdb: https://www4.rcsb.org/ligand/FUC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FUC.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+FUC_NAG_NAG:
+  FUC_NAG_NAG:
+  - ligand: FUC
+    url_pdb: https://www4.rcsb.org/ligand/FUC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FUC.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+FUL-like:
+  FUL-like:
+  - ligand: FUL
+    url_pdb: https://www4.rcsb.org/ligand/FUL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/F/FUL.svg
+GAL-like:
+  GAL-like:
+  - ligand: GAL
+    url_pdb: https://www4.rcsb.org/ligand/GAL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GAL.svg
+GAL-like_SIA:
+  GAL-like_SIA:
+  - ligand: GAL
+    url_pdb: https://www4.rcsb.org/ligand/GAL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GAL.svg
+  - ligand: SIA
+    url_pdb: https://www4.rcsb.org/ligand/SIA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SIA.svg
+GDP-like:
+  GDP-like:
+  - ligand: GDP
+    url_pdb: https://www4.rcsb.org/ligand/GDP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GDP.svg
+GDP-like_MG-like:
+  GDP-like_MG-like:
+  - ligand: GDP
+    url_pdb: https://www4.rcsb.org/ligand/GDP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GDP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+GLA-like:
+  GLA-like:
+  - ligand: GLA
+    url_pdb: https://www4.rcsb.org/ligand/GLA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GLA.svg
+GLC-like:
+  GLC-like:
+  - ligand: GLC
+    url_pdb: https://www4.rcsb.org/ligand/GLC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GLC.svg
+GLC-like_GLC-like:
+  GLC-like_GLC-like:
+  - ligand: GLC
+    url_pdb: https://www4.rcsb.org/ligand/GLC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GLC.svg
+  - ligand: GLC
+    url_pdb: https://www4.rcsb.org/ligand/GLC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GLC.svg
+GLU-like:
+  GLU-like:
+  - ligand: GLU
+    url_pdb: https://www4.rcsb.org/ligand/GLU
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GLU.svg
+GOL-like:
+  GOL-like:
+  - ligand: GOL
+    url_pdb: https://www4.rcsb.org/ligand/GOL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GOL.svg
+GSH:
+  GSH:
+  - ligand: GSH
+    url_pdb: https://www4.rcsb.org/ligand/GSH
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GSH.svg
+GTP-like:
+  GTP-like:
+  - ligand: GTP
+    url_pdb: https://www4.rcsb.org/ligand/GTP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GTP.svg
+GTP-like_MG-like:
+  GTP-like_MG-like:
+  - ligand: GTP
+    url_pdb: https://www4.rcsb.org/ligand/GTP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GTP.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+GUN-like:
+  GUN-like:
+  - ligand: GUN
+    url_pdb: https://www4.rcsb.org/ligand/GUN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/G/GUN.svg
+H4B-like:
+  H4B-like:
+  - ligand: H4B
+    url_pdb: https://www4.rcsb.org/ligand/H4B
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/H4B.svg
+H4B-like_HEM-like:
+  H4B-like_HEM-like:
+  - ligand: H4B
+    url_pdb: https://www4.rcsb.org/ligand/H4B
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/H4B.svg
+  - ligand: HEM
+    url_pdb: https://www4.rcsb.org/ligand/HEM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEM.svg
+HEA:
+  HEA:
+  - ligand: HEA
+    url_pdb: https://www4.rcsb.org/ligand/HEA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEA.svg
+HEC-like:
+  HEC-like:
+  - ligand: HEC
+    url_pdb: https://www4.rcsb.org/ligand/HEC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEC.svg
+HEM-like or OXY-like_HEM-like:
+  HEM-like:
+  - ligand: HEM
+    url_pdb: https://www4.rcsb.org/ligand/HEM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEM.svg
+  OXY-like_HEM-like:
+  - ligand: OXY
+    url_pdb: https://www4.rcsb.org/ligand/OXY
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/OXY.svg
+  - ligand: HEM
+    url_pdb: https://www4.rcsb.org/ligand/HEM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEM.svg
+HEZ-like:
+  HEZ-like:
+  - ligand: HEZ
+    url_pdb: https://www4.rcsb.org/ligand/HEZ
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HEZ.svg
+HG-like:
+  HG-like:
+  - ligand: HG
+    url_pdb: https://www4.rcsb.org/ligand/HG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HG.svg
+HIS-like:
+  HIS-like:
+  - ligand: HIS
+    url_pdb: https://www4.rcsb.org/ligand/HIS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HIS.svg
+HOH-like:
+  HOH-like:
+  - ligand: HOH
+    url_pdb: https://www4.rcsb.org/ligand/HOH
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/H/HOH.svg
+ILE-like:
+  ILE-like:
+  - ligand: ILE
+    url_pdb: https://www4.rcsb.org/ligand/ILE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/I/ILE.svg
+IMD-like:
+  IMD-like:
+  - ligand: IMD
+    url_pdb: https://www4.rcsb.org/ligand/IMD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/I/IMD.svg
+IOD-like:
+  IOD-like:
+  - ligand: IOD
+    url_pdb: https://www4.rcsb.org/ligand/IOD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/I/IOD.svg
+IPH-like:
+  IPH-like:
+  - ligand: IPH
+    url_pdb: https://www4.rcsb.org/ligand/IPH
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/I/IPH.svg
+LDA-like:
+  LDA-like:
+  - ligand: LDA
+    url_pdb: https://www4.rcsb.org/ligand/LDA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/L/LDA.svg
+LFA-like:
+  LFA-like:
+  - ligand: LFA
+    url_pdb: https://www4.rcsb.org/ligand/LFA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/L/LFA.svg
+LMT:
+  LMT:
+  - ligand: LMT
+    url_pdb: https://www4.rcsb.org/ligand/LMT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/L/LMT.svg
+LYS-like:
+  LYS-like:
+  - ligand: LYS
+    url_pdb: https://www4.rcsb.org/ligand/LYS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/L/LYS.svg
+MAN-like:
+  MAN-like:
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+MAN-like_MAN-like:
+  MAN-like_MAN-like:
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+MAN-like_MAN-like_MAN-like:
+  MAN-like_MAN-like_MAN-like:
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+MAN-like_NAG:
+  MAN-like_NAG:
+  - ligand: MAN
+    url_pdb: https://www4.rcsb.org/ligand/MAN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MAN.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+MES:
+  MES:
+  - ligand: MES
+    url_pdb: https://www4.rcsb.org/ligand/MES
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MES.svg
+MET:
+  MET:
+  - ligand: MET
+    url_pdb: https://www4.rcsb.org/ligand/MET
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MET.svg
+MG-like:
+  MG-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+MG-like_MG-like:
+  MG-like_MG-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+MG-like_POP-like:
+  MG-like_POP-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: POP
+    url_pdb: https://www4.rcsb.org/ligand/POP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/POP.svg
+MG-like_PYR-like:
+  MG-like_PYR-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: PYR
+    url_pdb: https://www4.rcsb.org/ligand/PYR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PYR.svg
+MG-like_SO4-like:
+  MG-like_SO4-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+MG-like_TPP-like:
+  MG-like_TPP-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: TPP
+    url_pdb: https://www4.rcsb.org/ligand/TPP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TPP.svg
+MG-like_TTP-like:
+  MG-like_TTP-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: TTP
+    url_pdb: https://www4.rcsb.org/ligand/TTP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TTP.svg
+MG-like_ZN-like:
+  MG-like_ZN-like:
+  - ligand: MG
+    url_pdb: https://www4.rcsb.org/ligand/MG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MG.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+MLI-like:
+  MLI-like:
+  - ligand: MLI
+    url_pdb: https://www4.rcsb.org/ligand/MLI
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MLI.svg
+MLI-like_ZN-like:
+  MLI-like_ZN-like:
+  - ligand: MLI
+    url_pdb: https://www4.rcsb.org/ligand/MLI
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MLI.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+MLT-like:
+  MLT-like:
+  - ligand: MLT
+    url_pdb: https://www4.rcsb.org/ligand/MLT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MLT.svg
+MPD-like:
+  MPD-like:
+  - ligand: MPD
+    url_pdb: https://www4.rcsb.org/ligand/MPD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MPD.svg
+MTA-like:
+  MTA-like:
+  - ligand: MTA
+    url_pdb: https://www4.rcsb.org/ligand/MTA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MTA.svg
+MTX-like:
+  MTX-like:
+  - ligand: MTX
+    url_pdb: https://www4.rcsb.org/ligand/MTX
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MTX.svg
+MYR-like:
+  MYR-like:
+  - ligand: MYR
+    url_pdb: https://www4.rcsb.org/ligand/MYR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/M/MYR.svg
+N-like:
+  N-like:
+  - ligand: N
+    url_pdb: https://www4.rcsb.org/ligand/N
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/N.svg
+NAD-like:
+  NAD-like:
+  - ligand: NAD
+    url_pdb: https://www4.rcsb.org/ligand/NAD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAD.svg
+NAG:
+  NAG:
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+NAG_NAG:
+  NAG_NAG:
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+  - ligand: NAG
+    url_pdb: https://www4.rcsb.org/ligand/NAG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAG.svg
+NAP-like:
+  NAP-like:
+  - ligand: NAP
+    url_pdb: https://www4.rcsb.org/ligand/NAP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NAP.svg
+NCO:
+  NCO:
+  - ligand: NCO
+    url_pdb: https://www4.rcsb.org/ligand/NCO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NCO.svg
+NDG:
+  NDG:
+  - ligand: NDG
+    url_pdb: https://www4.rcsb.org/ligand/NDG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NDG.svg
+NHE-like:
+  NHE-like:
+  - ligand: NHE
+    url_pdb: https://www4.rcsb.org/ligand/NHE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/N/NHE.svg
+OCA-like:
+  OCA-like:
+  - ligand: OCA
+    url_pdb: https://www4.rcsb.org/ligand/OCA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/OCA.svg
+OLA-like:
+  OLA-like:
+  - ligand: OLA
+    url_pdb: https://www4.rcsb.org/ligand/OLA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/OLA.svg
+OLC-like:
+  OLC-like:
+  - ligand: OLC
+    url_pdb: https://www4.rcsb.org/ligand/OLC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/OLC.svg
+ORO-like:
+  ORO-like:
+  - ligand: ORO
+    url_pdb: https://www4.rcsb.org/ligand/ORO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/ORO.svg
+OXY-like:
+  OXY-like:
+  - ligand: OXY
+    url_pdb: https://www4.rcsb.org/ligand/OXY
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/O/OXY.svg
+P33-like:
+  P33-like:
+  - ligand: P33
+    url_pdb: https://www4.rcsb.org/ligand/P33
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/P33.svg
+P6G-like:
+  P6G-like:
+  - ligand: P6G
+    url_pdb: https://www4.rcsb.org/ligand/P6G
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/P6G.svg
+PE4-like:
+  PE4-like:
+  - ligand: PE4
+    url_pdb: https://www4.rcsb.org/ligand/PE4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PE4.svg
+PEB:
+  PEB:
+  - ligand: PEB
+    url_pdb: https://www4.rcsb.org/ligand/PEB
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PEB.svg
+PEG-like:
+  PEG-like:
+  - ligand: PEG
+    url_pdb: https://www4.rcsb.org/ligand/PEG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PEG.svg
+PEK:
+  PEK:
+  - ligand: PEK
+    url_pdb: https://www4.rcsb.org/ligand/PEK
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PEK.svg
+PEP-like:
+  PEP-like:
+  - ligand: PEP
+    url_pdb: https://www4.rcsb.org/ligand/PEP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PEP.svg
+PG4-like:
+  PG4-like:
+  - ligand: PG4
+    url_pdb: https://www4.rcsb.org/ligand/PG4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PG4.svg
+PGE-like:
+  PGE-like:
+  - ligand: PGE
+    url_pdb: https://www4.rcsb.org/ligand/PGE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PGE.svg
+PGO-like:
+  PGO-like:
+  - ligand: PGO
+    url_pdb: https://www4.rcsb.org/ligand/PGO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PGO.svg
+PGV-like:
+  PGV-like:
+  - ligand: PGV
+    url_pdb: https://www4.rcsb.org/ligand/PGV
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PGV.svg
+PHB-like:
+  PHB-like:
+  - ligand: PHB
+    url_pdb: https://www4.rcsb.org/ligand/PHB
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PHB.svg
+PHE-like:
+  PHE-like:
+  - ligand: PHE
+    url_pdb: https://www4.rcsb.org/ligand/PHE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PHE.svg
+PLC:
+  PLC:
+  - ligand: PLC
+    url_pdb: https://www4.rcsb.org/ligand/PLC
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PLC.svg
+PLM-like:
+  PLM-like:
+  - ligand: PLM
+    url_pdb: https://www4.rcsb.org/ligand/PLM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PLM.svg
+PLP-like:
+  PLP-like:
+  - ligand: PLP
+    url_pdb: https://www4.rcsb.org/ligand/PLP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PLP.svg
+POP-like:
+  POP-like:
+  - ligand: POP
+    url_pdb: https://www4.rcsb.org/ligand/POP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/POP.svg
+PRO-like:
+  PRO-like:
+  - ligand: PRO
+    url_pdb: https://www4.rcsb.org/ligand/PRO
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PRO.svg
+PUT-like:
+  PUT-like:
+  - ligand: PUT
+    url_pdb: https://www4.rcsb.org/ligand/PUT
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PUT.svg
+PX4-like:
+  PX4-like:
+  - ligand: PX4
+    url_pdb: https://www4.rcsb.org/ligand/PX4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PX4.svg
+PYR-like:
+  PYR-like:
+  - ligand: PYR
+    url_pdb: https://www4.rcsb.org/ligand/PYR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/P/PYR.svg
+RARE_LIGAND:
+  RARE_LIGAND: null
+RET-like:
+  RET-like:
+  - ligand: RET
+    url_pdb: https://www4.rcsb.org/ligand/RET
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/R/RET.svg
+SAH-like:
+  SAH-like:
+  - ligand: SAH
+    url_pdb: https://www4.rcsb.org/ligand/SAH
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SAH.svg
+SAM:
+  SAM:
+  - ligand: SAM
+    url_pdb: https://www4.rcsb.org/ligand/SAM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SAM.svg
+SCN:
+  SCN:
+  - ligand: SCN
+    url_pdb: https://www4.rcsb.org/ligand/SCN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SCN.svg
+SER-like:
+  SER-like:
+  - ligand: SER
+    url_pdb: https://www4.rcsb.org/ligand/SER
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SER.svg
+SF4-like:
+  SF4-like:
+  - ligand: SF4
+    url_pdb: https://www4.rcsb.org/ligand/SF4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SF4.svg
+SFG:
+  SFG:
+  - ligand: SFG
+    url_pdb: https://www4.rcsb.org/ligand/SFG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SFG.svg
+SIA:
+  SIA:
+  - ligand: SIA
+    url_pdb: https://www4.rcsb.org/ligand/SIA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SIA.svg
+SIN-like:
+  SIN-like:
+  - ligand: SIN
+    url_pdb: https://www4.rcsb.org/ligand/SIN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SIN.svg
+SO4-like:
+  SO4-like:
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+SO4-like_SO4-like:
+  SO4-like_SO4-like:
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+SO4-like_ZN-like:
+  SO4-like_ZN-like:
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+SO4-like_ZN-like_ZN-like:
+  SO4-like_ZN-like_ZN-like:
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+SPM-like:
+  SPM-like:
+  - ligand: SPM
+    url_pdb: https://www4.rcsb.org/ligand/SPM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SPM.svg
+SR-like:
+  SR-like:
+  - ligand: SR
+    url_pdb: https://www4.rcsb.org/ligand/SR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SR.svg
+STU-like:
+  STU-like:
+  - ligand: STU
+    url_pdb: https://www4.rcsb.org/ligand/STU
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/STU.svg
+TAR-like:
+  TAR-like:
+  - ligand: TAR
+    url_pdb: https://www4.rcsb.org/ligand/TAR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TAR.svg
+TGL:
+  TGL:
+  - ligand: TGL
+    url_pdb: https://www4.rcsb.org/ligand/TGL
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TGL.svg
+THM-like:
+  THM-like:
+  - ligand: THM
+    url_pdb: https://www4.rcsb.org/ligand/THM
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/THM.svg
+THP:
+  THP:
+  - ligand: THP
+    url_pdb: https://www4.rcsb.org/ligand/THP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/THP.svg
+THR-like:
+  THR-like:
+  - ligand: THR
+    url_pdb: https://www4.rcsb.org/ligand/THR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/THR.svg
+TLA:
+  TLA:
+  - ligand: TLA
+    url_pdb: https://www4.rcsb.org/ligand/TLA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TLA.svg
+TMP-like:
+  TMP-like:
+  - ligand: TMP
+    url_pdb: https://www4.rcsb.org/ligand/TMP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TMP.svg
+TRP-like:
+  TRP-like:
+  - ligand: TRP
+    url_pdb: https://www4.rcsb.org/ligand/TRP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TRP.svg
+TRS-like:
+  TRS-like:
+  - ligand: TRS
+    url_pdb: https://www4.rcsb.org/ligand/TRS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TRS.svg
+TYD:
+  TYD:
+  - ligand: TYD
+    url_pdb: https://www4.rcsb.org/ligand/TYD
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TYD.svg
+TYR-like:
+  TYR-like:
+  - ligand: TYR
+    url_pdb: https://www4.rcsb.org/ligand/TYR
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/T/TYR.svg
+U5P-like:
+  U5P-like:
+  - ligand: U5P
+    url_pdb: https://www4.rcsb.org/ligand/U5P
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/U5P.svg
+UDP-like:
+  UDP-like:
+  - ligand: UDP
+    url_pdb: https://www4.rcsb.org/ligand/UDP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/UDP.svg
+UMP-like:
+  UMP-like:
+  - ligand: UMP
+    url_pdb: https://www4.rcsb.org/ligand/UMP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/UMP.svg
+UPG-like:
+  UPG-like:
+  - ligand: UPG
+    url_pdb: https://www4.rcsb.org/ligand/UPG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/UPG.svg
+URA-like:
+  URA-like:
+  - ligand: URA
+    url_pdb: https://www4.rcsb.org/ligand/URA
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/URA.svg
+URF-like:
+  URF-like:
+  - ligand: URF
+    url_pdb: https://www4.rcsb.org/ligand/URF
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/URF.svg
+URI-like:
+  URI-like:
+  - ligand: URI
+    url_pdb: https://www4.rcsb.org/ligand/URI
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/URI.svg
+XE:
+  XE:
+  - ligand: XE
+    url_pdb: https://www4.rcsb.org/ligand/XE
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/X/XE.svg
+XYP-like:
+  XYP-like:
+  - ligand: XYP
+    url_pdb: https://www4.rcsb.org/ligand/XYP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/X/XYP.svg
+XYS-like:
+  XYS-like:
+  - ligand: XYS
+    url_pdb: https://www4.rcsb.org/ligand/XYS
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/X/XYS.svg
+ZN-like:
+  ZN-like:
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+ZN-like_AKG-like:
+  ZN-like_AKG-like:
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+  - ligand: AKG
+    url_pdb: https://www4.rcsb.org/ligand/AKG
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/A/AKG.svg
+ZN-like_SO4-like:
+  ZN-like_SO4-like:
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+  - ligand: SO4
+    url_pdb: https://www4.rcsb.org/ligand/SO4
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/S/SO4.svg
+ZN-like_UDP-like:
+  ZN-like_UDP-like:
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+  - ligand: UDP
+    url_pdb: https://www4.rcsb.org/ligand/UDP
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/U/UDP.svg
+ZN-like_ZN-like:
+  ZN-like_ZN-like:
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg
+  - ligand: ZN
+    url_pdb: https://www4.rcsb.org/ligand/ZN
+    url_svg: https://cdn.rcsb.org/images/ccd/unlabeled/Z/ZN.svg

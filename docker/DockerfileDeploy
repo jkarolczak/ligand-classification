@@ -1,0 +1,22 @@
+FROM ubuntu:20.04
+
+ENV PYTHONPATH="/app/src"
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV TZ=Europe/Warsaw
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get update
+RUN apt-get install -y \
+    pip git ninja-build cmake build-essential libopenblas-dev xterm xauth openssh-server tmux wget  \
+    mate-desktop-environment-core
+
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
+RUN pip install pandas streamlit==1.15.0 numpy plotly pyyaml scikit-image plyfile addict open3d yapf wget
+
+ENV MAX_JOBS=4
+RUN pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
+RUN pip install -U git+https://github.com/NVIDIA/MinkowskiEngine -v --no-deps \
+                           --install-option="--cpu_only" \
+                           --install-option="--blas=openblas"
