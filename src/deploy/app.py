@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 
 from deploy.inference import predict, load_model
@@ -43,6 +45,21 @@ def main():
     --- 
     """)
 
+    st.markdown("""
+    ## Input examples
+    You can test the application using the examples below.
+    """)
+
+    cols = st.columns(7)
+    for col, file in zip(cols, os.listdir("src/deploy/ligands")):
+        file_path = os.path.join("src/deploy/ligands", file)
+        with open(file_path, "rb") as fp:
+            col.download_button(
+                label=file,
+                data=fp.read(),
+                file_name=file
+            )
+
     global model
     model = load_model()
 
@@ -50,20 +67,21 @@ def main():
     col1.markdown("## Input")
     col1_form = col1.form("test")
     col1_content = col1.empty()
-    col1_content.markdown("""
-    Files of the following structures are supported:
-    - `.npy`, `.npz`:
-        - dense three dimensional numpy array
-    - `.xyz`, `.txt`:
-        - without any header
-        - each line describe a voxel following the pattern `x y z density`
-    - `.pts`
-        - the first line contains information about number of points (lines)
-        - each line describe a voxel following the pattern `x y z density`
-    - `.csv`
-        - files with headers and headerless are supported
-        - each line describe a voxel following the pattern `x, y, z, density`
-    """)
+    with col1_content.container():
+        col1_content.markdown("""
+        Files of the following structures are supported:
+        - `.npy`, `.npz`:
+            - dense three dimensional numpy array
+        - `.xyz`, `.txt`:
+            - without any header
+            - each line describe a voxel following the pattern `x y z density`
+        - `.pts`
+            - the first line contains information about number of points (lines)
+            - each line describe a voxel following the pattern `x y z density`
+        - `.csv`
+            - files with headers and headerless are supported
+            - each line describe a voxel following the pattern `x, y, z, density`
+        """)
     col2.markdown("## Predictions")
     col2_predictions = col2.empty()
     col2_predictions.info("Upload a blob to see predictions.")
