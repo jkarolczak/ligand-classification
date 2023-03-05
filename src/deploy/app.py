@@ -1,7 +1,5 @@
-import io
 import os
 
-import numpy as np
 import streamlit as st
 
 from deploy.inference import predict, load_model
@@ -93,7 +91,7 @@ def main():
             if file_val:
                 blob = parse(file_val)
                 viz = volume_3d(blob, "Blob")
-                col1_content.plotly_chart(viz, use_container_width=True, height=1000)
+                col1_content.plotly_chart(viz, use_container_width=True, height=500)
                 blob = preprocess(blob)
                 preds = predict(blob, model)
                 with col2_predictions.container():
