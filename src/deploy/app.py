@@ -1,3 +1,7 @@
+import io
+import os
+
+import numpy as np
 import streamlit as st
 
 from deploy.inference import predict, load_model
@@ -46,24 +50,35 @@ def main():
     global model
     model = load_model()
 
+    cols = st.columns(5)
+    for col, file in zip(cols, os.listdir("src/deploy/ligands")):
+        file_path = os.path.join("src/deploy/ligands", file)
+        with open(file_path, "rb") as fp:
+            col.download_button(
+                label=file,
+                data=fp.read(),  # Download buffer
+                file_name=file
+            )
+
     col1, col2 = st.columns(2)
     col1.markdown("## Input")
     col1_form = col1.form("test")
     col1_content = col1.empty()
-    col1_content.markdown("""
-    Files of the following structures are supported:
-    - `.npy`, `.npz`:
-        - dense three dimensional numpy array
-    - `.xyz`, `.txt`:
-        - without any header
-        - each line describe a voxel following the pattern `x y z density`
-    - `.pts`
-        - the first line contains information about number of points (lines)
-        - each line describe a voxel following the pattern `x y z density`
-    - `.csv`
-        - files with headers and headerless are supported
-        - each line describe a voxel following the pattern `x, y, z, density`
-    """)
+    with col1_content.container():
+        col1_content.markdown("""
+        Files of the following structures are supported:
+        - `.npy`, `.npz`:
+            - dense three dimensional numpy array
+        - `.xyz`, `.txt`:
+            - without any header
+            - each line describe a voxel following the pattern `x y z density`
+        - `.pts`
+            - the first line contains information about number of points (lines)
+            - each line describe a voxel following the pattern `x y z density`
+        - `.csv`
+            - files with headers and headerless are supported
+            - each line describe a voxel following the pattern `x, y, z, density`
+        """)
     col2.markdown("## Predictions")
     col2_predictions = col2.empty()
     col2_predictions.info("Upload a blob to see predictions.")
@@ -73,7 +88,7 @@ def main():
             if file_val:
                 blob = parse(file_val)
                 viz = volume_3d(blob, "Blob")
-                col1_content.plotly_chart(viz, use_container_width=True, height=500)
+                col1_content.plotly_chart(viz, use_container_width=True, height=1000)
                 blob = preprocess(blob)
                 preds = predict(blob, model)
                 with col2_predictions.container():
