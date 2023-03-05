@@ -47,18 +47,23 @@ def main():
     --- 
     """)
 
-    global model
-    model = load_model()
+    st.markdown("""
+    ## Input examples
+    You can test the application using the examples below.
+    """)
 
-    cols = st.columns(5)
+    cols = st.columns(7)
     for col, file in zip(cols, os.listdir("src/deploy/ligands")):
         file_path = os.path.join("src/deploy/ligands", file)
         with open(file_path, "rb") as fp:
             col.download_button(
                 label=file,
-                data=fp.read(),  # Download buffer
+                data=fp.read(),
                 file_name=file
             )
+
+    global model
+    model = load_model()
 
     col1, col2 = st.columns(2)
     col1.markdown("## Input")
