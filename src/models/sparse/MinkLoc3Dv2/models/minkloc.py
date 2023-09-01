@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import MinkowskiEngine as ME
 
+import models.sparse.MinkLoc3Dv2.models.minkfpn
 from .layers.pooling_wrapper import PoolingWrapper
 
 
@@ -17,12 +18,13 @@ class MinkLoc(torch.nn.Module):
         self.normalize_embeddings = normalize_embeddings
         self.stats = {}
 
-    def forward(self, batch):
-        x = self.backbone(batch)
+    def forward(self, batch, nears):
+        x: models.sparse.MinkLoc3Dv2.models.minkfpn.MinkFPN = self.backbone(batch)
         # x is (num_points, n_features) tensor
         assert x.shape[1] == self.pooling.in_dim, f'Backbone output tensor has: {x.shape[1]} channels. ' \
                                                   f'Expected: {self.pooling.in_dim}'
-        x = self.pooling(x)
+        x: models.sparse.MinkLoc3Dv2.models.layers.pooling_wrapper.PoolingWrapper = self.pooling(x)
+        print(x[0])
         if hasattr(self.pooling, 'stats'):
             self.stats.update(self.pooling.stats)
 

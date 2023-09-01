@@ -61,11 +61,11 @@ if __name__ == "__main__":
     for e in range(cfg["epochs"]):
         train_dataloader.dataset.sample(e)
         model.train()
-        for idx, (coords, feats, labels) in enumerate(train_dataloader):
+        for idx, (coords, feats, nears, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
-            batch = ME.SparseTensor(feats, coords, device=device)
+            blobel = ME.SparseTensor(feats, coords, device=device)
             try:
-                labels_hat = model(batch)
+                labels_hat = model(blobel, nears)
                 loss = criterion(labels_hat, labels) / accum_iter
                 loss.backward()
                 del labels_hat
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             if device == torch.device("cuda"):
                 torch.cuda.synchronize()
                 torch.cuda.empty_cache()
-            del (batch, labels)
+            del (blobel, labels)
             gc.collect()
         model.eval()
         with torch.no_grad():

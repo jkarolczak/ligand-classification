@@ -1,11 +1,11 @@
 accum_iter: 1
-batch_size: 64
-dataset_dir: ../data/blobs_shell_22
-dataset_file: ../data/train.csv
+batch_size: 128
+dataset_dir: ../data/blobs_uniform_2000_max
+dataset_file: ../data/train-near.csv
 dataset_max_size: null
 dataset_min_size: null
 device: cuda
-epochs: 2
+epochs: 50
 lr: 0.001
 model: MinkLoc3D
 no_workers: 8

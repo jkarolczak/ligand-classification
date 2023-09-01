@@ -35,7 +35,7 @@ class BaseDataset(Dataset, ABC):
         file has to contain columns 'ligands' and 'blob_map_file'
         :param max_size: maximal number of instances of each class present in the dataset
         :param min_size: minimal number of instances of each class present in the dataset
-        :param normalize: whether to normalize the point clout
+        :param normalize: whether to normalize the point cloud
         """
         seed(rng_seed)
         self.annotations_file_path = annotations_file_path
@@ -44,13 +44,18 @@ class BaseDataset(Dataset, ABC):
                 self.annotations_file_path, "cmb_blob_labels.csv"
             )
         file_ligand_map = pd.read_csv(
-            labels_file_path, usecols=["ligand", "blob_map_filename"]
+            labels_file_path, usecols=["ligand", "blob_map_filename", "local_near_cut_count_N",
+                                       "local_near_cut_count_O", "local_near_cut_count_C"]
         )
-        self.file_ligand_map = file_ligand_map.set_index("blob_map_filename").to_dict()[
-            "ligand"
-        ]
+        self.file_ligand_map = file_ligand_map.set_index("blob_map_filename").to_dict()["ligand"]
+        self.file_near_map = file_ligand_map.set_index("blob_map_filename")
+        self.file_near_map["near"] = self.file_near_map.apply(lambda x: [x["local_near_cut_count_N"],
+                                                                         x["local_near_cut_count_O"],
+                                                                         x["local_near_cut_count_C"]], axis=1)
+        self.file_near_map = self.file_near_map.to_dict()["near"]
         self.files = list(self.file_ligand_map.keys())
         self.labels_names = list(self.file_ligand_map.values())
+        self.near = list(self.file_near_map.values())
         self.encoder = LabelBinarizer()
         self.labels = self.encoder.fit_transform(self.labels_names)
 
@@ -127,12 +132,13 @@ class SparseDataset(BaseDataset):
 
     def __getitem__(self, idx):
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
+        near = torch.tensor(self.near[idx], dtype=torch.float32)
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, idx)
         blob = np.load(blob_path)["blob"]
         blob = torch.tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)
-        return coordinates, features, label
+        return coordinates, features, near, label
 
 
 class CoordsDataset(BaseDataset):
@@ -157,7 +163,7 @@ class CoordsDataset(BaseDataset):
         coordinates = torch.nonzero(blob).float()
         if self.normalize:
             coordinates = self._pc_normalize(coordinates)
-        return coordinates, label
+        return coordinates, near, label
 
 
 class RiconvDataset(CoordsDataset):
@@ -207,18 +213,20 @@ def collation_fn_sparse(blobel):
 
     :param blobel: tuple (coordinates, features, labels); blo(b)+(la)bel => blobel; all credit to Witek T.
     """
-    coords_batch, feats_batch, labels_batch = [], [], []
+    coords_batch, feats_batch, near_batch, labels_batch = [], [], [], []
 
-    for (coords, feats, label) in blobel:
+    for (coords, feats, near, label) in blobel:
         coords_batch.append(coords)
         feats_batch.append(feats)
+        near_batch.append(near)
         labels_batch.append(label)
 
     coords_batch = ME.utils.batched_coordinates(coords_batch)
     feats_batch = torch.tensor(np.concatenate(feats_batch, 0), dtype=torch.float32)
+    near_batch = torch.tensor(np.concatenate(near_batch, 0), dtype=torch.float32)
     labels_batch = torch.tensor(np.vstack(labels_batch), dtype=torch.float32)
 
-    return coords_batch, feats_batch, labels_batch
+    return coords_batch, feats_batch, near_batch, labels_batch
 
 
 def dataset_split(
