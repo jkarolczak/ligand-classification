@@ -24,15 +24,13 @@ class MinkLoc(torch.nn.Module):
         assert x.shape[1] == self.pooling.in_dim, f'Backbone output tensor has: {x.shape[1]} channels. ' \
                                                   f'Expected: {self.pooling.in_dim}'
         x: models.sparse.MinkLoc3Dv2.models.layers.pooling_wrapper.PoolingWrapper = self.pooling(x)
-        print(x[0])
+        print(x.shape, nears.shape)
         if hasattr(self.pooling, 'stats'):
             self.stats.update(self.pooling.stats)
 
-        # x = x.flatten(1)
         assert x.dim() == 2, f'Expected 2-dimensional tensor (batch_size,output_dim). Got {x.dim()} dimensions.'
         assert x.shape[1] == self.pooling.output_dim, f'Output tensor has: {x.shape[1]} channels. ' \
                                                       f'Expected: {self.pooling.output_dim}'
-
         if self.normalize_embeddings:
             x = F.normalize(x, dim=1)
         return x

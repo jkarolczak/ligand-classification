@@ -223,7 +223,7 @@ def collation_fn_sparse(blobel):
 
     coords_batch = ME.utils.batched_coordinates(coords_batch)
     feats_batch = torch.tensor(np.concatenate(feats_batch, 0), dtype=torch.float32)
-    near_batch = torch.tensor(np.concatenate(near_batch, 0), dtype=torch.float32)
+    near_batch = torch.tensor(np.vstack(near_batch), dtype=torch.float32)
     labels_batch = torch.tensor(np.vstack(labels_batch), dtype=torch.float32)
 
     return coords_batch, feats_batch, near_batch, labels_batch
