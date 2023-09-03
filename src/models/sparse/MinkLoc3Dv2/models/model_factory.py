@@ -2,7 +2,7 @@
 
 import torch.nn as nn
 
-from .minkloc import MinkLoc
+from .minkloc import MinkLoc, Classifier
 from ..misc.utils import ModelParams
 from MinkowskiEngine.modules.resnet_block import BasicBlock, Bottleneck
 from .layers.eca_block import ECABasicBlock
@@ -19,7 +19,8 @@ def model_factory(model_params: ModelParams):
                            block=block_module, layers=model_params.layers, planes=model_params.planes)
         pooling = PoolingWrapper(pool_method=model_params.pooling, in_dim=model_params.feature_size,
                                  output_dim=model_params.output_dim)
-        model = MinkLoc(backbone=backbone, pooling=pooling, normalize_embeddings=model_params.normalize_embeddings)
+        classifier = Classifier(minkloc_features=model_params.output_dim, tabular_features=3)
+        model = MinkLoc(backbone=backbone, pooling=pooling, classifier=classifier, normalize_embeddings=model_params.normalize_embeddings)
     else:
         raise NotImplementedError('Model not implemented: {}'.format(model_params.model))
 

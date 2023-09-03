@@ -64,6 +64,7 @@ if __name__ == "__main__":
         for idx, (coords, feats, nears, labels) in enumerate(train_dataloader):
             labels = labels.to(device=device)
             blobel = ME.SparseTensor(feats, coords, device=device)
+            nears = nears.to(device=device)
             try:
                 labels_hat = model(blobel, nears)
                 loss = criterion(labels_hat, labels) / accum_iter
@@ -84,11 +85,12 @@ if __name__ == "__main__":
         model.eval()
         with torch.no_grad():
             groundtruth, predictions = None, None
-            for idx, (coords, feats, labels) in enumerate(test_dataloader):
+            for idx, (coords, feats, nears, labels) in enumerate(test_dataloader):
                 torch.cuda.empty_cache()
 
                 batch = ME.SparseTensor(feats, coords, device=device)
-                preds = model(batch)
+                nears = nears.to(device=device)
+                preds = model(batch, nears)
 
                 labels = labels.to(cpu)
                 preds = preds.to(cpu)
