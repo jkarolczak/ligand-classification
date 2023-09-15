@@ -10,3 +10,4 @@ lr: 0.001
 model: MinkLoc3D
 no_workers: 8
 weight_decay: 1e-4
+ce_weight: true

@@ -20,7 +20,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
     torch.manual_seed(23)
-    torch.use_deterministic_algorithms(True)
+    #torch.use_deterministic_algorithms(True)
 
     cfg = read_config("../cfg/train.yaml")
 
@@ -38,6 +38,10 @@ if __name__ == "__main__":
 
     train, test = dataset_split(dataset=dataset)
 
+    weight = None
+    if cfg['ce_weight']:
+        weight = torch.tensor(train.get_weights())
+
     g_train, g_test = torch.Generator(), torch.Generator()
     g_train.manual_seed(42)
     g_test.manual_seed(42)
@@ -53,7 +57,7 @@ if __name__ == "__main__":
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(cfg["lr"]), weight_decay=float(cfg["weight_decay"]))
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=12, gamma=0.1)
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss(weight=weight)
 
     log.config(run=run, model=model, criterion=criterion, optimizer=optimizer, dataset=dataset)
 

@@ -104,6 +104,11 @@ class BaseDataset(Dataset, ABC):
         self.files, self.labels = zip(*tmp)
         self.labels = self.encoder.transform(self.labels)
 
+    def get_weights(self):
+        weight = self.labels.sum(axis=0)
+        weight = len(self.files) / (weight * len(weight))
+        return weight
+
     def __len__(self):
         return len(self.files)
 
