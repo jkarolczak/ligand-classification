@@ -1,8 +1,8 @@
-batch_size: 64
-dataset_dir: ../data/blobs_shell_22
+batch_size: 128
+dataset_dir: ../data/blobs_uniform_2000_max
 dataset_file: ../data/holdout.csv
 device: cuda
-model_epoch: 0
+model_epoch: 6
 model_name: MinkLoc3D
-model_run_id: LIGANDS-622
+model_run_id: LIGANDS-945
 no_workers: 8

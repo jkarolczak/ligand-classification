@@ -1,6 +1,7 @@
 from random import randrange
 
 import MinkowskiEngine as ME
+import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader
@@ -42,6 +43,8 @@ if __name__ == "__main__":
     result_predictions = []
 
     model.eval()
+    classes = dataset.encoder.classes_
+
     with torch.no_grad():
         groundtruth, predictions = None, None
         for idx, (coords, feats, labels) in enumerate(dataloader):
@@ -59,13 +62,19 @@ if __name__ == "__main__":
 
             preds_encoded = torch.zeros_like(preds)
             preds_encoded[list(range(preds.shape[0])), preds.max(axis=1).indices] = 1
-            result_labels.extend(dataset.encoder.inverse_transform(labels))
-            result_predictions.extend(dataset.encoder.inverse_transform(preds_encoded))
+            # result_labels.extend(dataset.encoder.inverse_transform(labels))
+            # result_predictions.extend(dataset.encoder.inverse_transform(preds_encoded))
+            result_labels.extend(labels.tolist())
+            result_predictions.extend(preds.tolist())
 
         epoch(run=run, preds=predictions, target=groundtruth, epoch_num=0, model_name=cfg["model_name"])
         run['seed'] = rng_seed
 
-    df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
+    df_id = pd.DataFrame({'id': dataset.files})
+    df_labels = pd.DataFrame(result_labels, columns=map(lambda x: f"real_{x}", classes))
+    df_predictions = pd.DataFrame(result_predictions, columns=map(lambda x: f"pred_{x}", classes))
+    # df = pd.DataFrame({'id': dataset.files, 'labels': result_labels, 'predictions': result_predictions})
+    df = pd.concat([df_id, df_labels, df_predictions], axis=1)
     df.to_csv("predictions.csv")
 
     run.stop()
