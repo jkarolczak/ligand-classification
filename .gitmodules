@@ -1,0 +1,3 @@
+[submodule "cryo-em-ligand-cutter"]
+	path = cryo-em-ligand-cutter
+	url = git@github.com:dabrze/cryo-em-ligand-cutter.git
