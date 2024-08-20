@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  app:
+  streamlit:
     image: jkarolczak/ligand-deploy
     volumes:
       - "../:/app:rw"
@@ -11,4 +11,19 @@ services:
     network_mode: "host"
     entrypoint: streamlit run /app/src/deploy/app.py --server.port $DEPLOY_PORT
     environment:
-      MKL_THREADING_LAYER: 1
+      - MKL_THREADING_LAYER: 1
+      - STREAMLIT_SERVER_HEADLESS=true
+    ports:
+      - "8501:8501"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .docker/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - streamlit
+
