@@ -5,7 +5,6 @@ from typing import Callable, Dict, Tuple, Union
 import numpy as np
 import itertools
 import math
-import open3d as o3d
 import torch
 
 from scipy.ndimage import generic_filter
@@ -353,6 +352,8 @@ class NormalsTransform(Transform):
             raise ValueError("{} requires method to be 'open3d' or 'riconv'".format(type(self).__name__))
 
     def _open3d_estimation(self, coordinates):
+        import open3d as o3d
+
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(coordinates)
         pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=self.knn))

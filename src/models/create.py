@@ -1,12 +1,12 @@
 from cfg import read_config
-from models.contiguous.models import PointNet, Classifier
+# from models.contiguous.models import PointNet, Classifier
 from models.sparse import MinkLoc3Dv2
 from models.sparse.MinkLoc3Dv2.misc.utils import ModelParams
 from models.sparse.MinkLoc3Dv2.models.model_factory import model_factory
 from models.sparse.TransLoc3D import create_model, Config
 from models.sparse.TransLoc3D.transloc3d.model import TransLoc3D
-from models.contiguous.riconv2.riconv2_cls import RiConv2
-from models.contiguous.riconv2.riconv2_utils import load_state_dict
+# from models.contiguous.riconv2.riconv2_cls import RiConv2
+# # from models.contiguous.riconv2.riconv2_utils import load_state_dict
 
 
 def transloc3d() -> TransLoc3D:
@@ -21,25 +21,25 @@ def minkloc3dv2() -> MinkLoc3Dv2:
     return model
 
 
-def pointnet() -> PointNet:
-    pointnet_params = read_config("../cfg/models/pointnet.yaml")
-    num_classes = pointnet_params.pop("num_classes")
-    pn = PointNet(**pointnet_params)
-    model = Classifier(pn, num_classes=num_classes)
-    return model
+# def pointnet() -> PointNet:
+#     pointnet_params = read_config("../cfg/models/pointnet.yaml")
+#     num_classes = pointnet_params.pop("num_classes")
+#     pn = PointNet(**pointnet_params)
+#     model = Classifier(pn, num_classes=num_classes)
+#     return model
 
 
-def riconv2() -> RiConv2:
-    def _inplace_relu(m):
-        classname = m.__class__.__name__
-        if classname.find('ReLU') != -1:
-            m.inplace = True
-
-    riconv2_params = read_config("../cfg/models/riconv2.yaml")
-    num_classes = riconv2_params.pop("num_classes")
-    use_normals = riconv2_params.pop("use_normals")
-    classifier = RiConv2(num_classes, 2, normal_channel=use_normals)
-    classifier.apply(_inplace_relu)
-    if riconv2_params["pretrained_weights"]:
-        classifier = load_state_dict(riconv2_params["pretrained_weights"], classifier)
-    return classifier
+# def riconv2() -> RiConv2:
+#     def _inplace_relu(m):
+#         classname = m.__class__.__name__
+#         if classname.find('ReLU') != -1:
+#             m.inplace = True
+#
+#     riconv2_params = read_config("../cfg/models/riconv2.yaml")
+#     num_classes = riconv2_params.pop("num_classes")
+#     use_normals = riconv2_params.pop("use_normals")
+#     classifier = RiConv2(num_classes, 2, normal_channel=use_normals)
+#     classifier.apply(_inplace_relu)
+#     if riconv2_params["pretrained_weights"]:
+#         classifier = load_state_dict(riconv2_params["pretrained_weights"], classifier)
+#     return classifier
