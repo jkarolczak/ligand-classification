@@ -55,7 +55,7 @@ Ensure you have the following installed:
 ## Demo
 
 The best model from the paper can be tested without the need to install anything. 
-The model is deployed as a Streamlit app under the link [ligands.xyz](https://ligands.xyz).
+The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
 
 ## Data
 
@@ -63,7 +63,7 @@ All the data necessary to reproduce results is available at [Zenodo](https://zen
 
 Repository with code for extracting ligands from CryoEM difference maps is a submodule of this repository, but can be also found [here](https://github.com/dabrze/cryo-em-ligand-cutter/tree/6032b5701cad7a4db86f780b91c2078907e36e42).
 
-Additionally, the processed data used for training the model that revealed as the best in the paper is available [here](https://ligands.blob.core.windows.net/ligands/blobs_uniform_2000_max.tar.gz).
+Additionally, the preprocessed data (uniformly sampled and max pooled 2000 points per ligand) that were used to train the final model are available [here](https://ligands.blob.core.windows.net/ligands/blobs_uniform_2000_max.tar.gz).
 
 ## Citation
 ```
