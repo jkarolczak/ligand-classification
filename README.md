@@ -1,75 +1,71 @@
+[![Streamlit - Demo](https://img.shields.io/badge/Streamlit-Demo-informational)](https://ligands.cs.put.poznan.pl)
+[![Zenodo - Data](https://img.shields.io/badge/Zenodo-Data-informational)](https://zenodo.org/records/10908325)
 ![example workflow](https://github.com/jkarolczak/ligands-classification/actions/workflows/python-app.yml/badge.svg)
 
-# Ligand classification using deep neural networks
 
-## Environment
+# Deep Learning Methods for Ligand Identification in Density Maps
+[Jacek Karolczak](https://github.com/jkarolczak), [Anna Przybyłowska](https://github.com/annprzy), [Konrad Szewczyk](https://github.com/konradszewczyk), [Witold Taisner](https://github.com/wtaisner), [John M. Heumann](https://github.com/jmheumann), Michael H.B. Stowell, [Michał Nowicki](https://github.com/MichalNowicki?tab=repositories), [Dariusz Brzezinski](https://github.com/dabrze)
+
+Accurately identifying ligands plays a crucial role in structure-guided drug design. 
+Based on density maps from X-ray diffraction or cryogenic-sample electron microscopy (cryoEM), scientists verify whether small-molecule ligands bind to active sites. 
+However, the interpretation of density maps is challenging, and cognitive bias can sometimes mislead investigators into modeling fictitious compounds. 
+Ligand identification can be aided by automatic methods, but existing approaches are available only for X-ray diffraction. 
+Here, we propose to identify ligands using a deep learning approach that treats density maps as 3D point clouds. 
+We show that the proposed model is on par with existing methods for X-ray crystallography while also being applicable to cryoEM density maps. 
+Our study demonstrates that electron density map fragments can be used to train models that can be applied to cryoEM structures, but also highlights challenges associated with the standardization of electron microscopy maps and the quality assessment of cryoEM ligands.
+
+In the repository, we provide the code for the experiments conducted in the paper, including models implementations and transformations for generating datasets.
+To reproduce the results, use scripts from the `scripts` directory. 
+Configuration files for the experiments are available in the `cfg` directory.
+
+Weights of the model that revealed as the best in the paper are published as `model.pt` ([link](https://github.com/jkarolczak/ligand-classification/blob/main/model.pt)).
+
+## Environment setup
 
 ### Docker
 
-We provide a docker setup with all dependencies and runtime configuration. To start the container follow:
+To simplify the setup and ensure consistency, to , we provide a Docker configuration that includes all necessary dependencies.
 
-1. Have installed:
-    - [docker](https://docs.docker.com/engine/install/)  (>=20.0.0)
-    - [docker compose](https://docker-docs.netlify.app/compose/install/#install-compose) (>=2.0.0!, notice, that the
-      page suggests installing older version)
-    - additionally, to run using GPU:
-        - [cuda](https://developer.nvidia.com/cuda-downloads) (>=11.3)
-          , [nvcc](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html)
-          and [cudnn](https://developer.nvidia.com/cudnn) (>= 8.0)
-        - [nvidia docker runtime](https://developer.nvidia.com/nvidia-container-runtime)
-2. Clone this repository.
-3. `sudo chmod 744 ./start.sh ./stop.sh`
-4. Set the environment configuration in the `docker/.env`:
-    - `PYTORCH`, `CUDA`, `CUDNN` - only for GPU, modify only if needed. Before changing verify against Minkowski Engine
-      requirements
-    - `DATA_PATH` - if your name is Adaś and you are computer you should leave it as it is. If your name is Ania, Witek
-      or Konrad, RNG guesses it is `../../data/`. In other cases set the path to the folder containing data
-5. Start container using `./start.sh`. If you want to run container on cpu use `./start.sh cpu`.
-6. To stop use `./stop.sh` or `./stop.sh cpu` for cpu respectively.
+#### Prerequisites
 
-### PyCharm setup: ###
+Ensure you have the following installed:
 
-1. Mark `src` directory as the source root:
-    - right click on `src` directory -> Mark Directory As -> Source root
-    - with this step done, PyCharm will consider `src` as source directory, therefore to reach `ligands-classification`
-      directory remember to use `../` in your code.
-2. Exclude unnecessary directories from indexing:
-    - PyCharm automatically indexes files in the project, so that it can propose i.e. path completion, yet some
-      directories should not be indexed:
-    - similarly to the first step: right click on directory -> Mark Directory As -> Excluded
-    - directories to exclude: `.neptune`, `data` and `venv` if present
-3. Branch management:
-    - switch between the branches using PyCharm GUI, not with terminal tools
-    - in the bottom-right corner, there is a special menu:
+- [Docker](https://docs.docker.com/engine/install/) (>= 20.0.0)
+- [Docker Compose](https://docker-docs.netlify.app/compose/install/#install-compose) (>= 2.0.0)
+- (Optional) For GPU support:
+  - [CUDA](https://developer.nvidia.com/cuda-downloads) (>= 11.3)
+  - [NVCC](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html)
+  - [cuDNN](https://developer.nvidia.com/cudnn) (>= 8.0)
+  - [NVIDIA Docker Runtime](https://developer.nvidia.com/nvidia-container-runtime)
 
-![branch management](static/readme-images/branch-management-pycharm.jpg "branch management")
+#### Steps to Start
 
-- select the desired branch and choose `Checkout` in order to switch branches,
-- if you can't see a branch, make sure to run `git fetch` from the Git toolbar menu.
+1. Clone this repository.
+2. Set the necessary permissions: `sudo chmod 744 ./start.sh ./stop.sh`
+3. Configure the environment by editing the `docker/.env` file:
+   - Adjust `PYTORCH`, `CUDA`, and `CUDNN` settings if needed (for GPU use).
+   - Set the `DATA_PATH` to point to your data directory. Default is `../../data/`.
+4. Start the container:
+   - For GPU use: `./start.sh`
+   - For CPU use: `./start.sh cpu`
+5. To stop the container:
+   - For GPU use: `./stop.sh`
+   - For CPU use: `./stop.sh cpu`
 
-4. Pulling changes from `main` branch into a task branch:
-    - should there be some update on the `main` branch, please make sure to include them and **resolve potential merge
-      conflicts** before creating a pull request from your task branch
-    - checkout to the `main` branch
-    - update project using Git toolbar menu
-    - checkout to the task branch
-    - open branch menu -> choose main branch -> Merge 'main' into task branch
-    - thanks to the above, all commits merged into the `main` branch will be applied to the specific branch
+## Demo
 
-![update branch](static/readme-images/update-branch.jpg "update branch")
+The best model from the paper can be tested without the need to install anything. 
+The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
 
 ## Data
 
-### Labels (.csv)
+All the data necessary to reproduce results is available at [Zenodo](https://zenodo.org/record/10908325).
 
-- All [[download](https://ligands.blob.core.windows.net/ligands/cmb_blob_labels.csv)]
-- Train set [[download](https://ligands.blob.core.windows.net/ligands/train.csv)]
-- Holdout [[download](https://ligands.blob.core.windows.net/ligands/holdout.csv)]
+Repository with code for extracting ligands from CryoEM difference maps is a submodule of this repository, but can be also found [here](https://github.com/dabrze/cryo-em-ligand-cutter/tree/6032b5701cad7a4db86f780b91c2078907e36e42).
 
-### Datasets
+Additionally, the preprocessed data (uniformly sampled and max pooled 2000 points per ligand) that were used to train the final model are available [here](https://ligands.blob.core.windows.net/ligands/blobs_uniform_2000_max.tar.gz).
 
-- Raw [[download](https://ligands.blob.core.windows.net/ligands/cmb_blob_labels.csv)]
-- Surface (neighbourhood=22) + uniform selection (max_blob_size=2000,
-  method=basic) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_basic.tar.gz)]
-- Surface (neighbourhood=22) + uniform selection (max_blob_size=2000,
-  method=max) [[download](https://ligands.blob.core.windows.net/ligands/blobs_shell_22_uniform_2000_max.tar.gz)]
+## Citation
+```
+Space reserved for bibtex entry
+```
