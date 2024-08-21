@@ -1,21 +1,20 @@
 services:
   streamlit:
-    image: jkarolczak/ligand-deploy:lite
+    image: jkarolczak/ligand-deploy:st-1.37.1
     volumes:
       - "../:/app:rw"
       - "${PWD}/model.pt:/app/src/deploy/model.pt"
     working_dir: /app
     tty: true
     stdin_open: true
-    command: >
-      bash -c "pip install streamlit==1.37.1 
-      && streamlit run /app/src/deploy/app.py --server.port 8501 --browser.gatherUsageStats=false --theme.base="light" --server.enableCORS=false --server.enableXsrfProtection=false"
+    entrypoint: streamlit run /app/src/deploy/app.py
     environment:
       - MKL_THREADING_LAYER=1
       - STREAMLIT_SERVER_HEADLESS=true
       - STREAMLIT_SERVER_CORS_ORIGINS=https://ligands.cs.put.poznan.pl,https://ligands.xyz
     ports:
       - "8501:8501"
+    restart: always
 
   nginx:
     image: nginx:latest
@@ -25,6 +24,6 @@ services:
     volumes:
       - ${PWD}/docker/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
+    restart: always
     depends_on:
       - streamlit
-
