@@ -7,7 +7,9 @@ services:
     working_dir: /app
     tty: true
     stdin_open: true
-    entrypoint: pip install streamlit==1.37.1 && streamlit run /app/src/deploy/app.py --server.port 8501 --browser.gatherUsageStats=false --theme.base="light" --server.enableCORS=false --server.enableXsrfProtection=false
+    command: >
+      bash -c "pip install streamlit==1.37.1 
+      && streamlit run /app/src/deploy/app.py --server.port 8501 --browser.gatherUsageStats=false --theme.base="light" --server.enableCORS=false --server.enableXsrfProtection=false"
     environment:
       - MKL_THREADING_LAYER=1
       - STREAMLIT_SERVER_HEADLESS=true
