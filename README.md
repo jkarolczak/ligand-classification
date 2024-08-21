@@ -1,4 +1,7 @@
+[![Streamlit - Demo](https://img.shields.io/badge/Streamlit-Demo-informational)](https://ligands.cs.put.poznan.pl)
+[![Zenodo - Data](https://img.shields.io/badge/Zenodo-Data-informational)](https://zenodo.org/records/10908325)
 ![example workflow](https://github.com/jkarolczak/ligands-classification/actions/workflows/python-app.yml/badge.svg)
+
 
 # Deep Learning Methods for Ligand Identification in Density Maps
 [Jacek Karolczak](https://github.com/jkarolczak), [Anna Przybyłowska](https://github.com/annprzy), [Konrad Szewczyk](https://github.com/konradszewczyk), [Witold Taisner](https://github.com/wtaisner), [John M. Heumann](https://github.com/jmheumann), Michael H.B. Stowell, [Michał Nowicki](https://github.com/MichalNowicki?tab=repositories), [Dariusz Brzezinski](https://github.com/dabrze)
@@ -21,7 +24,7 @@ Weights of the model that revealed as the best in the paper are published as `mo
 
 ### Docker
 
-To simplify the setup and ensure consistency, we provide a Docker configuration that includes all necessary dependencies.
+To simplify the setup and ensure consistency, to , we provide a Docker configuration that includes all necessary dependencies.
 
 #### Prerequisites
 
@@ -48,6 +51,11 @@ Ensure you have the following installed:
 5. To stop the container:
    - For GPU use: `./stop.sh`
    - For CPU use: `./stop.sh cpu`
+
+## Demo
+
+The best model from the paper can be tested without the need to install anything. 
+The model is deployed as a Streamlit app under the link [ligands.xyz](https://ligands.xyz).
 
 ## Data
 
