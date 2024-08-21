@@ -24,7 +24,7 @@ Weights of the model that revealed as the best in the paper are published as `mo
 
 ### Docker
 
-To simplify the setup and ensure consistency, to , we provide a Docker configuration that includes all necessary dependencies.
+To simplify the setup and ensure consistency,  we provide a Docker configuration that includes all necessary dependencies.
 
 #### Prerequisites
 
