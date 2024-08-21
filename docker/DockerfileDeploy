@@ -12,7 +12,7 @@ RUN apt-get install -y \
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN pip install pandas streamlit==1.15.0 numpy plotly pyyaml scikit-image plyfile addict yapf wget altair==4.0 scikit-learn
+RUN pip install pandas streamlit==1.37.1 numpy plotly pyyaml scikit-image plyfile addict yapf wget altair==4.0 scikit-learn
 
 ENV MAX_JOBS=4
 RUN pip install torch==1.13

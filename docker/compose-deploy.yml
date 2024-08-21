@@ -1,6 +1,6 @@
 services:
   streamlit:
-    image: jkarolczak/ligand-deploy:lite
+    image: jkarolczak/ligand-deploy:st-1.37.1
     volumes:
       - "../:/app:rw"
       - "${PWD}/model.pt:/app/src/deploy/model.pt"
