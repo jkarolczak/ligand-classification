@@ -55,7 +55,7 @@ Ensure you have the following installed:
 ## Demo
 
 The best model from the paper can be tested without the need to install anything. 
-The model is deployed as a Streamlit app under the link [ligands.xyz](https://ligands.xyz).
+The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
 
 ## Data
 
