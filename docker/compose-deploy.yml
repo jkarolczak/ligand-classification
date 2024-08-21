@@ -7,7 +7,7 @@ services:
     working_dir: /app
     tty: true
     stdin_open: true
-    entrypoint: streamlit run /app/src/deploy/app.py --server.port 8501
+    entrypoint: streamlit run /app/src/deploy/app.py --server.port 8501 --browser.gatherUsageStats=false --theme.base="light" --server.enableCORS=false --server.enableXsrfProtection=false
     environment:
       - MKL_THREADING_LAYER=1
       - STREAMLIT_SERVER_HEADLESS=true
