@@ -40,9 +40,10 @@ def main():
     clicking on the class name. Additionally there is list of building ligands that are visualised when there is a 
     cursor on the  name. Click on a ligand's name to see its Protein Data Bank entry.
     
-    The application was created as a Bachelor dissertation by Anna Przybyłowska, Konrad Szewczyk, Witold Taisner and 
-    Jacek Karolczak, under supervision of Ph.D. Dariusz Brzeziński. The source code is publicly available on 
-    [GitHub](https://github.com/jkarolczak/ligand-classification)
+    This application serves as supplementary material for the article 
+    *Deep Learning Methods for Ligand Identification in Density Maps* by Jacek Karolczak, Anna Przybyłowska, Konrad Szewczyk, 
+    Witold Taisner, John M. Heumann, Michael H.B. Stowell, Michał Nowicki and Dariusz Brzezinski. The source code is publicly 
+    available on [GitHub](https://github.com/jkarolczak/ligand-classification)
     
     --- 
     """)
