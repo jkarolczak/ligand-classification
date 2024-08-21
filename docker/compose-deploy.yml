@@ -11,6 +11,7 @@ services:
     environment:
       - MKL_THREADING_LAYER=1
       - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_CORS_ORIGINS=https://ligands.cs.put.poznan.pl,https://ligands.xyz
     ports:
       - "8501:8501"
 
