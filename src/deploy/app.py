@@ -4,9 +4,8 @@ import streamlit as st
 
 from deploy.inference import predict, load_model
 from deploy.parsing import parse
-from deploy.preprocessing import preprocess
+from deploy.preprocessing import preprocess, scale_cryoem_blob
 from deploy.visualization import volume_3d
-
 
 model = None
 
@@ -90,9 +89,21 @@ def main():
     col2_predictions.info("Upload a blob to see predictions.")
     with col1_form:
         file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
-        if st.form_submit_button():
+        form_col1, form_col2 = col1_form.columns(2)
+        with form_col1:
+            rescale_cryoem = st.toggle("Rescale voxel values (turn this on for cryoEM blobs)")
+
+        with form_col2:
+            resolution = st.slider("Resolution (used only for cryoEM blobs)", min_value=1.0, max_value=4.0, value=1.0,
+                                   step=0.1)
+
+        submit_button = st.form_submit_button("Submit")
+
+        if submit_button:
             if file_val:
                 blob = parse(file_val)
+                if rescale_cryoem:
+                    blob = scale_cryoem_blob(blob, resolution=resolution)
                 viz = volume_3d(blob, "Blob")
                 col1_content.plotly_chart(viz, use_container_width=True, height=500)
                 blob = preprocess(blob)
