@@ -58,4 +58,4 @@ def scale_cryoem_blob(blob: np.ndarray, resolution: float) -> np.ndarray:
     """
 
     """
-    return blob * (MAP_VALUE_MAPPER[resolution] / blob[blob > 0].min())
+    return blob * (MAP_VALUE_MAPPER[round(resolution, 1)] / blob[blob > 0].min())
