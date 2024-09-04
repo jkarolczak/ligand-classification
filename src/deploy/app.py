@@ -96,19 +96,19 @@ def main():
 
         submit_button = st.form_submit_button("Submit")
 
-        if submit_button:
-            if file_val:
-                blob = parse(file_val)
-                if rescale_cryoem:
-                    blob = scale_cryoem_blob(blob, resolution=resolution)
-                viz = volume_3d(blob, "Blob")
-                col1_content.plotly_chart(viz, use_container_width=True, height=500)
-                blob = preprocess(blob)
-                preds = predict(blob, model)
-                with col2_predictions.container():
-                    st.components.v1.html(preds, width=650, height=1000, scrolling=True)
-            else:
-                col2_predictions.error("No file has been uploaded.")
+    if submit_button:
+        if file_val:
+            blob = parse(file_val)
+            if rescale_cryoem:
+                blob = scale_cryoem_blob(blob, resolution=resolution)
+            viz = volume_3d(blob, "Blob")
+            col1_content.plotly_chart(viz, use_container_width=True, height=500)
+            blob = preprocess(blob)
+            preds = predict(blob, model)
+            with col2_predictions.container():
+                st.components.v1.html(preds, width=650, height=1000, scrolling=True)
+        else:
+            col2_predictions.error("No file has been uploaded.")
 
 
 if __name__ == "__main__":
