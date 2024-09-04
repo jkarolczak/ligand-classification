@@ -87,9 +87,9 @@ def main():
     col2.markdown("## Predictions")
     col2_predictions = col2.empty()
     col2_predictions.info("Upload a blob to see predictions.")
-    with col1_form:
+    with col1_form as form:
         file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
-        form_col1, form_col2 = st.columns(2)
+        form_col1, form_col2 = form.columns(2)
         rescale_cryoem = form_col1.toggle("Rescale voxel values (turn this on for cryoEM blobs)")
         resolution = form_col2.slider("Resolution (used only for cryoEM blobs)", min_value=1.0, max_value=4.0, value=1.0,
                                       step=0.1)
