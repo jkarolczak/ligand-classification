@@ -91,11 +91,12 @@ def main():
         file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
         rescale_cryoem = st.toggle("Rescale voxel values (turn this on for cryoEM blobs)")
 
-    if rescale_cryoem:
-        resolution = st.number_input("Resolution", min_value=1.0, max_value=4.0, value=1.0, step=0.1)
+        if rescale_cryoem:
+            resolution = st.number_input("Resolution", min_value=1.0, max_value=4.0, value=1.0, step=0.1)
 
-    with col1_form:
-        if st.form_submit_button():
+        submit_button = st.form_submit_button("Submit")
+
+        if submit_button:
             if file_val:
                 blob = parse(file_val)
                 if rescale_cryoem:
