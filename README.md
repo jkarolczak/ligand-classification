@@ -23,17 +23,17 @@ Our study demonstrates that electron density map fragments can be used to train 
 structures, but also highlights challenges associated with the standardization of electron microscopy maps and the
 quality assessment of cryoEM ligands.
 
-In the repository, we provide the code for the experiments conducted in the paper, including models implementations and
+In the repository, we provide the code for the experiments conducted in the paper, including model implementations and
 transformations for generating datasets.
 To reproduce the results, use scripts from the `scripts` directory.
 Configuration files for the experiments are available in the `cfg` directory.
 
-Weights of the model that revealed as the best in the paper are published
+Weights of the model that was revealed as the best in the paper are published
 as `model.pt` ([link](https://github.com/jkarolczak/ligand-classification/blob/main/model.pt)).
 
 ---
 
-Below presented are schematics of deep learning architectures used to predict ligands:
+Presented below are schematics of deep learning architectures used to predict ligands:
 
 <ol type="A">
   <li>The RiConv++ architecture with five enhanced rotation invariant convolution (RIConv++) layers.</li>
@@ -48,6 +48,7 @@ groups.
 <img src="static/figures/architectures.png" alt="Deep Learning Architectures Schematics" width="800px"/>
 
 ---
+
 Here are some snapshots of ligand identifications made by the proposed MinkLoc3Dv2 model.
 
 - (A–D) Examples of correctly predicted X-ray ligands.
@@ -60,10 +61,10 @@ Here are some snapshots of ligand identifications made by the proposed MinkLoc3D
 Each ligand is labeled by its Chemical Component Dictionary ID, structure resolution, and (in parentheses) the PDB ID,
 chain, and residue number. X-ray diffraction ligands shown in green mesh based on Fo-Fc maps contoured at 2.8σ
 calculated after removal of solvent and other small molecules (including the ligand) from the model.
-
 CryoEM ligands depicted in pink mesh based on difference maps contoured according to the proposed automatic density
 thresholding method (13.642, 3.385, 17.997, 7.850, and 5.613 V for panels F–J, respectively). The white mesh in panel J
 shows a manually selected contour threshold of 11.000 V. Atomic coordinates were taken from the PDB deposits.
+
 ---
 
 ## Environment setup
