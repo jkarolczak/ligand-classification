@@ -118,5 +118,16 @@ the final model are available [here](https://ligands.blob.core.windows.net/ligan
 ## Citation
 
 ```
-Space reserved for bibtex entry
+@article {Karolczak2024.08.27.610022,
+	author = {Karolczak, Jacek and Przyby{\l}owska, Anna and Szewczyk, Konrad and Taisner, Witold and Heumann, John M. and Stowell, Michael H.B. and Nowicki, Micha{\l} and Brzezinski, Dariusz},
+	title = {Ligand Identification using Deep Learning},
+	elocation-id = {2024.08.27.610022},
+	year = {2024},
+	doi = {10.1101/2024.08.27.610022},
+	publisher = {Cold Spring Harbor Laboratory},
+	abstract = {Motivation Accurately identifying ligands plays a crucial role in the process of structure-guided drug design. Based on density maps from X-ray diffraction or cryogenic-sample electron microscopy (cryoEM), scientists verify whether small-molecule ligands bind to active sites of interest. However, the interpretation of density maps is challenging, and cognitive bias can sometimes mislead investigators into modeling fictitious compounds. Ligand identification can be aided by automatic methods, but existing approaches are available only for X-ray diffraction and are based on iterative fitting or feature-engineered machine learning rather than end-to-end deep learning.Results Here, we propose to identify ligands using a deep learning approach that treats density maps as 3D point clouds. We show that the proposed model is on par with existing machine learning methods for X-ray crystallography while also being applicable to cryoEM density maps. Our study demonstrates that electron density map fragments can be used to train models that can be applied to cryoEM structures, but also highlights challenges associated with the standardization of electron microscopy maps and the quality assessment of cryoEM ligands.Availability Code and model weights are available on GitHub at https://github.com/jkarolczak/ligands-classification. Datasets used for training and testing are hosted at Zenodo: 10.5281/zenodo.10908325.Contact dariusz.brzezinski{at}cs.put.poznan.plCompeting Interest StatementThe authors have declared no competing interest.},
+	URL = {https://www.biorxiv.org/content/early/2024/08/28/2024.08.27.610022},
+	eprint = {https://www.biorxiv.org/content/early/2024/08/28/2024.08.27.610022.full.pdf},
+	journal = {bioRxiv}
+}
 ```
