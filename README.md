@@ -41,24 +41,29 @@ Below presented are schematics of deep learning architectures used to predict li
   <li>The TransLoc3D architecture built from four modules: 3D Sparse Convolution, Adaptive Receptive Field, External Transformer, and NetVLAD.</li>
 </ol>
 
-All the architectures were prepared to take as input the same sample of 2000 voxels and output the probability scores of
-all the studied 219 ligand groups.
+All the architectures were modified to take as input the same sample of 2000 voxels (or less in case of ligands is
+described by default by smaller number of voxels) and output the probability scores of all the studied 219 ligand
+groups.
 
 <img src="static/figures/architectures.png" alt="Deep Learning Architectures Schematics" width="800px"/>
 
 ---
-Examples of ligand identification using the proposed MinkLoc3Dv2 model. (A–D) Examples of correctly predicted X-ray
-ligands. (E) Uridine-5’-diphosphate (UDP) misclassified as uridine (URI, black dashed frame). (F–I) Examples of
-correctly predicted cryoEM ligands.     (J) Heme A (HEM) misclassified as a rare ligand due to incorrect density
-thresholding. Each ligand is labeled by its Chemical Component Dictionary ID, structure resolution, and (in parentheses)
-the PDB ID, chain, and residue number. X-ray diffraction ligands shown in green mesh based on Fo-Fc maps contoured at
-2.8σ calculated after removal of solvent and other small molecules (including the ligand) from the model. CryoEM ligands
-depicted in pink mesh based on difference maps contoured according to the proposed automatic density thresholding
-method (13.642, 3.385, 17.997, 7.850, and 5.613 V for panels F–J, respectively). The white mesh in panel J shows a
-manually selected contour threshold of 11.000 V. Atomic coordinates were taken from the PDB deposits.
+Here are some snapshots of ligand identifications made by the proposed MinkLoc3Dv2 model.
+
+- (A–D) Examples of correctly predicted X-ray ligands.
+- (E) Uridine-5’-diphosphate (UDP) misclassified as uridine (URI, black dashed frame).
+- (F–I) Examples of correctly predicted cryoEM ligands.
+- (J) Heme A (HEM) misclassified as a rare ligand due to incorrect density thresholding.
 
 <img src="static/figures/identified-blobs.jpg" alt="Blobs Identified by MinkLoc3Dv2" width="800px"/>
 
+Each ligand is labeled by its Chemical Component Dictionary ID, structure resolution, and (in parentheses) the PDB ID,
+chain, and residue number. X-ray diffraction ligands shown in green mesh based on Fo-Fc maps contoured at 2.8σ
+calculated after removal of solvent and other small molecules (including the ligand) from the model.
+
+CryoEM ligands depicted in pink mesh based on difference maps contoured according to the proposed automatic density
+thresholding method (13.642, 3.385, 17.997, 7.850, and 5.613 V for panels F–J, respectively). The white mesh in panel J
+shows a manually selected contour threshold of 11.000 V. Atomic coordinates were taken from the PDB deposits.
 ---
 
 ## Environment setup
