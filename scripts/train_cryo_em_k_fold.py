@@ -9,9 +9,9 @@ from torch.utils.data import DataLoader
 import log
 import models
 from cfg import read_config
-from data import SparseDataset, collation_fn_sparse
+from data import SparseDataset, collation_fn_sparse, concatenate_sparse_datasets
 
-FOLD_FILES = ["fold1.csv", "fold2.csv", "fold3.csv"]
+FOLD_FILES = ["../data/fold1.csv", "../data/fold2.csv", "../data/fold3.csv"]
 
 
 def seed_worker(_):
@@ -23,7 +23,7 @@ def seed_worker(_):
 def run_training(cfg, train_files, test_file, fold_idx, device, run):
     train_datasets = [SparseDataset(cfg["dataset_dir"], f, min_size=cfg["dataset_min_size"],
                                     max_size=cfg["dataset_max_size"]) for f in train_files]
-    train_dataset = torch.utils.data.ConcatDataset(train_datasets)
+    train_dataset = concatenate_sparse_datasets(train_datasets)
 
     test_dataset = SparseDataset(cfg["dataset_dir"], test_file, min_size=cfg["dataset_min_size"],
                                  max_size=cfg["dataset_max_size"])
@@ -74,7 +74,7 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
             del (batch, labels)
             gc.collect()
 
-        run[f"train/{fold_idx}/{criterion.__name__}"].log(total_loss / len(train_dataloader))
+        run[f"train/fold-{fold_idx}/{criterion}"].log(total_loss / len(train_dataloader))
 
         model.eval()
         groundtruth, predictions = None, None
@@ -110,7 +110,6 @@ if __name__ == "__main__":
     cfg = read_config("../cfg/train.yaml")
 
     device = torch.device("cuda" if torch.cuda.is_available() and cfg["device"] != "cpu" else "cpu")
-    cpu = torch.device("cpu")
 
     run = log.get_run()
 
@@ -127,7 +126,7 @@ if __name__ == "__main__":
         test_file = FOLD_FILES[fold_idx]
         train_files = [f for i, f in enumerate(FOLD_FILES) if i != fold_idx]
 
-        groundtruth, predictions = run_training(cfg, train_files, test_file, fold_idx, device, cpu, run)
+        groundtruth, predictions = run_training(cfg, train_files, test_file, fold_idx, device, run)
 
         all_groundtruth.append(groundtruth)
         all_predictions.append(predictions)

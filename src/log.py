@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import Union, List, OrderedDict, Dict
 
-import neptune.new as neptune
+import neptune
 import torch
 import torchmetrics
 import yaml

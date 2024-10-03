@@ -129,7 +129,8 @@ class SparseDataset(BaseDataset):
         label = torch.tensor(self.labels[idx], dtype=torch.float32)
         idx = self.files[idx]
         blob_path = os.path.join(self.annotations_file_path, idx)
-        blob = np.load(blob_path)["blob"]
+        blob = np.load(blob_path)
+        blob = blob[blob.files[0]]
         blob = torch.tensor(blob, dtype=torch.float32)
         coordinates, features = self._get_coords_feats(blob)
         return coordinates, features, label
@@ -260,3 +261,35 @@ def dataset_split(
     test.label_files_map = test_label_files_map
 
     return train, test
+
+
+def concatenate_sparse_datasets(datasets: List[SparseDataset]) -> SparseDataset:
+    """
+    Concatenates multiple SparseDataset objects into one.
+
+    :param datasets: List of SparseDataset objects to be concatenated.
+    :return: A new SparseDataset object containing data from all input datasets.
+    """
+    if not datasets:
+        raise ValueError("No datasets provided for concatenation.")
+
+    base_dataset = deepcopy(datasets[0])
+
+    all_files = []
+    all_labels = []
+    all_file_ligand_map = {}
+
+    for dataset in datasets:
+        all_files.extend(dataset.files)
+        all_labels.extend(dataset.labels)
+        all_file_ligand_map.update(dataset.file_ligand_map)
+
+    base_dataset.files = all_files
+    base_dataset.labels = all_labels
+    base_dataset.file_ligand_map = all_file_ligand_map
+
+    base_dataset.label_files_map = collections.defaultdict(list)
+    for k, v in zip(base_dataset.files, base_dataset.labels_names):
+        base_dataset.label_files_map[v].append(k)
+
+    return base_dataset
