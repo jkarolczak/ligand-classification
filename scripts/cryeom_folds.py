@@ -2,6 +2,7 @@ from collections import defaultdict, Counter
 
 import numpy as np
 import pandas as pd
+from pandas.core.common import random_state
 from sklearn.model_selection._split import StratifiedGroupKFold
 
 
@@ -35,6 +36,7 @@ class CustomGreedyKFold:
     def greedy_kfold(self, df):
         if self.shuffle:
             df = df.sample(frac=1, random_state=self.random_state).reset_index(drop=True)
+        rng = np.random.default_rng(self.random_state)
         folds = [[] for i in range(self.k)]
         folds_instances = []
         X = df['blob_map_filename'].to_numpy()
@@ -45,7 +47,8 @@ class CustomGreedyKFold:
 
         for c in np.unique(y):
             bin_sizes = [np.sum(y == c) // self.k for _ in range(self.k)]
-            for i in range(np.sum(y == c) % self.k):
+            random_bins_too_add_one = rng.choice(list(range(self.k)), size=(np.sum(y == c) % self.k))
+            for i in random_bins_too_add_one:
                 bin_sizes[i] += 1
             bins = [[] for _ in range(self.k)]
             group_class = groups_class[groups_class['ligand'] == c]
@@ -89,7 +92,7 @@ def kfold(strategy, df, k=3, remove_too_small=False):
     print(len(df))
     if remove_too_small:
         groups_class = df[['ligand', 'group']].groupby(['ligand', 'group']).size().to_frame('count').reset_index(drop=False)
-        too_small = groups_class[groups_class['count'] < k]
+        too_small = groups_class[groups_class['count'] == 1]
         for i in range(len(too_small)):
             c = too_small['ligand'].iloc[i]
             group = too_small['group'].iloc[i]
@@ -117,7 +120,7 @@ def kfold(strategy, df, k=3, remove_too_small=False):
 
 def save_kfolds(dfs, main_path):
     for i, df in enumerate(dfs):
-        df[['blob_map_filename']].to_csv(f'{main_path}/fold{i}.csv', index=False)
+        df[['ligand', 'blob_map_filename']].to_csv(f'{main_path}/fold{i}.csv', index=False)
 
 if __name__ == '__main__':
     path_cryoem = 'cryoem_q0.6_blob_labels.csv'
@@ -129,8 +132,12 @@ if __name__ == '__main__':
 
     cryoem = pd.read_csv(path_cryoem, sep=',')
     ligand_mapping = pd.read_csv(path_ligands, sep=',')
-    cryoem = cryoem[cryoem['ligand'].isin(ligand_mapping['ligand'])]
+    cryoem.loc[~cryoem['ligand'].isin(ligand_mapping['ligand']), 'ligand'] = 'RARE_LIGAND'
     cryoem['group'] = cryoem['blob_map_filename'].apply(lambda x: x.split('_')[0])
+
+    unique_classes = pd.DataFrame(cryoem['ligand'].unique(), columns=['ligand'])
+    unique_classes.to_csv(f'{folds_save_path}/classes.csv', index=False)
+
 
     print(cryoem.head())
     print(f"Number of classes: {len(cryoem['ligand'].unique())}")
