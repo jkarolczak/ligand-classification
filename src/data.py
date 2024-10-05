@@ -295,7 +295,8 @@ def concatenate_sparse_datasets(datasets: List[SparseDataset]) -> SparseDataset:
         all_file_ligand_map.update(dataset.file_ligand_map)
 
     base_dataset.files = all_files
-    base_dataset.labels = all_labels
+    base_dataset.labels = np.array(all_labels)
+    base_dataset.labels_names = base_dataset.encoder.inverse_transform(base_dataset.labels)
     base_dataset.file_ligand_map = all_file_ligand_map
 
     base_dataset.label_files_map = collections.defaultdict(list)

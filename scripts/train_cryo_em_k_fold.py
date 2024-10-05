@@ -12,7 +12,7 @@ from cfg import read_config
 from data import SparseDataset, collation_fn_sparse, concatenate_sparse_datasets
 
 FOLD_FILES = ["../data/fold0.csv", "../data/fold1.csv", "../data/fold2.csv"]
-CRYOEM_DIR = "../data/blobs_cryoem_q0.6_uniform_2000_max"
+CRYOEM_DIR = "../data/blobs_cryoem+xray"
 
 def seed_worker(_):
     worker_seed = torch.initial_seed() % 2 ** 32
