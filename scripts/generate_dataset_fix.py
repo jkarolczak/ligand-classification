@@ -12,7 +12,8 @@ from pipeline import Pipeline
 def main(x: Tuple[int, str]) -> None:
     idx, f_name = x
     input_path = os.path.join(input_dir, f_name)
-    blob = np.load(input_path)["blob"]
+    blob = np.load(input_path)
+    blob = blob[blob.files[0]]
     blob = transformation_pipeline.preprocess(blob)
     output_path = os.path.join(output_dir, f_name)
     np.savez_compressed(output_path, blob=blob)

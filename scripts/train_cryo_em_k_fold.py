@@ -11,8 +11,8 @@ import models
 from cfg import read_config
 from data import SparseDataset, collation_fn_sparse, concatenate_sparse_datasets
 
-FOLD_FILES = ["../data/fold1.csv", "../data/fold2.csv", "../data/fold3.csv"]
-
+FOLD_FILES = ["../data/fold0.csv", "../data/fold1.csv", "../data/fold2.csv"]
+CRYOEM_DIR = "../data/blobs_cryoem_q0.6_uniform_2000_max"
 
 def seed_worker(_):
     worker_seed = torch.initial_seed() % 2 ** 32
@@ -21,12 +21,21 @@ def seed_worker(_):
 
 
 def run_training(cfg, train_files, test_file, fold_idx, device, run):
-    train_datasets = [SparseDataset(cfg["dataset_dir"], f, min_size=cfg["dataset_min_size"],
-                                    max_size=cfg["dataset_max_size"]) for f in train_files]
+    # cryo-em
+    classes_file_path = cfg["dataset_file"] or "../data/cryoem-classes.csv"
+    train_datasets = [SparseDataset(CRYOEM_DIR, f, min_size=cfg["dataset_min_size"],
+                                    max_size=cfg["dataset_max_size"], classes_file_path=classes_file_path)
+                      for f in train_files]
+
+    # x-ray
+    if cfg["dataset_file"]:
+        train_datasets.append(SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+                              max_size=cfg["dataset_max_size"]))
+
     train_dataset = concatenate_sparse_datasets(train_datasets)
 
-    test_dataset = SparseDataset(cfg["dataset_dir"], test_file, min_size=cfg["dataset_min_size"],
-                                 max_size=cfg["dataset_max_size"])
+    test_dataset = SparseDataset(CRYOEM_DIR, test_file, min_size=cfg["dataset_min_size"],
+                                 max_size=cfg["dataset_max_size"], classes_file_path=classes_file_path)
 
     g_train, g_test = torch.Generator(), torch.Generator()
     g_train.manual_seed(42)
@@ -47,6 +56,10 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
     criterion = torch.nn.CrossEntropyLoss()
 
     accum_iter = cfg["accum_iter"]
+
+    all_epoch_groundtruth = []
+    all_epoch_predictions = []
+
     for e in range(cfg["epochs"]):
         train_dataloader.dataset.sample(e)
         model.train()
@@ -65,7 +78,8 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
                 if not idx % accum_iter:
                     optimizer.step()
                     optimizer.zero_grad()
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
             if device == torch.device("cuda"):
@@ -74,7 +88,7 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
             del (batch, labels)
             gc.collect()
 
-        run[f"train/fold-{fold_idx}/{criterion}"].log(total_loss / len(train_dataloader))
+        run[f"train/fold-{fold_idx}-as-test/{criterion}"].log(total_loss / len(train_dataloader))
 
         model.eval()
         groundtruth, predictions = None, None
@@ -98,9 +112,12 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
                     except:
                         pass
 
+        all_epoch_groundtruth.append(groundtruth)
+        all_epoch_predictions.append(predictions)
+
         scheduler.step()
 
-    return groundtruth, predictions
+    return all_epoch_groundtruth, all_epoch_predictions
 
 
 if __name__ == "__main__":
@@ -119,22 +136,29 @@ if __name__ == "__main__":
     run["config/epochs"] = cfg["epochs"]
     run["config/k_folds"] = len(FOLD_FILES)
 
-    all_groundtruth = []
-    all_predictions = []
+    all_epoch_groundtruth_folds = [[] for _ in range(cfg["epochs"])]
+    all_epoch_predictions_folds = [[] for _ in range(cfg["epochs"])]
 
     for fold_idx in range(len(FOLD_FILES)):
         test_file = FOLD_FILES[fold_idx]
         train_files = [f for i, f in enumerate(FOLD_FILES) if i != fold_idx]
 
-        groundtruth, predictions = run_training(cfg, train_files, test_file, fold_idx, device, run)
+        epoch_groundtruth, epoch_predictions = run_training(cfg, train_files, test_file, fold_idx, device, run)
 
-        all_groundtruth.append(groundtruth)
-        all_predictions.append(predictions)
+        for e in range(cfg["epochs"]):
+            all_epoch_groundtruth_folds[e].append(epoch_groundtruth[e])
+            all_epoch_predictions_folds[e].append(epoch_predictions[e])
 
-    aggregated_groundtruth = torch.cat(all_groundtruth, dim=0)
-    aggregated_predictions = torch.cat(all_predictions, dim=0)
+    for e in range(cfg["epochs"]):
+        aggregated_groundtruth_epoch = torch.cat(all_epoch_groundtruth_folds[e], dim=0)
+        aggregated_predictions_epoch = torch.cat(all_epoch_predictions_folds[e], dim=0)
 
-    log.epoch(run=run, preds=aggregated_predictions, target=aggregated_groundtruth, epoch_num=cfg["epochs"] - 1,
-              model_name=cfg["model"])
+        log.epoch(
+            run=run,
+            preds=aggregated_predictions_epoch,
+            target=aggregated_groundtruth_epoch,
+            epoch_num=e,
+            model_name=cfg["model"]
+        )
 
     run.stop()

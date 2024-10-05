@@ -22,6 +22,7 @@ class BaseDataset(Dataset, ABC):
             self,
             annotations_file_path: str,
             labels_file_path: str = None,
+            classes_file_path: str = None,
             rng_seed: int = 23,
             min_size: int = None,
             max_size: int = None,
@@ -50,9 +51,18 @@ class BaseDataset(Dataset, ABC):
             "ligand"
         ]
         self.files = list(self.file_ligand_map.keys())
-        self.labels_names = list(self.file_ligand_map.values())
+
         self.encoder = LabelBinarizer()
-        self.labels = self.encoder.fit_transform(self.labels_names)
+
+        self.labels_names = list(self.file_ligand_map.values())
+
+        if classes_file_path:
+            self.all_labels = list(pd.read_csv(classes_file_path)["ligand"])
+            self.encoder = self.encoder.fit(self.all_labels)
+        else:
+            self.encoder = self.encoder.fit(self.labels_names)
+
+        self.labels = self.encoder.transform(self.labels_names)
 
         self.label_files_map = collections.defaultdict(list)
         for k, v in sorted(self.file_ligand_map.items()):
