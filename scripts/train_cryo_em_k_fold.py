@@ -3,13 +3,14 @@ import random
 
 import MinkowskiEngine as ME
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
 import log
 import models
 from cfg import read_config
-from data import SparseDataset, collation_fn_sparse, concatenate_sparse_datasets
+from data import SparseDataset, collation_fn_sparse, concatenate_sparse_datasets, dataset_split
 
 FOLD_FILES = ["../data/fold0.csv", "../data/fold1.csv", "../data/fold2.csv"]
 CRYOEM_DIR = "../data/blobs_cryoem+xray"
@@ -29,8 +30,10 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
 
     # x-ray
     if cfg["dataset_file"]:
-        train_datasets.append(SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
-                              max_size=cfg["dataset_max_size"]))
+        x_ray = SparseDataset(cfg["dataset_dir"], cfg["dataset_file"], min_size=cfg["dataset_min_size"],
+                              max_size=cfg["dataset_max_size"])
+        x_ray, _ = dataset_split(dataset=x_ray)
+        train_datasets.append(x_ray)
 
     train_dataset = concatenate_sparse_datasets(train_datasets)
 
@@ -116,8 +119,10 @@ def run_training(cfg, train_files, test_file, fold_idx, device, run):
         all_epoch_predictions.append(predictions)
 
         scheduler.step()
+    idx = test_dataset.files
+    classes = test_dataset.encoder.classes_
 
-    return all_epoch_groundtruth, all_epoch_predictions
+    return all_epoch_groundtruth, all_epoch_predictions, idx, classes
 
 
 if __name__ == "__main__":
@@ -138,16 +143,19 @@ if __name__ == "__main__":
 
     all_epoch_groundtruth_folds = [[] for _ in range(cfg["epochs"])]
     all_epoch_predictions_folds = [[] for _ in range(cfg["epochs"])]
+    idxs = []
 
     for fold_idx in range(len(FOLD_FILES)):
         test_file = FOLD_FILES[fold_idx]
         train_files = [f for i, f in enumerate(FOLD_FILES) if i != fold_idx]
 
-        epoch_groundtruth, epoch_predictions = run_training(cfg, train_files, test_file, fold_idx, device, run)
+        epoch_groundtruth, epoch_predictions, idx, classes = run_training(cfg, train_files, test_file, fold_idx, device, run)
 
         for e in range(cfg["epochs"]):
             all_epoch_groundtruth_folds[e].append(epoch_groundtruth[e])
             all_epoch_predictions_folds[e].append(epoch_predictions[e])
+
+        idxs.extend(idx)
 
     for e in range(cfg["epochs"]):
         aggregated_groundtruth_epoch = torch.cat(all_epoch_groundtruth_folds[e], dim=0)
@@ -160,5 +168,11 @@ if __name__ == "__main__":
             epoch_num=e,
             model_name=cfg["model"]
         )
+
+    df_id = pd.DataFrame({'id': idxs})
+    df_labels = pd.DataFrame(aggregated_groundtruth_epoch.numpy(), columns=map(lambda x: f"real_{x}", classes))
+    df_predictions = pd.DataFrame(aggregated_predictions_epoch.numpy(), columns=map(lambda x: f"pred_{x}", classes))
+    df = pd.concat([df_id, df_labels, df_predictions], axis=1)
+    df.to_csv(f"predictions-{run['sys/id'].fetch()}.csv")
 
     run.stop()
