@@ -43,7 +43,6 @@ def classify_ligand():
         blob = preprocess(blob)
 
         preds = predict(blob, model)
-        preds = softmax(preds, dim=0)
         preds = raw_pred_to_dataframe_probabilities(preds)
         preds = preds.to_dict("records")
 
