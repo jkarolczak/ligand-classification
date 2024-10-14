@@ -2,7 +2,7 @@ from torch.nn.functional import softmax
 from flask import Flask, request, jsonify
 from flask_caching import Cache
 
-from deploy.inference import predict, load_model, raw_pred_to_top10_dataframe
+from deploy.inference import predict, load_model, raw_pred_to_dataframe_probabilities
 from deploy.parsing import parse_flask
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 
@@ -44,7 +44,7 @@ def classify_ligand():
 
         preds = predict(blob, model)
         preds = softmax(preds, dim=0)
-        preds = raw_pred_to_top10_dataframe(preds)
+        preds = raw_pred_to_dataframe_probabilities(preds)
         preds = preds.to_dict("records")
 
         return jsonify({"predictions": preds}), 200
