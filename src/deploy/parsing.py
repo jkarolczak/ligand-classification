@@ -4,7 +4,6 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 import plyfile as ply
-import werkzeug
 from numpy.lib import recfunctions as rfn
 
 
