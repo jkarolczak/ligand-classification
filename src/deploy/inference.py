@@ -85,8 +85,8 @@ def raw_pred_to_dataframe_probabilities(predictions: torch.Tensor) -> pd.DataFra
     cls = indices_to_cls(indices)
     df = pd.DataFrame(
         {
-            "Class": cls,
-            "Probability": prob
+            "class": cls,
+            "probability": prob
         }
     ).sort_values(by="Probability", ascending=False).reset_index().drop(columns="index")
     return df
