@@ -50,7 +50,6 @@ def classify_ligand():
         return jsonify({"predictions": preds}), 200
 
     except Exception as e:
-        raise e
         return jsonify({"error": str(e)}), 500
 
 
