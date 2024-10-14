@@ -13,7 +13,7 @@ cache = Cache(app)
 
 @app.route("/api")
 def home():
-    return "Ligand Classification API is up and running!"
+    return "Ligand Classification API is up and running!", 200
 
 
 @app.route("/api/predict", methods=["POST"])
@@ -33,12 +33,11 @@ def classify_ligand():
         rescale_cryoem = request.form.get("rescale_cryoem", "false").lower() == "true"
         resolution = request.form.get("resolution", None)
 
-        if not resolution:
+        if rescale_cryoem and not resolution:
             return jsonify({"error": "No resolution part in the request"}), 400
 
-        resolution = float(resolution)
-
         if rescale_cryoem:
+            resolution = float(resolution)
             blob = scale_cryoem_blob(blob, resolution=resolution)
 
         blob = preprocess(blob)
