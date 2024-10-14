@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_caching import Cache
 
 from deploy.inference import predict, load_model, raw_pred_to_top10_dataframe
 from deploy.parsing import parse_flask
@@ -7,8 +6,6 @@ from deploy.preprocessing import preprocess, scale_cryoem_blob
 
 app = Flask(__name__)
 model = load_model()
-app.config["CACHE_TYPE"] = "SimpleCache"
-cache = Cache(app)
 
 
 @app.route("/api")
@@ -17,7 +14,6 @@ def home():
 
 
 @app.route("/api/predict", methods=["POST"])
-@cache.cached(timeout=300)
 def classify_ligand():
     if len(request.files) == 0:
         return jsonify({"error": "No file part in the request"}), 400
@@ -37,9 +33,7 @@ def classify_ligand():
                 return jsonify({"error": "No resolution part in the request"}), 400
 
             resolution = float(resolution)
-            print(blob.min(), blob.max())
             blob = scale_cryoem_blob(blob, resolution=resolution)
-            print(blob.min(), blob.max())
 
         blob = preprocess(blob)
 
