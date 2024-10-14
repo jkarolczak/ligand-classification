@@ -79,16 +79,14 @@ def raw_pred_to_dataframe(predictions: torch.Tensor) -> pd.DataFrame:
     return df
 
 
-def predict(blob: np.ndarray, model) -> str:
+def predict(blob: np.ndarray, model) -> pd.DataFrame:
     """
 
     """
     me_tensor = blob_to_me_tensor(blob)
     pred = model(me_tensor).squeeze(0)
     df = raw_pred_to_dataframe(pred)
-    table = render_table([(i + 1, ligand_dict()[row["Class"]], round(row["Probability"], 2))
-                          for i, row in df.iterrows()])
-    return table
+    return df
 
 
 def load_model():

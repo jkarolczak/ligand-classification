@@ -1,5 +1,5 @@
 services:
-  streamlit:
+  app:
     image: jkarolczak/ligand-deploy:st-1.37.1
     volumes:
       - "../:/app:rw"
@@ -16,6 +16,21 @@ services:
       - "8501:8501"
     restart: always
 
+  api:
+    image: jkarolczak/ligand-deploy:flask-3.0.3
+    volumes:
+      - "../:/app:rw"
+      - "${PWD}/model.pt:/app/src/deploy/model.pt"
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    entrypoint: python api.py
+    environment:
+      - MKL_THREADING_LAYER=1
+    ports:
+      - "5000:5000"
+    restart: always
+
   nginx:
     image: nginx:latest
     ports:
@@ -26,4 +41,5 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     restart: always
     depends_on:
-      - streamlit
+      - app
+      - api

@@ -107,7 +107,9 @@ def main():
                 viz = volume_3d(blob, "Blob")
                 col1_content.plotly_chart(viz, use_container_width=True, height=500)
                 blob = preprocess(blob)
-                preds = predict(blob, model)
+                df = predict(blob, model)
+                preds = render_table([(i + 1, ligand_dict()[row["Class"]], round(row["Probability"], 2))
+                                      for i, row in df.iterrows()])
                 with col2_predictions.container():
                     st.components.v1.html(preds, width=650, height=1000, scrolling=True)
             else:
