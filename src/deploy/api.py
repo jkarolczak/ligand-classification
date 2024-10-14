@@ -47,6 +47,7 @@ def classify_ligand():
         blob = preprocess(blob)
 
         preds = predict(blob, model)
+        # preds = torch.nn.functional.softmax(preds, axis=0)
         preds = preds.to_dict("records")
 
         return jsonify({"predictions": preds}), 200
