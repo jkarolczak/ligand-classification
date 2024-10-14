@@ -24,7 +24,7 @@ services:
     working_dir: /app
     tty: true
     stdin_open: true
-    entrypoint: python api.py
+    entrypoint: python3 api.py
     environment:
       - MKL_THREADING_LAYER=1
     ports:
