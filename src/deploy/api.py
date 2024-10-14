@@ -1,7 +1,8 @@
+from torch.nn.functional import softmax
 from flask import Flask, request, jsonify
 from flask_caching import Cache
 
-from deploy.inference import predict, load_model
+from deploy.inference import predict, load_model, raw_pred_to_top10_dataframe
 from deploy.parsing import parse_flask
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 
@@ -29,9 +30,6 @@ def classify_ligand():
 
     try:
         blob = parse_flask(file_val)
-        print(file_val)
-        print(file_val.__dict__)
-        print(blob)
         rescale_cryoem = request.form.get("rescale_cryoem", "false").lower() == "true"
         resolution = request.form.get("resolution", None)
 
@@ -45,7 +43,8 @@ def classify_ligand():
         blob = preprocess(blob)
 
         preds = predict(blob, model)
-        # preds = torch.nn.functional.softmax(preds, axis=0)
+        preds = softmax(preds, axis=0)
+        preds = raw_pred_to_top10_dataframe(preds)
         preds = preds.to_dict("records")
 
         return jsonify({"predictions": preds}), 200

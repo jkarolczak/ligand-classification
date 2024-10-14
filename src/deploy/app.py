@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from deploy.inference import predict, load_model, ligand_dict, render_table
+from deploy.inference import predict, load_model, ligand_dict, render_table, raw_pred_to_top10_dataframe
 from deploy.parsing import parse_streamlit
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 from deploy.visualization import volume_3d
@@ -107,7 +107,8 @@ def main():
                 viz = volume_3d(blob, "Blob")
                 col1_content.plotly_chart(viz, use_container_width=True, height=500)
                 blob = preprocess(blob)
-                df = predict(blob, model)
+                pred = predict(blob, model)
+                df = raw_pred_to_top10_dataframe(pred)
                 preds = render_table([(i + 1, ligand_dict()[row["Class"]], round(row["Probability"], 2))
                                       for i, row in df.iterrows()])
                 with col2_predictions.container():

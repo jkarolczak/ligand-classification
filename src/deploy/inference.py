@@ -66,10 +66,23 @@ def indices_to_cls(indices: torch.Tensor) -> List[str]:
     return [idx_to_cls(idx) for idx in indices]
 
 
-def raw_pred_to_dataframe(predictions: torch.Tensor) -> pd.DataFrame:
+def raw_pred_to_top10_dataframe(predictions: torch.Tensor) -> pd.DataFrame:
     top_k = torch.topk(predictions, 10)
     prob = vals_to_probs(top_k.values)
     cls = indices_to_cls(top_k.indices)
+    df = pd.DataFrame(
+        {
+            "Class": cls,
+            "Probability": prob
+        }
+    ).sort_values(by="Probability", ascending=False).reset_index().drop(columns="index")
+    return df
+
+
+def raw_pred_to_dataframe_probabilities(predictions: torch.Tensor) -> pd.DataFrame:
+    prob, indices = torch.sort(predictions)
+    prob = vals_to_probs(prob)
+    cls = indices_to_cls(indices)
     df = pd.DataFrame(
         {
             "Class": cls,
@@ -85,8 +98,7 @@ def predict(blob: np.ndarray, model) -> pd.DataFrame:
     """
     me_tensor = blob_to_me_tensor(blob)
     pred = model(me_tensor).squeeze(0)
-    df = raw_pred_to_dataframe(pred)
-    return df
+    return pred
 
 
 def load_model():
