@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from deploy.inference import predict, load_model
+from deploy.inference import predict, load_model, ligand_dict, render_table
 from deploy.parsing import parse
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 from deploy.visualization import volume_3d

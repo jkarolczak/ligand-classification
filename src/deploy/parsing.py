@@ -45,6 +45,7 @@ def _construct_blob(points: np.ndarray) -> np.ndarray:
     blob[(x.astype(int), y.astype(int), z.astype(int))] = features
     return blob
 
+
 def parse_ply(byte_obj: _io.BytesIO) -> np.ndarray:
     """
     Parse ply files
