@@ -4,6 +4,7 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 import plyfile as ply
+import werkzeug
 from numpy.lib import recfunctions as rfn
 
 
@@ -112,7 +113,7 @@ def parse_csv(byte_obj: _io.BytesIO) -> np.ndarray:
     return _construct_blob(points)
 
 
-def parse(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
+def parse_streamlit(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
     """
     Parse point cloud.
 
@@ -134,3 +135,30 @@ def parse(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
         return parse_xyz_pts_txt(byte_object, ext)
     elif ext == "csv":
         return parse_csv(byte_object)
+
+
+def parse_flask(file: werkzeug.datastructures.FileStorage) -> np.ndarray:
+    """
+    Parse point cloud from a file uploaded via Flask request.
+
+    :param file: File uploaded from a request.
+    :type file: werkzeug.datastructures.FileStorage
+    :returns: Parsed point cloud as a numpy array.
+    :rtype: np.ndarray
+    """
+    byte_object = BytesIO(file.read())
+
+    ext = file.filename.split(".")[-1].lower()
+
+    if ext == "npz":
+        return parse_npz(byte_object)
+    elif ext == "npy":
+        return parse_npy(byte_object)
+    elif ext == "ply":
+        return parse_ply(byte_object)
+    elif ext in {"xyz", "pts", "txt"}:
+        return parse_xyz_pts_txt(byte_object, ext)
+    elif ext == "csv":
+        return parse_csv(byte_object)
+    else:
+        raise ValueError(f"Unsupported file extension: {ext}")

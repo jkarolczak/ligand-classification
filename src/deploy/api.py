@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_caching import Cache
 
 from deploy.inference import predict, load_model
-from deploy.parsing import parse
+from deploy.parsing import parse_flask
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ def classify_ligand():
         return jsonify({"error": "Unsupported file format"}), 400
 
     try:
-        blob = parse(file_val)
+        blob = parse_flask(file_val)
         print(file_val)
         print(file_val.__dict__)
         print(blob)

@@ -3,7 +3,7 @@ import os
 import streamlit as st
 
 from deploy.inference import predict, load_model, ligand_dict, render_table
-from deploy.parsing import parse
+from deploy.parsing import parse_streamlit
 from deploy.preprocessing import preprocess, scale_cryoem_blob
 from deploy.visualization import volume_3d
 
@@ -101,7 +101,7 @@ def main():
 
         if submit_button:
             if file_val:
-                blob = parse(file_val)
+                blob = parse_streamlit(file_val)
                 if rescale_cryoem:
                     blob = scale_cryoem_blob(blob, resolution=resolution)
                 viz = volume_3d(blob, "Blob")
