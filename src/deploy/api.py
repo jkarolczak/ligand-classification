@@ -32,13 +32,14 @@ def classify_ligand():
         rescale_cryoem = request.form.get("rescale_cryoem", "false").lower() == "true"
         resolution = request.form.get("resolution", None)
 
-        if rescale_cryoem and not resolution:
-            return jsonify({"error": "No resolution part in the request"}), 400
-
         if rescale_cryoem:
-            print(resolution, rescale_cryoem)
+            if not resolution:
+                return jsonify({"error": "No resolution part in the request"}), 400
+
             resolution = float(resolution)
+            print(blob.min(), blob.max())
             blob = scale_cryoem_blob(blob, resolution=resolution)
+            print(blob.min(), blob.max())
 
         blob = preprocess(blob)
 
