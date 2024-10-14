@@ -140,7 +140,7 @@ def parse_streamlit(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.n
     return _parse_bytes(byte_object, ext)
 
 
-def parse_flask(file: werkzeug.datastructures.FileStorage) -> np.ndarray:
+def parse_flask(file) -> np.ndarray:
     """
     Parse point cloud from a file uploaded via Flask request.
 
