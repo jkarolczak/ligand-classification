@@ -43,7 +43,7 @@ def classify_ligand():
         blob = preprocess(blob)
 
         preds = predict(blob, model)
-        preds = softmax(preds, axis=0)
+        preds = softmax(preds, dim=0)
         preds = raw_pred_to_top10_dataframe(preds)
         preds = preds.to_dict("records")
 
