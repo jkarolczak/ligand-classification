@@ -29,7 +29,8 @@ def classify_ligand():
 
     try:
         blob = parse(file_val)
-
+        print(blob)
+        print(blob.__dict__)
         rescale_cryoem = request.form.get("rescale_cryoem", "false").lower() == "true"
         resolution = request.form.get("resolution", None)
 
