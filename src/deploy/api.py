@@ -19,6 +19,7 @@ def home():
 @app.route("/api/predict", methods=["POST"])
 @cache.cached(timeout=300)
 def classify_ligand():
+    print(request.files)
     if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
 
