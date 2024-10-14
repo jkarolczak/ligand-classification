@@ -36,6 +36,7 @@ def classify_ligand():
             return jsonify({"error": "No resolution part in the request"}), 400
 
         if rescale_cryoem:
+            print(resolution, rescale_cryoem)
             resolution = float(resolution)
             blob = scale_cryoem_blob(blob, resolution=resolution)
 
