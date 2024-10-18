@@ -83,12 +83,14 @@ def main():
         - `.csv`
             - files with headers and headerless are supported
             - each line describe a voxel following the pattern `x, y, z, density`
+        - `.ccp4`, `.mrc`
+            - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
         """)
     col2.markdown("## Predictions")
     col2_predictions = col2.empty()
     col2_predictions.info("Upload a blob to see predictions.")
     with col1_form:
-        file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
+        file_val = st.file_uploader("Input", type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv", "mrc", "ccp4"])
         form_col1, form_col2 = col1_form.columns(2)
         with form_col1:
             rescale_cryoem = st.toggle("Rescale voxel values (turn this on for cryoEM blobs)")
