@@ -3,8 +3,6 @@ from io import BytesIO
 
 import numpy as np
 import streamlit as st
-import plyfile as ply
-from numpy.lib import recfunctions as rfn
 
 
 def parse_npz(byte_obj: _io.BytesIO) -> np.ndarray:
@@ -58,6 +56,9 @@ def parse_ply(byte_obj: _io.BytesIO) -> np.ndarray:
     :returns: point cloud
     :rtype: np.ndarray
     """
+    import plyfile as ply
+    from numpy.lib import recfunctions as rfn
+
     plydata = ply.PlyData.read(byte_obj)
 
     points = np.array(plydata.elements[0].data)
@@ -112,6 +113,33 @@ def parse_csv(byte_obj: _io.BytesIO) -> np.ndarray:
     return _construct_blob(points)
 
 
+def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
+    """
+    Parse ccp4 and mrc files
+    - ccp4 and mrc files structure: should meet the description on ccp-em website:
+        https://www.ccpem.ac.uk/mrc_format/mrc2014.php
+
+    :param byte_obj: input object to be parsed.
+    :type byte_obj: _io.BytesIO
+    :returns: point cloud
+    :rtype: np.ndarray
+    """
+    from tempfile import NamedTemporaryFile
+    import mrcfile
+
+    with NamedTemporaryFile(delete=True) as tmp_file:
+        tmp_file.write(byte_obj.read())
+        tmp_file.flush()
+
+        with mrcfile.open(tmp_file.name, mode="r") as file:
+            map_array = np.asarray(file.data, dtype="float")
+
+            order = (3 - file.header.maps, 3 - file.header.mapr, 3 - file.header.mapc)
+            blob = np.moveaxis(a=map_array, source=(0, 1, 2), destination=order)
+
+    return blob
+
+
 def _parse_bytes(byte_object, ext: str) -> np.ndarray:
     if ext == "npz":
         return parse_npz(byte_object)
@@ -119,10 +147,12 @@ def _parse_bytes(byte_object, ext: str) -> np.ndarray:
         return parse_npy(byte_object)
     elif ext == "ply":
         return parse_ply(byte_object)
-    elif ext == "xyz" or ext == "pts" or ext == "txt":
+    elif ext in ("xyz", "pts", "txt"):
         return parse_xyz_pts_txt(byte_object, ext)
     elif ext == "csv":
         return parse_csv(byte_object)
+    elif ext in ("mrc", "ccp4", "map"):
+        return parse_ccp4(byte_object)
 
 
 def parse_streamlit(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
