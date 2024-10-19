@@ -20,7 +20,7 @@ def classify_ligand():
 
     file_val = list(request.files.values())[0]
 
-    if not (file_val.filename.endswith((".npy", ".npz", ".pts", ".xyz", ".txt", ".csv", ".mrc", ".ccp4"))):
+    if not (file_val.filename.endswith((".npy", ".npz", ".mrc", ".ccp4", ".map", ".pts", ".xyz", ".txt", ".csv"))):
         return jsonify({"error": "Unsupported file format"}), 400
 
     try:
