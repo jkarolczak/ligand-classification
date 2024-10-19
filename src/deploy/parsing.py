@@ -151,7 +151,7 @@ def _parse_bytes(byte_object, ext: str) -> np.ndarray:
         return parse_xyz_pts_txt(byte_object, ext)
     elif ext == "csv":
         return parse_csv(byte_object)
-    elif ext in ("mrc", "ccp4"):
+    elif ext in ("mrc", "ccp4", "map"):
         return parse_ccp4(byte_object)
 
 
