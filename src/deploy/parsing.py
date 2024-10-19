@@ -152,7 +152,7 @@ def _parse_bytes(byte_object, ext: str) -> np.ndarray:
     elif ext == "csv":
         return parse_csv(byte_object)
     elif ext in ("mrc", "ccp4"):
-        return parse_ccp4(byte_object, ext)
+        return parse_ccp4(byte_object)
 
 
 def parse_streamlit(file: st.runtime.uploaded_file_manager.UploadedFile) -> np.ndarray:
