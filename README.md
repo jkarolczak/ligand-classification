@@ -74,7 +74,9 @@ The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.p
 
 ## API
 
-The Ligand Classification API provides endpoints for classifying ligands from 3D point cloud data using the best model from paper. The API supports various file formats for point cloud input and returns the top 10 predicted ligand classes along with their probabilities.
+The Ligand Classification API provides endpoints for classifying ligands from 3D point cloud data using the best model
+from paper. The API supports various file formats for point cloud input and returns the top 10 predicted ligand classes
+along with their probabilities.
 
 Each user is limited to one request per second.
 
@@ -83,24 +85,26 @@ Each user is limited to one request per second.
 ### Endpoints
 
 #### 1. Health Check - `[GET]` `http://ligands.cs.put.poznan.pl/api`
+
 Checks if the Ligand Classification API is operational.
 
 ###### Responses
+
 - **200**: Success
 
   <details>
-	  
+
   Example response:
   ```text
   Ligand Classification API is up and running!
   ```
-	  
+
   </details>
 
 - **500**: Server Error
 
   <details>
-	  
+
   <summary>Error Details</summary>
 
   ```json
@@ -113,12 +117,34 @@ Checks if the Ligand Classification API is operational.
 ---
 
 #### 2. Classify Ligand - `[POST]` `http://ligands.cs.put.poznan.pl/api/predict`
-Classifies the uploaded 3D point cloud data and returns the top 10 most likely ligand classes along with their respective probabilities.
+
+Classifies the uploaded 3D point cloud data and returns the top 10 most likely ligand classes along with their
+respective probabilities.
 
 ###### Request Body
+
 - **file** (`string`, `binary`, required):  
-  The 3D point cloud file. Supported formats: `.npy`, `.npz`, `.pts`, `.xyz`, `.txt`, `.csv`.  
-  Example: `example.npy`
+  Supported formats: `.npy`, `.npz`, `.ccp4`, `.mrc`, `.map`, `.pts`, `.xyz`, `.txt`, `.csv`
+
+  <details>
+
+    - `.npy`, `.npz`:
+        - dense three dimensional numpy array
+    - `.ccp4`, `.mrc`, `.map`
+        - the map must be resampled to have a grid with 0.2 Å resolution
+        - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
+    - `.xyz`, `.txt`:
+        - without any header
+        - each line describe a voxel following the pattern `x y z density`
+    - `.pts`
+        - the first line contains information about number of points (lines)
+        - each line describe a voxel following the pattern `x y z density`
+    - `.csv`
+        - files with headers and headerless are supported
+        - each line describe a voxel following the pattern `x, y, z, density`
+          Example: `example.npy`
+
+  </details>
 
 - **rescale_cryoem** (`string`, optional):  
   Indicates whether to rescale the cryoEM data. Accepts `"true"` or `"false"`.  
@@ -129,10 +155,11 @@ Classifies the uploaded 3D point cloud data and returns the top 10 most likely l
   Example: `1.5`
 
 ###### Responses
+
 - **200**: Successfully classified ligand
 
   <details>
-	  
+
   Example response:
   ```json
   {
@@ -149,17 +176,17 @@ Classifies the uploaded 3D point cloud data and returns the top 10 most likely l
     ]
   }
   ```
-  
+
 </details>
 
 - **400**: Bad Request (Multiple Possible Errors)
 
   <details>
-  
+
     - **No file part in the request**
-      
+
     <details>
-	    
+
     <summary>Error Details</summary>
 
     ```json
@@ -167,41 +194,41 @@ Classifies the uploaded 3D point cloud data and returns the top 10 most likely l
       "error": "No file part in the request"
     }
     ```
-    
-    </details>
-
-  - **Unsupported file format**
-
-    <details>
-	    
-    <summary>Error Details</summary>
-
-    ```json
-    {
-      "error": "Unsupported file format"
-    }
-    ```
-    
-    </details>
-
-  - **Missing resolution when rescale_cryoem is true**
-
-    <details>
-	    
-    <summary>Error Details</summary>
-
-    ```json
-    {
-      "error": "No resolution part in the request"
-    }
-    ```
 
     </details>
 
-- **500**: Internal Server Error  
+    - **Unsupported file format**
+
+      <details>
+
+      <summary>Error Details</summary>
+
+      ```json
+      {
+        "error": "Unsupported file format"
+      }
+      ```
+
+      </details>
+
+    - **Missing resolution when rescale_cryoem is true**
+
+      <details>
+
+      <summary>Error Details</summary>
+
+      ```json
+      {
+        "error": "No resolution part in the request"
+      }
+      ```
+
+      </details>
+
+- **500**: Internal Server Error
 
   <details>
-	  
+
   <summary>Error Details</summary>
 
   ```json
@@ -210,7 +237,7 @@ Classifies the uploaded 3D point cloud data and returns the top 10 most likely l
   }
   ```
   </details>
-  
+
 </details>
 
 ## Environment setup
