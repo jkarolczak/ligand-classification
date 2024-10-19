@@ -3,7 +3,7 @@ base="light"
 
 [server]
 port=8501
-maxUploadSize=5
+maxUploadSize=20
 enableCORS=false
 enableXsrfProtection=false
 
