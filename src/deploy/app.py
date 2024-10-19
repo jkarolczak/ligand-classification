@@ -75,6 +75,7 @@ def main():
         - `.npy`, `.npz`:
             - dense three dimensional numpy array
         - `.ccp4`, `.mrc`, `.map`
+            - the map must be resampled to have a grid with 0.2 Å resolution
             - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
         - `.xyz`, `.txt`:
             - without any header
