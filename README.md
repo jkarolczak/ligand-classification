@@ -28,7 +28,7 @@ transformations for generating datasets.
 To reproduce the results, use scripts from the `scripts` directory.
 Configuration files for the experiments are available in the `cfg` directory.
 
-Weights of the model that was revealed as the best in the paper are published
+We provide weights of the model trained on cryoEM and X-ray crystallography
 as `model.pt` ([link](https://github.com/jkarolczak/ligand-classification/blob/main/model.pt)).
 
 ---
@@ -69,14 +69,18 @@ shows a manually selected contour threshold of 11.000 V. Atomic coordinates were
 
 ## Demo
 
-The best model from the paper can be tested without the need to install anything.
+The model trained on blobs from cryoEM and X-ray crystallography can be tested without the need to install
+anything.
 The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
+
+---
 
 ## API
 
-The Ligand Classification API provides endpoints for classifying ligands from 3D point cloud data using the best model
-from paper. The API supports various file formats for point cloud input and returns the top 10 predicted ligand classes
-along with their probabilities.
+The Ligand Classification API provides endpoints for classifying ligands from 3D point cloud data using a model trained
+on all the data mentioned in the paper, including blobs from cryoEM and X-ray crystallography.
+The API supports various file formats for point cloud input and returns the top 10 predicted ligand classes along with
+their probabilities.
 
 Each user is limited to one request per second.
 
