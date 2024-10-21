@@ -28,7 +28,7 @@ transformations for generating datasets.
 To reproduce the results, use scripts from the `scripts` directory.
 Configuration files for the experiments are available in the `cfg` directory.
 
-Weights of the model that was revealed as the best in the paper are published
+We provide weights of the model trained on cryoEM and X-ray crystallography
 as `model.pt` ([link](https://github.com/jkarolczak/ligand-classification/blob/main/model.pt)).
 
 ---
@@ -102,7 +102,8 @@ Ensure you have the following installed:
 
 ## Demo
 
-The best model from the paper can be tested without the need to install anything.
+The model trained on blobs from cryoEM and X-ray crystallography can be tested without the need to install
+anything.
 The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
 
 ## Data
