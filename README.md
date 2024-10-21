@@ -67,6 +67,183 @@ shows a manually selected contour threshold of 11.000 V. Atomic coordinates were
 
 ---
 
+## Demo
+
+The model trained on blobs from cryoEM and X-ray crystallography can be tested without the need to install
+anything.
+The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
+
+---
+
+## API
+
+The Ligand Classification API provides endpoints for classifying ligands from 3D point cloud data using a model trained
+on all the data mentioned in the paper, including blobs from cryoEM and X-ray crystallography.
+The API supports various file formats for point cloud input and returns the top 10 predicted ligand classes along with
+their probabilities.
+
+Each user is limited to one request per second.
+
+**Base URL:** `http://ligands.cs.put.poznan.pl`
+
+### Endpoints
+
+#### 1. Health Check - `[GET]` `http://ligands.cs.put.poznan.pl/api`
+
+Checks if the Ligand Classification API is operational.
+
+###### Responses
+
+- **200**: Success
+
+  <details>
+
+  Example response:
+  ```text
+  Ligand Classification API is up and running!
+  ```
+
+  </details>
+
+- **500**: Server Error
+
+  <details>
+
+  <summary>Error Details</summary>
+
+  ```json
+  {
+    "error": "Internal Server Error"
+  }
+  ```
+  </details>
+
+---
+
+#### 2. Classify Ligand - `[POST]` `http://ligands.cs.put.poznan.pl/api/predict`
+
+Classifies the uploaded 3D point cloud data and returns the top 10 most likely ligand classes along with their
+respective probabilities.
+
+###### Request Body
+
+- **file** (`string`, `binary`, required):  
+  Supported formats: `.npy`, `.npz`, `.ccp4`, `.mrc`, `.map`, `.pts`, `.xyz`, `.txt`, `.csv`
+
+  <details>
+
+    - `.npy`, `.npz`:
+        - dense three dimensional numpy array
+    - `.ccp4`, `.mrc`, `.map`
+        - the map must be resampled to have a grid with 0.2 Å resolution
+        - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
+    - `.xyz`, `.txt`:
+        - without any header
+        - each line describe a voxel following the pattern `x y z density`
+    - `.pts`
+        - the first line contains information about number of points (lines)
+        - each line describe a voxel following the pattern `x y z density`
+    - `.csv`
+        - files with headers and headerless are supported
+        - each line describe a voxel following the pattern `x, y, z, density`
+          Example: `example.npy`
+
+  </details>
+
+- **rescale_cryoem** (`string`, optional):  
+  Indicates whether to rescale the cryoEM data. Accepts `"true"` or `"false"`.  
+  Example: `"false"`
+
+- **resolution** (`number`, optional):  
+  The resolution value for cryoEM data rescaling. Required if `rescale_cryoem` is `"true"`.  
+  Example: `1.5`
+
+###### Responses
+
+- **200**: Successfully classified ligand
+
+  <details>
+
+  Example response:
+  ```json
+  {
+    "predictions": [
+      {
+        "Class": "ATP",
+        "Probability": 0.95
+      },
+      {
+        "Class": "GTP",
+        "Probability": 0.87
+      },
+      ...
+    ]
+  }
+  ```
+
+</details>
+
+- **400**: Bad Request (Multiple Possible Errors)
+
+  <details>
+
+    - **No file part in the request**
+
+    <details>
+
+    <summary>Error Details</summary>
+
+    ```json
+    {
+      "error": "No file part in the request"
+    }
+    ```
+
+    </details>
+
+    - **Unsupported file format**
+
+      <details>
+
+      <summary>Error Details</summary>
+
+      ```json
+      {
+        "error": "Unsupported file format"
+      }
+      ```
+
+      </details>
+
+    - **Missing resolution when rescale_cryoem is true**
+
+      <details>
+
+      <summary>Error Details</summary>
+
+      ```json
+      {
+        "error": "No resolution part in the request"
+      }
+      ```
+
+      </details>
+
+- **500**: Internal Server Error
+
+  <details>
+
+  <summary>Error Details</summary>
+
+  ```json
+  {
+    "error": "An unexpected error occurred"
+  }
+  ```
+  </details>
+
+</details>
+
 ## Environment setup
 
 ### Docker
@@ -99,12 +276,6 @@ Ensure you have the following installed:
 5. To stop the container:
     - For GPU use: `./stop.sh`
     - For CPU use: `./stop.sh cpu`
-
-## Demo
-
-The model trained on blobs from cryoEM and X-ray crystallography can be tested without the need to install
-anything.
-The model is deployed as a Streamlit app under the link [ligands.cs.put.poznan.pl](https://ligands.cs.put.poznan.pl).
 
 ## Data
 
