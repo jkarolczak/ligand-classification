@@ -3,6 +3,7 @@ from io import BytesIO
 
 import numpy as np
 import streamlit as st
+from scipy.stats import norm
 
 CCP4_TARGET_VOXEL_SIZE = 0.2
 
@@ -146,6 +147,17 @@ def resample_blob(blob: np.ndarray, target_voxel_size: float, unit_cell: np.ndar
     return blob
 
 
+def _compute_density_threshold(map_array: np.ndarray) -> float:
+    map_median = np.median(map_array)
+    map_std = np.std(map_array)
+    value_mask = (map_array < map_median - 0.5 * map_std) | (map_array > map_median + 0.5 * map_std)
+
+    quantile_threshold = norm.cdf(2.8)
+    density_threshold = np.quantile(map_array[value_mask], quantile_threshold)
+
+    return density_threshold
+
+
 def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
     """
     Parse ccp4 and mrc files
@@ -177,6 +189,9 @@ def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
             unit_cell[0], unit_cell[2] = unit_cell[2], unit_cell[0]
             unit_cell[3:] = 90.
             blob = resample_blob(blob, CCP4_TARGET_VOXEL_SIZE, unit_cell, map_array)
+
+            density_threshold = _compute_density_threshold(map_array)
+            blob[blob < density_threshold] = 0
 
     return blob
 
