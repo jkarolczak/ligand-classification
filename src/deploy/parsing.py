@@ -4,6 +4,8 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 
+CCP4_TARGET_VOXEL_SIZE = 0.2
+
 
 def parse_npz(byte_obj: _io.BytesIO) -> np.ndarray:
     """
@@ -113,6 +115,37 @@ def parse_csv(byte_obj: _io.BytesIO) -> np.ndarray:
     return _construct_blob(points)
 
 
+def resample_blob(blob: np.ndarray, target_voxel_size: float, unit_cell: np.ndarray, map_array: np.ndarray) -> np.ndarray:
+    """
+    Resamples a given blob to a target voxel size using the provided unit cell and map array.
+
+    :param blob: The blob to be resampled.
+    :type blob: numpy.ndarray
+    :param target_voxel_size: The target voxel size (in Angstroms).
+    :type target_voxel_size: float
+    :param unit_cell: The unit cell dimensions (in Angstroms).
+    :type unit_cell: tuple
+    :param map_array: The map array.
+    :type map_array: numpy.ndarray
+
+    :return: The resampled blob.
+    :rtype: numpy.ndarray
+    """
+    from scipy.ndimage import zoom
+
+    blob = zoom(
+        blob,
+        [
+            unit_cell[0] / target_voxel_size / map_array.shape[0],
+            unit_cell[1] / target_voxel_size / map_array.shape[1],
+            unit_cell[2] / target_voxel_size / map_array.shape[2],
+        ],
+        prefilter=False,
+    )
+
+    return blob
+
+
 def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
     """
     Parse ccp4 and mrc files
@@ -136,6 +169,14 @@ def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
 
             order = (3 - file.header.maps, 3 - file.header.mapr, 3 - file.header.mapc)
             blob = np.moveaxis(a=map_array, source=(0, 1, 2), destination=order)
+
+            unit_cell = np.zeros(6, dtype="float")
+            cell = file.header.cella[["x", "y", "z"]]
+            unit_cell[:3] = cell.astype([("x", "<f4"), ("y", "<f4"), ("z", "<f4")]).view(("<f4", 3))
+
+            unit_cell[0], unit_cell[2] = unit_cell[2], unit_cell[0]
+            unit_cell[3:] = float(90)
+            blob = resample_blob(blob, CCP4_TARGET_VOXEL_SIZE, unit_cell, map_array)
 
     return blob
 
