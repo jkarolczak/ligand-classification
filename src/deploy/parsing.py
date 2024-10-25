@@ -175,7 +175,7 @@ def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
             unit_cell[:3] = cell.astype([("x", "<f4"), ("y", "<f4"), ("z", "<f4")]).view(("<f4", 3))
 
             unit_cell[0], unit_cell[2] = unit_cell[2], unit_cell[0]
-            unit_cell[3:] = float(90)
+            unit_cell[3:] = 90.
             blob = resample_blob(blob, CCP4_TARGET_VOXEL_SIZE, unit_cell, map_array)
 
     return blob
