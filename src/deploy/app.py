@@ -40,9 +40,9 @@ def main():
     cursor on the  name. Click on a ligand's name to see its Protein Data Bank entry.
     
     This application serves as supplementary material for the article 
-    *Deep Learning Methods for Ligand Identification in Density Maps* by Jacek Karolczak, Anna Przybyłowska, Konrad Szewczyk, 
-    Witold Taisner, John M. Heumann, Michael H.B. Stowell, Michał Nowicki and Dariusz Brzezinski. The source code is publicly 
-    available on [GitHub](https://github.com/jkarolczak/ligand-classification)
+    *Ligand Identification in CryoEM and X-ray Maps Using Deep Learning* by Jacek Karolczak, Anna Przybyłowska, Konrad 
+    Szewczyk, Witold Taisner, John M. Heumann, Michael H.B. Stowell, Michał Nowicki and Dariusz Brzezinski. The source code is 
+    publicly available on [GitHub](https://github.com/jkarolczak/ligand-classification)
     
     --- 
     """)
@@ -74,9 +74,6 @@ def main():
         Files of the following structures are supported:
         - `.npy`, `.npz`:
             - dense three dimensional numpy array
-        - `.ccp4`, `.mrc`, `.map`
-            - the map must be resampled to have a grid with 0.2 Å resolution
-            - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
         - `.xyz`, `.txt`:
             - without any header
             - each line describe a voxel following the pattern `x y z density`
@@ -92,7 +89,7 @@ def main():
     col2_predictions.info("Upload a blob to see predictions.")
     with col1_form:
         file_val = st.file_uploader("Input",
-                                    type=["npy", "npz", "mrc", "ccp4", "map", "ply", "pts", "xyz", "txt", "csv"])
+                                    type=["npy", "npz", "ply", "pts", "xyz", "txt", "csv"])
         form_col1, form_col2 = col1_form.columns(2)
         with form_col1:
             rescale_cryoem = st.toggle("Rescale voxel values (turn this on for cryoEM blobs)")
