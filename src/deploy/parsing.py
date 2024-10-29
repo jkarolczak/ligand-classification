@@ -35,7 +35,11 @@ def parse_npy(byte_obj: _io.BytesIO) -> np.ndarray:
 
 
 def _construct_blob(points: np.ndarray) -> np.ndarray:
-    x, y, z = points[:, 0][:, np.newaxis], points[:, 1][:, np.newaxis], points[:, 2][:, np.newaxis]
+    x, y, z = (
+        points[:, 0][:, np.newaxis],
+        points[:, 1][:, np.newaxis],
+        points[:, 2][:, np.newaxis],
+    )
     features = points[:, 3][:, np.newaxis]
     x_range = int(np.max(x)) + 1
     y_range = int(np.max(y)) + 1
@@ -87,7 +91,7 @@ def parse_xyz_pts_txt(byte_obj: _io.BytesIO, ext: str) -> np.ndarray:
     :returns: point cloud
     :rtype: np.ndarray
     """
-    if ext == 'pts':
+    if ext == "pts":
         _ = byte_obj.readline()
     points = np.loadtxt(byte_obj, encoding="bytes")
     return _construct_blob(points)
@@ -108,14 +112,19 @@ def parse_csv(byte_obj: _io.BytesIO) -> np.ndarray:
     :rtype: np.ndarray
     """
     try:
-        points = np.loadtxt(byte_obj, delimiter=',', encoding="bytes")
+        points = np.loadtxt(byte_obj, delimiter=",", encoding="bytes")
     except ValueError:
         _ = byte_obj.readline()
-        points = np.loadtxt(byte_obj, delimiter=',', encoding="bytes")
+        points = np.loadtxt(byte_obj, delimiter=",", encoding="bytes")
     return _construct_blob(points)
 
 
-def resample_blob(blob: np.ndarray, target_voxel_size: float, unit_cell: np.ndarray, map_array: np.ndarray) -> np.ndarray:
+def resample_blob(
+    blob: np.ndarray,
+    target_voxel_size: float,
+    unit_cell: np.ndarray,
+    cell_sampling: list,
+) -> np.ndarray:
     """
     Resamples a given blob to a target voxel size using the provided unit cell and map array.
 
@@ -136,9 +145,9 @@ def resample_blob(blob: np.ndarray, target_voxel_size: float, unit_cell: np.ndar
     blob = zoom(
         blob,
         [
-            unit_cell[0] / target_voxel_size / map_array.shape[0],
-            unit_cell[1] / target_voxel_size / map_array.shape[1],
-            unit_cell[2] / target_voxel_size / map_array.shape[2],
+            unit_cell[0] / target_voxel_size / cell_sampling[0],
+            unit_cell[1] / target_voxel_size / cell_sampling[1],
+            unit_cell[2] / target_voxel_size / cell_sampling[2],
         ],
         prefilter=False,
     )
@@ -165,18 +174,21 @@ def parse_ccp4(byte_obj: _io.BytesIO) -> np.ndarray:
         tmp_file.flush()
 
         with mrcfile.open(tmp_file.name, mode="r") as file:
-            map_array = np.asarray(file.data, dtype="float")
-
             order = (3 - file.header.maps, 3 - file.header.mapr, 3 - file.header.mapc)
-            blob = np.moveaxis(a=map_array, source=(0, 1, 2), destination=order)
+            blob = np.asarray(file.data, dtype="float")
+            blob = np.moveaxis(a=blob, source=(0, 1, 2), destination=order)
 
             unit_cell = np.zeros(6, dtype="float")
             cell = file.header.cella[["x", "y", "z"]]
-            unit_cell[:3] = cell.astype([("x", "<f4"), ("y", "<f4"), ("z", "<f4")]).view(("<f4", 3))
-
+            unit_cell[:3] = cell.astype(
+                [("x", "<f4"), ("y", "<f4"), ("z", "<f4")]
+            ).view(("<f4", 3))
             unit_cell[0], unit_cell[2] = unit_cell[2], unit_cell[0]
-            unit_cell[3:] = 90.
-            blob = resample_blob(blob, CCP4_TARGET_VOXEL_SIZE, unit_cell, map_array)
+            unit_cell[3:] = 90.0
+
+            cell_sampling = [file.header.mz, file.header.my, file.header.mx]
+
+            blob = resample_blob(blob, CCP4_TARGET_VOXEL_SIZE, unit_cell, cell_sampling)
 
     return blob
 
