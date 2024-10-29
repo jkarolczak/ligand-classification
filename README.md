@@ -3,7 +3,7 @@
 [![Zenodo - Data](https://img.shields.io/badge/Zenodo-Data-informational)](https://zenodo.org/records/10908325)
 ![example workflow](https://github.com/jkarolczak/ligands-classification/actions/workflows/python-app.yml/badge.svg)
 
-# Deep Learning Methods for Ligand Identification in Density Maps
+# Ligand Identification in CryoEM and X-ray Maps Using Deep Learning
 
 [Jacek Karolczak](https://github.com/jkarolczak), [Anna Przybyłowska](https://github.com/annprzy), [Konrad Szewczyk](https://github.com/konradszewczyk), [Witold Taisner](https://github.com/wtaisner), [John M. Heumann](https://github.com/jmheumann),
 Michael H.B.
@@ -128,15 +128,12 @@ respective probabilities.
 ###### Request Body
 
 - **file** (`string`, `binary`, required):  
-  Supported formats: `.npy`, `.npz`, `.ccp4`, `.mrc`, `.map`, `.pts`, `.xyz`, `.txt`, `.csv`
+  Supported formats: `.npy`, `.npz`, `.pts`, `.xyz`, `.txt`, `.csv`
 
   <details>
 
     - `.npy`, `.npz`:
         - dense three dimensional numpy array
-    - `.ccp4`, `.mrc`, `.map`
-        - the map must be resampled to have a grid with 0.2 Å resolution
-        - for details see [ccp-em website](https://www.ccpem.ac.uk/mrc_format/mrc2014.php)
     - `.xyz`, `.txt`:
         - without any header
         - each line describe a voxel following the pattern `x y z density`
@@ -170,11 +167,11 @@ respective probabilities.
     "predictions": [
       {
         "Class": "ATP",
-        "Probability": 0.95
+        "Probability": 0.82
       },
       {
         "Class": "GTP",
-        "Probability": 0.87
+        "Probability": 0.07
       },
       ...
     ]
